@@ -73,6 +73,9 @@
     border-radius: 50%;
     border: 2px solid #FFF;
     transition: all .7s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     &:hover {
       color: $main;
       background: #FFF;
