@@ -18,4 +18,134 @@
       color: $sec;
     }
   }
+  
+  .geek-features {
+    margin-top: 20px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.75em;
+    opacity: 0.9;
+    
+    // ASCII Art
+    .ascii-art {
+      margin: 10px 0;
+      .ascii-text {
+        margin: 0;
+        color: #0F0;
+        text-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+        font-size: 0.6em;
+        line-height: 1.2;
+        letter-spacing: 1px;
+        animation: glow-pulse 2s ease-in-out infinite;
+        @media (max-width: 600px) {
+          font-size: 0.4em;
+        }
+      }
+    }
+    
+    // Terminal Prompt with Typing Effect
+    .terminal-prompt {
+      margin: 15px 0;
+      color: #0F0;
+      text-shadow: 0 0 5px rgba(0, 255, 0, 0.3);
+      
+      .prompt-user {
+        color: #0FF;
+      }
+      .prompt-path {
+        color: #FF0;
+      }
+      .prompt-symbol {
+        color: #0F0;
+        margin: 0 2px;
+      }
+      
+      .typing-text {
+        color: #FFF;
+        display: inline-block;
+        overflow: hidden;
+        border-right: 2px solid #0F0;
+        white-space: nowrap;
+        animation: typing 3s steps(7, end) infinite, blink-cursor 0.75s step-end infinite;
+        width: 0;
+      }
+    }
+    
+    // Status Indicators
+    .status-indicators {
+      margin: 15px 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 15px;
+      
+      .status-dot {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        margin-right: 5px;
+        animation: pulse 2s ease-in-out infinite;
+        
+        &.online {
+          background-color: #0F0;
+          box-shadow: 0 0 10px rgba(0, 255, 0, 0.8);
+        }
+        
+        &.coding {
+          background-color: #FF0;
+          box-shadow: 0 0 10px rgba(255, 255, 0, 0.8);
+        }
+      }
+      
+      .status-text {
+        color: #AAA;
+        font-size: 0.9em;
+      }
+    }
+  }
+}
+
+// Animations
+@keyframes glow-pulse {
+  0%, 100% {
+    text-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+    opacity: 1;
+  }
+  50% {
+    text-shadow: 0 0 20px rgba(0, 255, 0, 0.8);
+    opacity: 0.9;
+  }
+}
+
+@keyframes typing {
+  0% {
+    width: 0;
+  }
+  50% {
+    width: 7ch;
+  }
+  100% {
+    width: 0;
+  }
+}
+
+@keyframes blink-cursor {
+  0%, 50% {
+    border-color: #0F0;
+  }
+  51%, 100% {
+    border-color: transparent;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(1.2);
+  }
 }
