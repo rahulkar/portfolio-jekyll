@@ -6,19 +6,22 @@
   <title>{% if page.title %}{{ page.title }}{% else %}{{ site.title }}{% endif %}</title>
   <meta name="description" content="{% if page.description %}{{ page.description | strip_html | strip_newlines | truncate: 160 }}{% else %}{{ site.description }}{% endif %}">
 
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{{ "/assets/css/main.css" | prepend: site.baseurl }}">
-  <link rel="shortcut icon" type="image/png" href="{{ '/assets/favicon.ico' }}" >
+  <link rel="shortcut icon" type="image/png" href="{{ "/assets/favicon.ico" | prepend: site.baseurl }}">
 
   <!-- Structured Data (JSON-LD) for Person Schema -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "Person",
-    "name": "{{ site.username }}",
-    "url": "{{ site.url }}",
-    "jobTitle": "{{ site.user_title }}",
-    "description": "{{ site.user_description }}",
-    "email": "{{ site.email }}"{% assign social_profiles = '' %}{% if site.twitter_username %}{% assign social_profiles = social_profiles | append: '"https://twitter.com/' | append: site.twitter_username | append: '"' %}{% endif %}{% if site.github_username %}{% if social_profiles != '' %}{% assign social_profiles = social_profiles | append: ',' %}{% endif %}{% assign social_profiles = social_profiles | append: '"https://github.com/' | append: site.github_username | append: '"' %}{% endif %}{% if site.gplus_username %}{% if social_profiles != '' %}{% assign social_profiles = social_profiles | append: ',' %}{% endif %}{% assign social_profiles = social_profiles | append: '"https://plus.google.com/' | append: site.gplus_username | append: '"' %}{% endif %}{% if social_profiles != '' %},
+    "name": {{ site.username | jsonify }},
+    "url": {{ site.url | jsonify }},
+    "jobTitle": {{ site.user_title | jsonify }},
+    "description": {{ site.user_description | jsonify }},
+    "email": {{ site.email | jsonify }}{% assign social_profiles = '' %}{% if site.github_username %}{% assign social_profiles = social_profiles | append: '"https://github.com/' | append: site.github_username | append: '"' %}{% endif %}{% if site.linkedin_url %}{% if social_profiles != '' %}{% assign social_profiles = social_profiles | append: ',' %}{% endif %}{% assign social_profiles = social_profiles | append: '"' | append: site.linkedin_url | append: '"' %}{% endif %}{% if site.credly_url %}{% if social_profiles != '' %}{% assign social_profiles = social_profiles | append: ',' %}{% endif %}{% assign social_profiles = social_profiles | append: '"' | append: site.credly_url | append: '"' %}{% endif %}{% if social_profiles != '' %},
     "sameAs": [{{ social_profiles }}]{% endif %}
   }
   </script>

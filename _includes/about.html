@@ -1,38 +1,135 @@
- <div class="user-details">
-  <h1> My Expertise </h1>
-  <p> {{site.user_description}} </p>
-</div>
-  <div class="user">
-    <div class="tech">
-      <h2>Test Automation</h2>
-      <div class="tech-icons">
-        <i class="devicon-java-plain-wordmark colored"></i>
-        <i class="devicon-cucumber-plain colored"></i>
-      </div>
-	  <p>Building enterprise-scale test automation frameworks with Selenium, Cucumber, TestNG, and Playwright. Covering web, API, and mobile automation with Appium to streamline testing workflows.</p>
+<section id="about">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <h2 class="sec-head__title">
+        <span class="prompt">$</span> cat <span class="arg">about.md</span>
+      </h2>
+      <span class="sec-head__count">// 01 of 03</span>
     </div>
-    <div class="tech">
-      <h2>Code & Development</h2>
-      <div class="tech-icons">
-        <i class="devicon-intellij-plain colored"></i>
-        <i class="devicon-javascript-plain colored"></i>
-      </div>
-	  <p>Java and JavaScript for building robust automation frameworks. Also working with Python, Go, and scripting languages to create efficient testing tools.</p>
+
+    <div class="kv reveal">
+      <div class="kv__cell"><span class="kv__k">// role</span><span class="kv__v">{{ site.user_title }}</span></div>
+      <div class="kv__cell"><span class="kv__k">// years</span><span class="kv__v"><span class="accent">11+</span> in IT delivery</span></div>
+      <div class="kv__cell"><span class="kv__k">// focus</span><span class="kv__v">Architecture, tooling, agentic AI</span></div>
+      <div class="kv__cell"><span class="kv__k">// time</span><span class="kv__v" id="local-time">--:-- IST</span></div>
+      <div class="kv__cell"><span class="kv__k">// platforms</span><span class="kv__v">Web / API / Mobile</span></div>
+      <div class="kv__cell"><span class="kv__k">// delivery</span><span class="kv__v">PoCs, platforms, cloud, DevOps</span></div>
     </div>
-    <div class="tech">
-      <h2>DevOps & Tools</h2>
-      <div class="tech-icons">
-        <i class="devicon-git-plain colored"></i>
-        <i class="devicon-docker-plain-wordmark colored"></i>
-      </div>
-	  <p>Streamlining CI/CD pipelines with Jenkins, GitLab CI/CD, and Azure DevOps. Working with Git, Gradle, Maven, Docker, and cloud platforms (AWS, Azure). Performance testing with JMeter and API automation using Postman and RestAssured.</p>
+
+    <div class="about__body reveal reveal--d1">
+      <p>{{ site.user_description }}</p>
+      <p>
+        Outside the editor, I am usually exploring DIY builds, biotech, retro
+        computing, bonsai, or going deep on a new tool. I write occasionally
+        about systems, taste, and the craft of building useful software.
+      </p>
     </div>
-    <div class="tech">
-      <h2>AI & Automation</h2>
-      <div class="tech-icons">
-        <i class="devicon-python-plain-wordmark colored"></i>
-        <i class="devicon-amazonwebservices-plain-wordmark colored"></i>
-      </div>
-	  <p>Exploring Generative AI and AI Agents, working with LLMs and modern AI frameworks. Certified AWS AI Practitioner building AI-powered solutions and integrating intelligent capabilities into enterprise applications.</p>
+
+    <pre class="deco--diagram reveal reveal--d2" aria-hidden="true"><span class="cmt">// delivery loop</span>
+  <span class="lbl">discover</span> --&gt; <span class="lbl">prototype</span> --&gt; <span class="lbl">architect</span> --&gt; <span class="lbl">scale</span>
+       ^                                             |
+       |--------------- enterprise feedback ----------|</pre>
+  </div>
+</section>
+
+<div class="divider" aria-hidden="true"></div>
+
+<section id="stack">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <h2 class="sec-head__title">
+        <span class="prompt">$</span> ls <span class="flag">--stack</span>
+      </h2>
+      <span class="sec-head__count">// 02 of 03</span>
     </div>
-</div>
+
+    <div class="stack-groups">
+      <div class="stack-group reveal">
+        <div class="stack-group__label">architecture and delivery</div>
+        <div class="chips">
+          <span class="chip"><img class="stack-icon" src="{{ "/assets/icons/stack/solution-architecture.svg" | prepend: site.baseurl }}" alt="" loading="lazy" decoding="async">Solution Architecture</span>
+          <span class="chip"><img class="stack-icon" src="{{ "/assets/icons/stack/proof-of-concepts.svg" | prepend: site.baseurl }}" alt="" loading="lazy" decoding="async">Proof-of-Concepts</span>
+          <span class="chip"><img class="stack-icon" src="{{ "/assets/icons/stack/enterprise-delivery.svg" | prepend: site.baseurl }}" alt="" loading="lazy" decoding="async">Enterprise Delivery</span>
+          <span class="chip"><img class="stack-icon" src="{{ "/assets/icons/stack/platform-strategy.svg" | prepend: site.baseurl }}" alt="" loading="lazy" decoding="async">Platform Strategy</span>
+          <span class="chip"><img class="stack-icon" src="{{ "/assets/icons/stack/roadmapping.svg" | prepend: site.baseurl }}" alt="" loading="lazy" decoding="async">Roadmapping</span>
+        </div>
+      </div>
+
+      <div class="stack-group reveal reveal--d1">
+        <div class="stack-group__label">tooling and engineering</div>
+        <div class="chips">
+          <span class="chip"><img class="stack-icon" src="{{ "/assets/icons/stack/java.svg" | prepend: site.baseurl }}" alt="" loading="lazy" decoding="async">Java</span>
+          <span class="chip"><img class="stack-icon" src="{{ "/assets/icons/stack/python.svg" | prepend: site.baseurl }}" alt="" loading="lazy" decoding="async">Python</span>
+          <span class="chip"><img class="stack-icon" src="{{ "/assets/icons/stack/javascript.svg" | prepend: site.baseurl }}" alt="" loading="lazy" decoding="async">JavaScript</span>
+          <span class="chip"><img class="stack-icon" src="{{ "/assets/icons/stack/postman.svg" | prepend: site.baseurl }}" alt="" loading="lazy" decoding="async">API Tooling</span>
+          <span class="chip"><img class="stack-icon" src="{{ "/assets/icons/stack/selenium.svg" | prepend: site.baseurl }}" alt="" loading="lazy" decoding="async">Automation Frameworks</span>
+        </div>
+      </div>
+
+      <div class="stack-group reveal reveal--d2">
+        <div class="stack-group__label">devops and cloud</div>
+        <div class="chips">
+          <span class="chip"><img class="stack-icon" src="{{ "/assets/icons/stack/jenkins.svg" | prepend: site.baseurl }}" alt="" loading="lazy" decoding="async">Jenkins</span>
+          <span class="chip"><img class="stack-icon" src="{{ "/assets/icons/stack/gitlab.svg" | prepend: site.baseurl }}" alt="" loading="lazy" decoding="async">GitLab CI/CD</span>
+          <span class="chip"><img class="stack-icon" src="{{ "/assets/icons/stack/azure-devops.svg" | prepend: site.baseurl }}" alt="" loading="lazy" decoding="async">Azure DevOps</span>
+          <span class="chip"><img class="stack-icon" src="{{ "/assets/icons/stack/docker.svg" | prepend: site.baseurl }}" alt="" loading="lazy" decoding="async">Docker</span>
+          <span class="chip"><img class="stack-icon" src="{{ "/assets/icons/stack/aws.svg" | prepend: site.baseurl }}" alt="" loading="lazy" decoding="async">AWS</span>
+          <span class="chip"><img class="stack-icon" src="{{ "/assets/icons/stack/azure.svg" | prepend: site.baseurl }}" alt="" loading="lazy" decoding="async">Azure</span>
+        </div>
+      </div>
+
+      <div class="stack-group reveal reveal--d3">
+        <div class="stack-group__label">agentic ai and tooling</div>
+        <div class="chips">
+          <span class="chip"><img class="stack-icon" src="{{ "/assets/icons/stack/openai.svg" | prepend: site.baseurl }}" alt="" loading="lazy" decoding="async">Generative AI</span>
+          <span class="chip"><img class="stack-icon" src="{{ "/assets/icons/stack/langchain.svg" | prepend: site.baseurl }}" alt="" loading="lazy" decoding="async">AI Agents</span>
+          <span class="chip"><img class="stack-icon" src="{{ "/assets/icons/stack/google-adk.svg" | prepend: site.baseurl }}" alt="" loading="lazy" decoding="async">Google ADK</span>
+          <span class="chip"><img class="stack-icon" src="{{ "/assets/icons/stack/llm.svg" | prepend: site.baseurl }}" alt="" loading="lazy" decoding="async">LLMs</span>
+          <span class="chip"><img class="stack-icon" src="{{ "/assets/icons/stack/playwright.svg" | prepend: site.baseurl }}" alt="" loading="lazy" decoding="async">Playwright</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider" aria-hidden="true"></div>
+
+<section id="connect" class="contact">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <h2 class="sec-head__title">
+        <span class="prompt">$</span> echo <span class="arg">$LINKS</span>
+      </h2>
+      <span class="sec-head__count">// 03 of 03</span>
+    </div>
+
+    <div class="contact__row">
+      <div class="reveal">
+        <h3 class="contact__title">
+          <span class="prompt">&gt; </span>let's connect.<br>
+          <span class="accent">always up for a chat.</span>
+        </h3>
+        <p class="contact__sub">
+          Happy to talk shop -- from enterprise systems and agentic AI to DIY
+          builds, biotech, retro computing, bonsai, and the engineering behind
+          quietly fascinating things.
+        </p>
+      </div>
+
+      <div class="contact__cta reveal reveal--d1">
+        <a href="mailto:{{ site.email }}" class="contact__email">
+          <span class="muted">-&gt;</span> {{ site.email }} <span class="arrow">open</span>
+        </a>
+        <div class="socials">
+          <a href="https://github.com/{{ site.github_username }}" target="_blank" rel="noopener">github</a>
+          <a href="{{ site.linkedin_url }}" target="_blank" rel="noopener">linkedin</a>
+          <a href="{{ site.credly_url }}" target="_blank" rel="noopener">credly</a>
+        </div>
+      </div>
+    </div>
+
+    <pre class="connect-art reveal reveal--d2" aria-hidden="true">--- EOF ------------------------------------------------
+thanks for scrolling / process exit 0
+--------------------------------------------------------</pre>
+  </div>
+</section>

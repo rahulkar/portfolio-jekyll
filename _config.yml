@@ -1,20 +1,20 @@
 # Site settings
 title: Rahul Kar
-description: Quality Engineering Lead & Solution Architect specializing in test automation, AI, and enterprise-scale frameworks. 10+ years of experience in automation strategy and Generative AI.
+description: Solution Architect specializing in enterprise software delivery, tooling, proof-of-concepts, agentic AI, cloud, DevOps, and quality engineering. 11+ years of IT industry experience.
 # baseurl: "/particle" # the subpath of your site, e.g. /blog
 url: "https://www.rahulkar.com/"
 
 # User settings
 username: Rahul Kar
-user_description: I'm a Quality Engineering Lead and Solution Architect with 10+ years of experience, always searching for the next challenge; no task is too scary nor too difficult. I lead automation strategy and develop enterprise-scale test automation frameworks using Java, Selenium, Cucumber, TestNG, and Playwright. I specialize in Generative AI, work extensively with AI Agents, and dive deep into all things AI. I speak fluent geek, silicon, crypto, marketing, electronics, and space stuff.
-user_title: Quality Engineering Lead & Solution Architect
+user_description: I'm an engineer who likes building things end-to-end, from early problem framing to the tooling, platforms, and delivery details that make software work in the real world. Eleven years in, I still believe great systems come from sweating the small details until they disappear.
+user_title: Enterprise Solution Architect & Technology Lead
 email: kar.rahul@pm.me
-twitter_username: lorem_ipsum
-github_username:  lorem_ipsum
-gplus_username:  lorem_ipsum
+github_username: rahulkar
+linkedin_url: "https://www.linkedin.com/in/karrahul/"
 credly_url: "https://www.credly.com/users/rahul-kar"
+
 # Google-analytics
 google-analytics:
   id: ""
 
-exclude: ['package.json', 'src' , 'node_modules']
+exclude: ['package.json', 'src', 'node_modules', 'rahul']

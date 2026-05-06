@@ -1,18 +1,143 @@
-<div id="particles-js">
-  <div class="header">
-      <h1>
-        <span class="site-title">{{site.username}}</span>
-        <span class="site-description">{{site.user_title}}</span>
-      </h1>
-      <div class="header-icons">
-        <a aria-label="Send email" href="mailto: kar.rahul@pm.me"><i class="icon fa fa-envelope"></i></a>
-		<a aria-label="LinkedIn" target="_blank" href="https://www.linkedin.com/in/karrahul/"><i class="icon fa fa-linkedin-square" aria-hidden="true"></i></a>
-		<a aria-label="GitHub" target="_blank" href="https://github.com/rahulkar"><i class="icon fa fa-github-square" aria-hidden="true"></i></a>
-		<a aria-label="Credly" target="_blank" href="https://www.credly.com/users/rahul-kar"><i class="icon fa fa-graduation-cap" aria-hidden="true"></i></a>
-      </div>
-      <div class="header-links">
-        <a class="link" href="#about" data-scroll>About Me</a>
-      </div>
-  </div>
-  <a class="down" href="#about" data-scroll><i class="icon fa fa-chevron-down" aria-hidden="true"></i></a>
+<nav class="bar" aria-label="Primary">
+  <a class="bar__cell bar__cell--brand" href="#top" data-scroll>
+    <span class="dot" aria-hidden="true"></span>
+    <span>~/rahul-kar</span>
+  </a>
+  <span class="bar__cell bar__cell--meta">
+    <span class="bar__muted">focus:</span>
+    <span class="bar__accent">architecture + AI</span>
+  </span>
+  <span class="bar__cell bar__cell--time" id="bar-time">--:--</span>
+  <span class="bar__cell bar__cell--ghost"></span>
+  <span class="bar__nav">
+    <a href="#about" data-scroll><span class="hash">#</span>about</a>
+    <a href="#stack" data-scroll><span class="hash">#</span>stack</a>
+    <a href="#connect" data-scroll><span class="hash">#</span>connect</a>
+  </span>
+  <button class="bar__menu" id="menu-btn" type="button" aria-label="Open menu" aria-expanded="false">
+    <span class="bar__menu-icon" aria-hidden="true"></span>
+    <span class="bar__menu-label">menu</span>
+  </button>
+  <span class="bar__cell bar__cell--cmd" title="Press Ctrl+K or C to connect">
+    <span class="key">K</span>
+  </span>
+</nav>
+
+<div class="sheet" id="menu-sheet" aria-hidden="true">
+  <a href="#about" data-scroll><span class="hash">#</span>about</a>
+  <a href="#stack" data-scroll><span class="hash">#</span>stack</a>
+  <a href="#connect" data-scroll><span class="hash">#</span>connect</a>
 </div>
+
+<header class="hero" id="top">
+  <div id="particles-js" aria-hidden="true"></div>
+
+  <div class="deco deco--circuit" aria-hidden="true">
+    <svg viewBox="0 0 320 280" fill="none" stroke="currentColor" stroke-width="1">
+      <path d="M10 40 H120 L150 70 H220 L240 50 H310" />
+      <path d="M10 100 H80 L100 120 V180 L120 200 H260" />
+      <path d="M10 160 H50 L70 140 H140" />
+      <path d="M180 240 H260 L280 220 V100" />
+      <circle cx="120" cy="40" r="3" fill="currentColor" />
+      <circle cx="220" cy="70" r="3" fill="currentColor" />
+      <circle cx="100" cy="120" r="3" fill="currentColor" />
+      <circle cx="260" cy="200" r="3" fill="currentColor" />
+      <circle cx="280" cy="100" r="3" fill="currentColor" />
+      <rect x="140" y="130" width="40" height="24" rx="2" />
+      <rect x="230" y="30" width="30" height="18" rx="2" />
+      <path d="M148 154 v6 M156 154 v6 M164 154 v6 M172 154 v6" />
+      <path d="M236 48 v6 M244 48 v6 M252 48 v6" />
+    </svg>
+  </div>
+
+  <div class="deco deco--cross" aria-hidden="true">+ BLR / IST
++ architecture / AI
++ build 2026.05</div>
+
+  <div class="line-art-float line-art-float--probe" aria-hidden="true">
+    <svg viewBox="0 0 180 120" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="78" cy="58" r="16" />
+      <path d="M78 42V24m0 52v22m-16-40H38m56 0h24" />
+      <path d="M116 58l34-18m-34 18l34 18" />
+      <path d="M150 40l10-5m-10 41l10 5" />
+      <path d="M50 58L28 42m22 16L28 74" />
+      <path d="M70 50h16m-16 8h16m-16 8h16" />
+      <path d="M94 34l12-10m-44 10L50 24" />
+      <circle cx="78" cy="58" r="4" fill="currentColor" stroke="none" />
+    </svg>
+  </div>
+
+  <div class="line-art-float line-art-float--bonsai" aria-hidden="true">
+    <svg viewBox="0 0 180 120" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M90 92c-4-14 2-24 0-38" />
+      <path d="M90 58c-16-2-28-10-34-22m34 18c14-4 24-12 30-26m-28 34c18 0 32 8 40 18m-42-14c-18 5-30 14-38 28" />
+      <path d="M54 36c10-14 24-10 36 18m30-26c16 8 12 24-28 34m40 18c-10 13-26 9-40-14M52 94c-8-13 8-25 38-28" />
+      <path d="M56 92h68l-8 16H64z" />
+      <path d="M70 108h40" />
+    </svg>
+  </div>
+
+  <div class="line-art-float line-art-float--sbc" aria-hidden="true">
+    <svg viewBox="0 0 180 120" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="42" y="26" width="96" height="68" rx="6" />
+      <rect x="60" y="44" width="22" height="18" rx="2" />
+      <rect x="96" y="40" width="24" height="26" rx="2" />
+      <circle cx="58" cy="82" r="4" />
+      <circle cx="122" cy="82" r="4" />
+      <path d="M42 42H26m16 16H20m22 16H28m110-32h16m-16 16h22m-22 16h14" />
+      <path d="M68 26v-8m16 8v-8m16 8v-8m16 8v-8M68 102v-8m16 8v-8m16 8v-8m16 8v-8" />
+      <path d="M118 40l16-16m-6 4h10v10" />
+    </svg>
+  </div>
+
+  <div class="wrap hero__inner">
+    <div class="hero__grid">
+      <div>
+        <div class="tag-row reveal">
+          <span class="tag">based in India</span>
+          <span class="tag">11+ years</span>
+          <span class="tag">tooling + cloud + agentic AI</span>
+        </div>
+
+        <h1 class="hero__heading reveal reveal--d1">
+          <span class="prompt">$ </span>whoami<br>
+          <span class="accent">rahul</span> - engineer<br>
+          <span class="hero__role">&amp; tinkerer</span><span class="caret"></span>
+        </h1>
+
+        <p class="hero__sub reveal reveal--d2">
+          I work on enterprise-grade software delivery, shaping tooling, proof-of-concepts,
+          cloud and DevOps practices, and agentic AI solutions with a strong quality engineering foundation.
+        </p>
+
+        <div class="hero__cta reveal reveal--d3">
+          <a href="#stack" class="btn btn--primary" data-scroll>
+            <span>./stack</span><span class="arrow">-&gt;</span>
+          </a>
+          <a href="#connect" class="btn" data-scroll>
+            <span>connect</span><span class="key">C</span>
+          </a>
+        </div>
+      </div>
+
+      <aside class="term reveal reveal--d2" aria-label="Profile terminal">
+        <div class="term__top">
+          <div class="lights" aria-hidden="true"><span></span><span></span><span></span></div>
+          <span class="path">~/rahul-kar/profile.json</span>
+        </div>
+        <div class="term__body">
+          <span class="ln"><span class="c-prompt">rahul@architect</span> <span class="c-mute">~</span> $ cat <span class="c-str">profile.json</span></span>
+          <span class="ln">{</span>
+          <span class="ln">  <span class="c-key">"role"</span>: <span class="c-str">"{{ site.user_title }}"</span>,</span>
+          <span class="ln">  <span class="c-key">"years"</span>: <span class="c-fn">"11+"</span>,</span>
+          <span class="ln">  <span class="c-key">"focus"</span>: [<span class="c-str">"solution architecture"</span>, <span class="c-str">"tooling"</span>, <span class="c-str">"agentic AI"</span>],</span>
+          <span class="ln">  <span class="c-key">"stack"</span>: [<span class="c-str">"cloud"</span>, <span class="c-str">"DevOps"</span>, <span class="c-str">"PoCs"</span>, <span class="c-str">"AI tooling"</span>],</span>
+          <span class="ln">  <span class="c-key">"timezone"</span>: <span class="c-str">"Asia/Kolkata"</span></span>
+          <span class="ln">}</span>
+          <span class="ln"><span class="c-prompt">rahul@architect</span> <span class="c-mute">~</span> $ status</span>
+          <span class="ln"><span class="c-ok">healthy</span> / architecting, prototyping, scaling<span class="caret"></span></span>
+        </div>
+      </aside>
+    </div>
+  </div>
+</header>
