@@ -16,8 +16,16 @@
   --sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --max: 1240px;
   --gutter: 32px;
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-5: 24px;
+  --s-6: 40px;
+  --s-7: 64px;
   --fast: 140ms cubic-bezier(.2,.7,.2,1);
   --med: 280ms cubic-bezier(.2,.7,.2,1);
+  --ring: 0 0 0 2px var(--bg), 0 0 0 4px var(--accent);
 }
 
 * {
@@ -66,6 +74,68 @@ a {
   color: var(--bg);
 }
 
+:focus-visible {
+  outline: none;
+  box-shadow: var(--ring);
+  border-radius: 3px;
+}
+
+html {
+  scrollbar-color: var(--line-2) transparent;
+  scrollbar-width: thin;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--line-2);
+  border: 2px solid var(--bg);
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--fg-dim);
+}
+
+.skip-link {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 100;
+  padding: 8px 14px;
+  background: var(--accent);
+  color: var(--bg);
+  font-family: var(--mono);
+  font-size: 12px;
+  border-radius: 3px;
+  transform: translateY(-200%);
+  transition: transform 160ms cubic-bezier(.2,.7,.2,1);
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+  outline: none;
+}
+
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 60;
+  height: 2px;
+  width: 0;
+  background: linear-gradient(90deg, var(--green), var(--amber));
+  pointer-events: none;
+  transition: width 80ms linear;
+}
+
 .wrap {
   width: 100%;
   max-width: var(--max);
@@ -103,6 +173,16 @@ a {
 .bar__cell--brand {
   color: var(--fg);
   font-weight: 500;
+}
+
+.bar__cell--brand .seg {
+  color: var(--fg-dim);
+  margin-left: 2px;
+  transition: color var(--fast), opacity var(--fast);
+}
+
+.bar__cell--brand .seg.is-active {
+  color: var(--amber);
 }
 
 .bar__cell--brand .dot,
@@ -383,6 +463,20 @@ a {
   line-height: 1.65;
 }
 
+.hero__sub-lead {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--fg);
+  font-family: var(--mono);
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: 0;
+}
+
+.hero__sub-rest {
+  display: block;
+}
+
 .hero__cta {
   display: flex;
   flex-wrap: wrap;
@@ -410,6 +504,11 @@ a {
 .btn:focus-visible {
   border-color: var(--accent);
   color: var(--accent);
+  transform: translateY(-1px);
+}
+
+.btn:active {
+  transform: translateY(0);
 }
 
 .btn--primary {
@@ -464,6 +563,20 @@ a {
   width: 9px;
   height: 9px;
   border-radius: 50%;
+  transition: transform 200ms cubic-bezier(.2,.7,.2,1), filter 200ms;
+}
+
+.term:hover .lights span {
+  transform: scale(1.08);
+  filter: brightness(1.15);
+}
+
+.term:hover .lights span:nth-child(2) {
+  transition-delay: 50ms;
+}
+
+.term:hover .lights span:nth-child(3) {
+  transition-delay: 100ms;
 }
 
 .lights span:nth-child(1) {
@@ -476,6 +589,20 @@ a {
 
 .lights span:nth-child(3) {
   background: #28c840;
+}
+
+.term__body .ln.is-typing {
+  opacity: 0;
+}
+
+.term__body .ln.has-typed {
+  opacity: 1;
+  animation: lnIn 240ms cubic-bezier(.2,.7,.2,1) both;
+}
+
+@keyframes lnIn {
+  from { opacity: 0; transform: translateY(2px); }
+  to { opacity: 1; transform: none; }
 }
 
 .term__body {
@@ -520,37 +647,53 @@ section {
 
 .sec-head {
   display: flex;
-  align-items: baseline;
+  align-items: flex-end;
   justify-content: space-between;
-  gap: 24px;
-  margin-bottom: 32px;
-  padding-bottom: 12px;
+  gap: var(--s-5);
+  margin-bottom: var(--s-6);
+  padding-bottom: var(--s-3);
   border-bottom: 1px solid var(--line);
 }
 
 .sec-head__title {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
   margin: 0;
   font-family: var(--mono);
-  font-size: 13px;
   font-weight: 500;
   letter-spacing: 0;
 }
 
-.sec-head__title::before {
+.sec-head__cmd {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--fg-mute);
+}
+
+.sec-head__cmd::before {
   content: "[";
   color: var(--fg-dim);
 }
 
-.sec-head__title::after {
+.sec-head__cmd::after {
   content: "]";
   color: var(--fg-dim);
 }
 
+.sec-head__name {
+  font-size: 28px;
+  font-weight: 500;
+  color: var(--fg);
+  letter-spacing: -0.01em;
+  line-height: 1.1;
+}
+
 .sec-head__title .arg {
-  color: var(--fg-mute);
+  color: var(--fg);
 }
 
 .sec-head__title .flag {
@@ -561,6 +704,7 @@ section {
   color: var(--fg-dim);
   font-size: 11px;
   letter-spacing: 0;
+  white-space: nowrap;
 }
 
 .kv {
@@ -680,13 +824,29 @@ section {
   font-size: 12px;
   font-weight: 500;
   box-shadow: none;
-  transition: border-color var(--fast), color var(--fast), background var(--fast);
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 420ms cubic-bezier(.2,.7,.2,1), transform 420ms cubic-bezier(.2,.7,.2,1), border-color var(--fast), color var(--fast), background var(--fast);
 }
+
+.stack-group.is-in .chips .chip {
+  opacity: 1;
+  transform: none;
+}
+
+.stack-group.is-in .chips .chip:nth-child(1) { transition-delay: 40ms; }
+.stack-group.is-in .chips .chip:nth-child(2) { transition-delay: 80ms; }
+.stack-group.is-in .chips .chip:nth-child(3) { transition-delay: 120ms; }
+.stack-group.is-in .chips .chip:nth-child(4) { transition-delay: 160ms; }
+.stack-group.is-in .chips .chip:nth-child(5) { transition-delay: 200ms; }
+.stack-group.is-in .chips .chip:nth-child(6) { transition-delay: 240ms; }
+.stack-group.is-in .chips .chip:nth-child(n+7) { transition-delay: 280ms; }
 
 .chip:hover {
   border-color: var(--line-2);
   color: var(--accent);
   background: rgba(110,231,160,0.06);
+  transform: translateY(-1px);
 }
 
 .chip__d {
@@ -787,10 +947,16 @@ section {
   transition: color var(--fast), border-color var(--fast);
 }
 
+.socials a {
+  transition: color var(--fast), border-color var(--fast), transform var(--fast), background var(--fast);
+}
+
 .socials a:hover,
 .socials a:focus-visible {
   color: var(--accent);
   border-color: var(--accent);
+  background: rgba(110,231,160,0.05);
+  transform: translateY(-1px);
 }
 
 .foot {
@@ -1203,7 +1369,8 @@ section {
     scroll-behavior: auto;
   }
 
-  .reveal {
+  .reveal,
+  .chip {
     opacity: 1;
     transform: none;
     transition: none;
@@ -1211,6 +1378,14 @@ section {
 
   .line-art-float {
     animation: none;
+  }
+
+  .scroll-progress {
+    display: none;
+  }
+
+  .term__body .ln.is-typing {
+    opacity: 1;
   }
 
   *,

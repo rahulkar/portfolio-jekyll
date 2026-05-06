@@ -2,9 +2,13 @@
 <html lang="en">
   {% include head.html %}
   <body>
+    <a class="skip-link" href="#main">skip to content</a>
+    <div class="scroll-progress" id="scroll-progress" aria-hidden="true"></div>
     {% include header.html %}
-    {% include about.html %}
-    {{ content }}
+    <main id="main">
+      {% include about.html %}
+      {{ content }}
+    </main>
     {% include footer.html %}
   </body>
 </html>
