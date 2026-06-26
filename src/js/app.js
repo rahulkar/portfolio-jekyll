@@ -125,6 +125,28 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 
+  var copyButtons = document.querySelectorAll("[data-copy-email]");
+  copyButtons.forEach(function (btn) {
+    var label = btn.querySelector(".contact__copy__text");
+    var box = btn.closest(".contact__email");
+    var resetTimer = null;
+    btn.addEventListener("click", function () {
+      var email = btn.getAttribute("data-copy-email");
+      if (!navigator.clipboard || !navigator.clipboard.writeText) return;
+      navigator.clipboard.writeText(email).then(function () {
+        btn.classList.add("is-copied");
+        if (box) box.classList.add("is-copied");
+        if (label) label.textContent = "copied";
+        window.clearTimeout(resetTimer);
+        resetTimer = window.setTimeout(function () {
+          btn.classList.remove("is-copied");
+          if (box) box.classList.remove("is-copied");
+          if (label) label.textContent = "copy";
+        }, 1600);
+      }).catch(function () {});
+    });
+  });
+
   var year = document.getElementById("year");
   if (year) year.textContent = new Date().getFullYear();
 });
