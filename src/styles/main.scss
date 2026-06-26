@@ -1,3 +1,20 @@
+/* Self-hosted variable fonts (latin subset) — replaces the Google Fonts CDN
+   for privacy, a strict CSP, and one fewer render-blocking third party. */
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 400 600;
+  font-display: swap;
+  src: url("/assets/fonts/inter.woff2") format("woff2");
+}
+@font-face {
+  font-family: "JetBrains Mono";
+  font-style: normal;
+  font-weight: 400 600;
+  font-display: swap;
+  src: url("/assets/fonts/jetbrains-mono.woff2") format("woff2");
+}
+
 :root {
   --bg: #0a0b0d;
   --bg-1: #0e1014;
@@ -5,8 +22,8 @@
   --line: rgba(255,255,255,0.08);
   --line-2: rgba(255,255,255,0.15);
   --fg: #e6e6e3;
-  --fg-mute: rgba(230,230,227,0.64);
-  --fg-dim: rgba(230,230,227,0.4);
+  --fg-mute: rgba(230,230,227,0.72);
+  --fg-dim: rgba(230,230,227,0.55);
   --green: #6ee7a0;
   --amber: #f5c66b;
   --blue: #7ab7ff;
@@ -42,7 +59,7 @@ body {
   padding: 0;
   background: var(--bg);
   color: var(--fg);
-  font-family: var(--mono);
+  font-family: var(--sans);
   font-size: 14px;
   line-height: 1.55;
   -webkit-font-smoothing: antialiased;
@@ -535,6 +552,7 @@ html {
 
 .term {
   overflow: hidden;
+  font-family: var(--mono);
   border: 1px solid var(--line-2);
   border-radius: 6px;
   background: rgba(10,11,13,0.72);

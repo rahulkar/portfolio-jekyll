@@ -1,9 +1,8 @@
 document.addEventListener("DOMContentLoaded", function () {
-  if (typeof SweetScroll !== "undefined") {
-    new SweetScroll({ duration: 800, easing: "easeOutQuart" });
-  }
+  var prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var allowParticles = !prefersReducedMotion && window.matchMedia("(min-width: 760px)").matches;
 
-  if (typeof particlesJS !== "undefined") {
+  if (typeof particlesJS !== "undefined" && allowParticles) {
     particlesJS("particles-js", {
       particles: {
         number: { value: 24, density: { enable: true, value_area: 1100 } },
