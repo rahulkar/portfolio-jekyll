@@ -1,21 +1,22 @@
 {
   "name": "particle",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "dev": "gulp"
-  },
+  "description": "Source build tooling for rahulkar.com (Jekyll portfolio)",
+  "private": true,
   "author": "Rahul Kar",
   "license": "ISC",
-  "dependencies": {
-    "browser-sync": "^2.26.3",
-    "gulp": "^4.0.0",
-    "gulp-concat": "^2.6.1",
-    "gulp-csso": "^3.0.1",
-    "gulp-imagemin": "^5.0.3",
-    "gulp-plumber": "^1.2.1",
-    "gulp-sass": "^4.0.2",
-    "gulp-uglify": "^3.0.1"
+  "scripts": {
+    "build:css": "sass src/styles/main.scss assets/css/main.css --style=compressed --no-source-map",
+    "build:js": "esbuild src/js/app.js --minify --outfile=assets/js/main.js",
+    "build": "npm run build:css && npm run build:js",
+    "watch:css": "sass --watch src/styles/main.scss:assets/css/main.css --style=compressed --no-source-map",
+    "watch:js": "esbuild src/js/app.js --minify --outfile=assets/js/main.js --watch",
+    "serve": "bundle exec jekyll serve --livereload",
+    "dev": "npm run build && concurrently -k -n css,js,jekyll \"npm:watch:css\" \"npm:watch:js\" \"npm:serve\""
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2",
+    "esbuild": "^0.25.0",
+    "sass": "^1.83.4"
   }
 }
