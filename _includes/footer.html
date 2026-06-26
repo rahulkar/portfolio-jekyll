@@ -8,5 +8,5 @@
 </footer>
 <script src="{{ "/assets/js/particles.min.js" | prepend: site.baseurl }}"></script>
 <script src="{{ "/assets/js/sweet-scroll.min.js" | prepend: site.baseurl }}"></script>
-<script src="{{ "/assets/js/main.js" | prepend: site.baseurl }}"></script>
+<script src="{{ "/assets/js/main.js" | prepend: site.baseurl }}?v={{ site.time | date: '%s' }}"></script>
 {% include google-analytics.html %}
