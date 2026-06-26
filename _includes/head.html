@@ -3,12 +3,13 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>{% if page.title %}{{ page.title }}{% else %}{{ site.title }}{% endif %}</title>
-  <meta name="description" content="{% if page.description %}{{ page.description | strip_html | strip_newlines | truncate: 160 }}{% else %}{{ site.description }}{% endif %}">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; font-src 'self'; style-src 'self'; script-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet">
+  {% seo %}
+
+  <link rel="preload" as="font" type="font/woff2" href="{{ "/assets/fonts/inter.woff2" | prepend: site.baseurl }}" crossorigin>
+  <link rel="preload" as="font" type="font/woff2" href="{{ "/assets/fonts/jetbrains-mono.woff2" | prepend: site.baseurl }}" crossorigin>
   <link rel="stylesheet" href="{{ "/assets/css/main.css" | prepend: site.baseurl }}?v={{ site.time | date: '%s' }}">
   <link rel="shortcut icon" type="image/png" href="{{ "/assets/favicon.ico" | prepend: site.baseurl }}">
 

@@ -1,0 +1,19 @@
+# Keeps dependencies patched and consolidates update PRs.
+# The Ruby gems (bundler) are what actually build/deploy the site on GitHub
+# Pages; the npm packages are local build tooling only (dart-sass + esbuild).
+version: 2
+updates:
+  - package-ecosystem: "bundler"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    groups:
+      ruby:
+        patterns: ["*"]
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    groups:
+      build-tooling:
+        patterns: ["*"]

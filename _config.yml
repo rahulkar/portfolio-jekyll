@@ -1,8 +1,16 @@
 # Site settings
 title: Rahul Kar
+tagline: Enterprise Solution Architect & Technology Lead
 description: Solution Architect specializing in enterprise software delivery, tooling, proof-of-concepts, agentic AI, cloud, DevOps, and quality engineering. 11+ years of IT industry experience.
 # baseurl: "/particle" # the subpath of your site, e.g. /blog
-url: "https://www.rahulkar.com/"
+url: "https://www.rahulkar.com"
+lang: en
+
+# Social sharing (jekyll-seo-tag). The OG/Twitter image is applied to every page
+# via `defaults` below, because seo-tag reads page.image (not site.image). The
+# Person schema is provided by the richer custom JSON-LD in _includes/head.html,
+# so author/twitter/social are intentionally omitted to avoid duplicate schema
+# and bogus empty Twitter handles.
 
 # User settings
 username: Rahul Kar
@@ -17,4 +25,16 @@ credly_url: "https://www.credly.com/users/rahul-kar"
 google-analytics:
   id: ""
 
-exclude: ['package.json', 'src', 'node_modules', 'rahul']
+plugins:
+  - jekyll-seo-tag
+  - jekyll-sitemap
+  - jekyll-feed
+
+# Default OG/Twitter share image for every page (consumed by jekyll-seo-tag)
+defaults:
+  - scope:
+      path: ""
+    values:
+      image: /assets/og.png
+
+exclude: ['package.json', 'package-lock.json', 'src', 'node_modules', 'rahul']
