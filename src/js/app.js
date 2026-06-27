@@ -2,7 +2,8 @@ document.addEventListener("DOMContentLoaded", function () {
   var prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   var allowParticles = !prefersReducedMotion && window.matchMedia("(min-width: 760px)").matches;
 
-  if (typeof particlesJS !== "undefined" && allowParticles) {
+  var initParticles = function () {
+    if (typeof particlesJS === "undefined") return;
     particlesJS("particles-js", {
       particles: {
         number: { value: 24, density: { enable: true, value_area: 1100 } },
@@ -45,6 +46,20 @@ document.addEventListener("DOMContentLoaded", function () {
       },
       retina_detect: true
     });
+  };
+
+  // Load the particles library only where it is actually used (desktop, motion
+  // allowed). This keeps ~23 KB of JS off phones, where particles never render.
+  if (allowParticles) {
+    if (typeof particlesJS !== "undefined") {
+      initParticles();
+    } else {
+      var pScript = document.createElement("script");
+      pScript.src = "/assets/js/particles.min.js";
+      pScript.defer = true;
+      pScript.onload = initParticles;
+      document.body.appendChild(pScript);
+    }
   }
 
   var reveals = document.querySelectorAll(".reveal");
@@ -64,6 +79,46 @@ document.addEventListener("DOMContentLoaded", function () {
   } else {
     reveals.forEach(function (el) {
       el.classList.add("is-in");
+    });
+  }
+
+  // Terminal "typing" reveal — drives the latent CSS hooks (.is-typing/.has-typed).
+  var termLines = document.querySelectorAll(".term__body .ln");
+  if (termLines.length && !prefersReducedMotion) {
+    termLines.forEach(function (ln) {
+      ln.classList.add("is-typing");
+    });
+    termLines.forEach(function (ln, i) {
+      window.setTimeout(function () {
+        ln.classList.remove("is-typing");
+        ln.classList.add("has-typed");
+      }, 130 * i + 160);
+    });
+  }
+
+  // Scroll-spy — reflect the active section in the brand segment + top-bar nav.
+  var brandSeg = document.getElementById("brand-seg");
+  var navLinks = document.querySelectorAll(".bar__nav a");
+  var spyTargets = ["top", "about", "stack", "connect"]
+    .map(function (id) { return document.getElementById(id); })
+    .filter(Boolean);
+  if (spyTargets.length && "IntersectionObserver" in window) {
+    var setActiveSection = function (id) {
+      if (brandSeg) {
+        brandSeg.textContent = id === "top" ? "" : "/" + id;
+        brandSeg.classList.toggle("is-active", id !== "top");
+      }
+      navLinks.forEach(function (a) {
+        a.classList.toggle("is-active", a.getAttribute("href") === "#" + id);
+      });
+    };
+    var spy = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) setActiveSection(entry.target.id);
+      });
+    }, { rootMargin: "-45% 0px -50% 0px", threshold: 0 });
+    spyTargets.forEach(function (el) {
+      spy.observe(el);
     });
   }
 
