@@ -1,0 +1,41 @@
+---
+layout: error
+title: 404 — page not found
+description: That route returned a non-zero exit. The page may have moved or never existed.
+sitemap: false
+---
+<section class="error">
+  <div id="particles-js" aria-hidden="true"></div>
+
+  <div class="wrap error__inner">
+    <p class="error__code" aria-hidden="true">404</p>
+
+    <aside class="term error__term" aria-label="Error output">
+      <div class="term__top">
+        <div class="lights" aria-hidden="true"><span></span><span></span><span></span></div>
+        <span class="path">~/rahul-kar/404</span>
+      </div>
+      <div class="term__body">
+        <span class="ln"><span class="c-prompt">rahul@architect</span> <span class="c-mute">~</span> $ open <span class="c-str" id="err-path">requested-path</span></span>
+        <span class="ln"><span class="c-err">error</span>: 404 &mdash; no such file or directory</span>
+        <span class="ln"><span class="c-prompt">rahul@architect</span> <span class="c-mute">~</span> $ suggest</span>
+        <span class="ln"><span class="c-ok">try</span> heading back to the homepage<span class="caret"></span></span>
+      </div>
+    </aside>
+
+    <h1 class="error__title"><span class="prompt">$ </span>page not found</h1>
+    <p class="error__sub">
+      The page you were looking for moved, was renamed, or never existed.
+      Let's get you back to something that resolves.
+    </p>
+
+    <div class="error__cta">
+      <a href="{{ "/" | prepend: site.baseurl }}" class="btn btn--primary" data-scroll>
+        <span>cd ~/</span><span class="arrow">-&gt;</span>
+      </a>
+      <a href="{{ "/#connect" | prepend: site.baseurl }}" class="btn">
+        <span>connect</span><span class="key">C</span>
+      </a>
+    </div>
+  </div>
+</section>

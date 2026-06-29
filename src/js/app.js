@@ -137,25 +137,49 @@ document.addEventListener("DOMContentLoaded", function () {
   var menuBtn = document.getElementById("menu-btn");
   var sheet = document.getElementById("menu-sheet");
   if (menuBtn && sheet) {
+    var sheetLinks = sheet.querySelectorAll("a");
+
     var toggleMenu = function (open) {
       var isOpen = typeof open === "boolean" ? open : !sheet.classList.contains("is-open");
       sheet.classList.toggle("is-open", isOpen);
       menuBtn.setAttribute("aria-expanded", String(isOpen));
       sheet.setAttribute("aria-hidden", String(!isOpen));
+      if (isOpen) {
+        if (sheetLinks.length) sheetLinks[0].focus();
+      } else if (sheet.contains(document.activeElement)) {
+        // Restore focus to the trigger when closing from within the sheet.
+        menuBtn.focus();
+      }
     };
 
     menuBtn.addEventListener("click", function () {
       toggleMenu();
     });
 
-    sheet.querySelectorAll("a").forEach(function (link) {
+    sheetLinks.forEach(function (link) {
       link.addEventListener("click", function () {
         toggleMenu(false);
       });
     });
 
     document.addEventListener("keydown", function (event) {
-      if (event.key === "Escape") toggleMenu(false);
+      if (event.key === "Escape") {
+        toggleMenu(false);
+        return;
+      }
+      // Trap Tab within the open menu (cycle: button -> links -> button).
+      if (event.key === "Tab" && sheet.classList.contains("is-open")) {
+        var items = [menuBtn].concat(Array.prototype.slice.call(sheetLinks));
+        var first = items[0];
+        var last = items[items.length - 1];
+        if (event.shiftKey && document.activeElement === first) {
+          event.preventDefault();
+          last.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+          event.preventDefault();
+          first.focus();
+        }
+      }
     });
   }
 
@@ -204,4 +228,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
   var year = document.getElementById("year");
   if (year) year.textContent = new Date().getFullYear();
+
+  // 404 page: surface the path that failed to resolve (CSP-safe, no inline JS).
+  var errPath = document.getElementById("err-path");
+  if (errPath) errPath.textContent = window.location.pathname;
 });

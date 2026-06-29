@@ -23,10 +23,6 @@ linkedin_handle: "in/karrahul"
 credly_url: "https://www.credly.com/users/rahul-kar"
 credly_handle: "rahul-kar"
 
-# Google-analytics
-google-analytics:
-  id: ""
-
 plugins:
   - jekyll-seo-tag
   - jekyll-sitemap

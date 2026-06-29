@@ -1,0 +1,35 @@
+name: Verify built assets
+
+# Guards against editing src/ but forgetting to run `npm run build`, which would
+# ship a stale assets/css/main.css or assets/js/main.js to GitHub Pages.
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      - run: npm run build
+
+      - name: Check built assets match source
+        run: |
+          if ! git diff --quiet -- assets/css/main.css assets/js/main.js; then
+            echo "::error::Built assets are out of date. Run 'npm run build' and commit assets/css/main.css and assets/js/main.js."
+            git --no-pager diff --stat -- assets/css/main.css assets/js/main.js
+            exit 1
+          fi
+          echo "Built assets are in sync with source."
