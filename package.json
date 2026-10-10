@@ -1,22 +1,31 @@
 {
   "name": "particle",
   "version": "1.0.0",
-  "description": "Source build tooling for rahulkar.com (Jekyll portfolio)",
+  "description": "Source build tooling for rahulkar.com (Jekyll portfolio, sketchbook theme)",
   "private": true,
   "author": "Rahul Kar",
   "license": "ISC",
   "scripts": {
     "build:css": "sass src/styles/main.scss assets/css/main.css --style=compressed --no-source-map",
-    "build:js": "esbuild src/js/app.js --minify --outfile=assets/js/main.js",
+    "build:js": "esbuild src/js/app.js --bundle --minify --format=iife --target=es2018 --outfile=assets/js/main.js",
     "build": "npm run build:css && npm run build:js",
+    "check:csp": "node tools/check-csp.mjs",
     "watch:css": "sass --watch src/styles/main.scss:assets/css/main.css --style=compressed --no-source-map",
-    "watch:js": "esbuild src/js/app.js --minify --outfile=assets/js/main.js --watch",
-    "serve": "bundle exec jekyll serve --livereload",
+    "watch:js": "esbuild src/js/app.js --bundle --minify --format=iife --target=es2018 --outfile=assets/js/main.js --watch",
+    "sketch": "node tools/roughen.mjs",
+    "fonts": "node tools/fonts.mjs",
+    "brand": "node tools/brand.mjs",
+    "serve": "bundle exec jekyll serve --force_polling",
+    "serve:light": "bundle exec jekyll build && python -m http.server 4001 --bind 127.0.0.1 --directory _site",
     "dev": "npm run build && concurrently -k -n css,js,jekyll \"npm:watch:css\" \"npm:watch:js\" \"npm:serve\""
   },
   "devDependencies": {
+    "@resvg/resvg-js": "^2.6.2",
     "concurrently": "^9.1.2",
     "esbuild": "^0.25.0",
-    "sass": "^1.83.4"
+    "png-to-ico": "^3.0.2",
+    "roughjs": "^4.6.6",
+    "sass": "^1.83.4",
+    "subset-font": "^2.9.0"
   }
 }

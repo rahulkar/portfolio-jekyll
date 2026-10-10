@@ -35,4 +35,4 @@ defaults:
     values:
       image: /assets/og.png
 
-exclude: ['package.json', 'package-lock.json', 'src', 'node_modules', 'rahul']
+exclude: ['package.json', 'package-lock.json', 'src', 'node_modules', 'rahul', 'tools', 'LOCAL_SETUP.md', 'LICENSE.txt']
