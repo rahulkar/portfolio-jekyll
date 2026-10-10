@@ -46,3 +46,6 @@ build/
 
 # Brand tooling cache
 node_modules/.cache/
+
+# Scratch photos never belong in the published tree
+*.heic

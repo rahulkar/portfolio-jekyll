@@ -1,0 +1,15 @@
+/* Loaded only when scripting is unavailable: show everything the scripted
+   reveal and draw-in animations would otherwise fade in. */
+.reveal,
+.chip,
+.doodle,
+.card__body .ln {
+  opacity: 1;
+  transform: none;
+  animation: none;
+}
+
+.sk path,
+.doodle--hover {
+  opacity: 1;
+}

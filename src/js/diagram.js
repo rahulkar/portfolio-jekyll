@@ -8,7 +8,11 @@ var column = window.matchMedia("(max-width: 760px)");
 var reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
 
 function opts(seed, extra) {
-  return Object.assign({ roughness: 1.3, bowing: 1.2, strokeWidth: 1.8, seed: seed, fixedDecimalPlaceDigits: 1 }, extra || {});
+  return Object.assign({ roughness: 1.3, bowing: 1.2, strokeWidth: 1.8, seed: seed }, extra || {});
+}
+
+function roundD(d) {
+  return d.replace(/-?\d+\.\d{2,}/g, function (m) { return (+m).toFixed(1); });
 }
 
 function arrowHead(x1, y1, x2, y2, seed) {
@@ -34,26 +38,28 @@ export function initDiagram(fig) {
     svg.setAttribute("focusable", "false");
     fig.insertBefore(svg, fig.firstChild);
   }
-  var lastW = 0;
-  var lastH = 0;
+  var lastSig = "";
 
   function draw() {
     var fr = fig.getBoundingClientRect();
     var W = Math.round(fr.width);
     var H = Math.round(fr.height);
     if (!W || !H) return;
-    if (W === lastW && H === lastH) return;
-    lastW = W;
-    lastH = H;
+    var rects = nodes.map(function (n) {
+      var r = n.getBoundingClientRect();
+      return { x: r.left - fr.left, y: r.top - fr.top, w: r.width, h: r.height };
+    });
+    // Redraw whenever a label moves (font swap, reflow), not only on resize.
+    var sig = W + "x" + H + "|" + rects.map(function (r) {
+      return Math.round(r.x) + "," + Math.round(r.y) + "," + Math.round(r.w);
+    }).join("|");
+    if (sig === lastSig) return;
+    lastSig = sig;
     svg.setAttribute("viewBox", "0 0 " + W + " " + H);
     svg.setAttribute("width", String(W));
     svg.setAttribute("height", String(H));
 
     var stacked = column.matches;
-    var rects = nodes.map(function (n) {
-      var r = n.getBoundingClientRect();
-      return { x: r.left - fr.left, y: r.top - fr.top, w: r.width, h: r.height };
-    });
     var drawables = [];
     rects.forEach(function (r, i) {
       drawables.push(gen.rectangle(r.x - 4, r.y - 4, r.w + 8, r.h + 8, opts(7 + i)));
@@ -88,7 +94,7 @@ export function initDiagram(fig) {
     drawables.forEach(function (d) {
       gen.toPaths(d).forEach(function (info) {
         var p = document.createElementNS(SVG_NS, "path");
-        p.setAttribute("d", info.d);
+        p.setAttribute("d", roundD(info.d));
         p.setAttribute("pathLength", "1");
         p.setAttribute("stroke-width", String(info.strokeWidth));
         p.setAttribute("class", "sk__stroke");
@@ -112,19 +118,28 @@ export function initDiagram(fig) {
     raf = window.requestAnimationFrame(function () { raf = 0; draw(); });
   };
 
+  // Keep the figure's size in sync only once it has been drawn, so the
+  // draw-in plays when the visitor reaches it rather than offscreen.
+  var watch = function () {
+    schedule();
+    if ("ResizeObserver" in window) new ResizeObserver(schedule).observe(fig);
+  };
+
   var start = function () {
     if ("IntersectionObserver" in window) {
       var io = new IntersectionObserver(function (entries) {
         entries.forEach(function (entry) {
-          if (entry.isIntersecting) { io.unobserve(fig); schedule(); }
+          if (entry.isIntersecting) { io.unobserve(fig); watch(); }
         });
       }, { rootMargin: "200px 0px" });
       io.observe(fig);
     } else {
-      schedule();
+      watch();
     }
-    if ("ResizeObserver" in window) new ResizeObserver(schedule).observe(fig);
-    window.addEventListener("orientationchange", function () { lastW = 0; schedule(); });
+    window.addEventListener("orientationchange", schedule);
+    if (document.fonts && document.fonts.addEventListener) {
+      document.fonts.addEventListener("loadingdone", schedule);
+    }
   };
   var started = false;
   var go = function () { if (!started) { started = true; start(); } };

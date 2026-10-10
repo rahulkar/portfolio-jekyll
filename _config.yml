@@ -39,4 +39,4 @@ defaults:
         height: 630
         alt: "Rahul Kar - Enterprise Solution Architect & Technology Lead"
 
-exclude: ['package.json', 'package-lock.json', 'src', 'node_modules', 'rahul', 'tools', 'LOCAL_SETUP.md', 'LICENSE.txt']
+exclude: ['package.json', 'package-lock.json', 'src', 'node_modules', 'rahul', 'tools', 'LOCAL_SETUP.md', 'LICENSE.txt', '*.heic']

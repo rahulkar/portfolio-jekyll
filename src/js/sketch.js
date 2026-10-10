@@ -36,9 +36,13 @@ function baseOpts(seed) {
     bowing: 1.2,
     strokeWidth: 1.8,
     seed: seed,
-    disableMultiStroke: mobile,
-    fixedDecimalPlaceDigits: 1
+    disableMultiStroke: mobile
   };
+}
+
+// toPaths() emits full double precision; one decimal is plenty for pixels.
+function roundD(d) {
+  return d.replace(/-?\d+\.\d{2,}/g, function (m) { return (+m).toFixed(1); });
 }
 
 // "x" marks a fill path; it is never written to the DOM. Phones get a
@@ -112,7 +116,7 @@ function paint(m) {
   shapes(m.kind, m.w, m.h, seed).forEach(function (drawable) {
     gen.toPaths(drawable).forEach(function (info) {
       var p = document.createElementNS(SVG_NS, "path");
-      p.setAttribute("d", info.d);
+      p.setAttribute("d", roundD(info.d));
       p.setAttribute("pathLength", "1");
       p.setAttribute("stroke-width", String(info.strokeWidth));
       p.setAttribute("class", info.stroke === "x" ? "sk__fill" : "sk__stroke");
@@ -186,6 +190,8 @@ export function sketchNow(host, kind) {
 }
 
 export function clearSketch(host) {
+  var queued = pending.indexOf(host);
+  if (queued > -1) pending.splice(queued, 1);
   var svg = host.querySelector(":scope > svg.sk");
   if (svg) svg.parentNode.removeChild(svg);
   host.classList.remove("is-sketched", "is-drawn", "is-settled");

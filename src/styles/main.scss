@@ -111,8 +111,11 @@ a {
   color: var(--ink);
 }
 
+/* Transparent outline: invisible normally, force-coloured (and so visible)
+   in Windows High Contrast, where box-shadow is dropped. */
 :focus-visible {
-  outline: none;
+  outline: 2px solid transparent;
+  outline-offset: 2px;
   box-shadow: var(--ring);
 }
 
@@ -620,7 +623,6 @@ a {
 
 .skip-link:focus {
   transform: translateY(0);
-  outline: none;
 }
 
 .scroll-progress {
@@ -629,8 +631,10 @@ a {
   left: 0;
   z-index: 60;
   height: 3px;
-  width: 0;
+  width: 100%;
   background: var(--pencil);
+  transform-origin: 0 50%;
+  transform: scaleX(0);
   pointer-events: none;
 }
 
@@ -676,6 +680,7 @@ a {
   display: inline-flex;
   align-items: center;
   gap: 7px;
+  min-height: 44px;
   color: var(--ink);
 }
 
@@ -763,7 +768,7 @@ a {
   display: none;
   align-items: center;
   gap: 8px;
-  height: 36px;
+  min-height: 44px;
   padding: 0 12px;
   border: 1.5px solid var(--ink);
   border-radius: var(--rad-a);
@@ -1365,6 +1370,7 @@ section {
 .contact__email__open {
   flex: 1;
   min-width: 0;
+  min-height: 44px;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -1515,6 +1521,15 @@ section {
 .social-btn:focus-visible .social-btn__ext {
   opacity: 1;
   transform: none;
+}
+
+/* The ring follows the rotated pill instead of boxing it. */
+.social-btn:focus-visible {
+  box-shadow: none;
+}
+
+.social-btn:focus-visible .sticker__visual {
+  box-shadow: 0 0 0 2.5px #fff, 0 0 0 4.5px var(--ballpoint);
 }
 
 .social-btn--github .social-btn__icon {
@@ -1991,10 +2006,21 @@ section {
   .tag {
     border: 1px solid CanvasText;
   }
+
+  :focus-visible {
+    outline-color: Highlight;
+  }
+
+  .bar__nav a.is-active {
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+  }
 }
 
 @media (prefers-contrast: more) {
-  body {
+  body,
+  .hero,
+  .error {
     background-image: none;
   }
 

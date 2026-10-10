@@ -158,7 +158,7 @@ document.addEventListener("DOMContentLoaded", function () {
     if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
       event.preventDefault();
       var commandTarget = document.getElementById("connect");
-      if (commandTarget) commandTarget.scrollIntoView({ behavior: "smooth", block: "start" });
+      if (commandTarget) commandTarget.scrollIntoView({ behavior: prefersReducedMotion ? "auto" : "smooth", block: "start" });
     }
   });
 
@@ -166,21 +166,32 @@ document.addEventListener("DOMContentLoaded", function () {
   copyButtons.forEach(function (btn) {
     var label = btn.querySelector(".contact__copy__text");
     var box = btn.closest(".contact__email");
+    var status = box ? box.querySelector("[role=\"status\"]") : null;
     var resetTimer = null;
+    var announce = function (text) {
+      if (status) status.textContent = text;
+    };
     btn.addEventListener("click", function () {
       var email = btn.getAttribute("data-copy-email");
-      if (!navigator.clipboard || !navigator.clipboard.writeText) return;
+      if (!navigator.clipboard || !navigator.clipboard.writeText) {
+        announce("Copying is not available here. Select the address to copy it.");
+        return;
+      }
       navigator.clipboard.writeText(email).then(function () {
         btn.classList.add("is-copied");
         if (box) box.classList.add("is-copied");
         if (label) label.textContent = "copied";
+        announce("Email address copied.");
         window.clearTimeout(resetTimer);
         resetTimer = window.setTimeout(function () {
           btn.classList.remove("is-copied");
           if (box) box.classList.remove("is-copied");
           if (label) label.textContent = "copy";
+          announce("");
         }, 1600);
-      }).catch(function () {});
+      }).catch(function () {
+        announce("Copying was blocked. Select the address to copy it.");
+      });
     });
   });
 
@@ -198,11 +209,14 @@ document.addEventListener("DOMContentLoaded", function () {
     var paint = function () {
       progressRaf = 0;
       var max = root.scrollHeight - window.innerHeight;
-      progress.style.width = (max > 0 ? (window.scrollY / max) * 100 : 0) + "%";
+      // scaleX is compositor-only; animating width would force layout.
+      progress.style.transform = "scaleX(" + (max > 0 ? window.scrollY / max : 0) + ")";
     };
-    window.addEventListener("scroll", function () {
+    var schedulePaint = function () {
       if (!progressRaf) progressRaf = window.requestAnimationFrame(paint);
-    }, { passive: true });
+    };
+    window.addEventListener("scroll", schedulePaint, { passive: true });
+    window.addEventListener("resize", schedulePaint, { passive: true });
     paint();
   }
 

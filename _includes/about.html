@@ -36,7 +36,7 @@
         <span class="loop__node">scale</span>
       </div>
       <span class="loop__back" aria-hidden="true">enterprise feedback</span>
-      <figcaption class="sr-only">Delivery loop: discover, prototype, architect, scale, with enterprise feedback looping back to discover.</figcaption>
+      <figcaption class="sr-only">Diagram: the four stages run left to right, and enterprise feedback loops from scale back to discover.</figcaption>
     </figure>
   </div>
 </section>
@@ -138,11 +138,12 @@
             <span class="contact__email__addr">{{ site.email }}</span>
             <svg class="doodle doodle--hover contact__email__arrow" aria-hidden="true" focusable="false"><use href="#d-arrow"></use></svg>
           </a>
-          <button class="contact__copy" type="button" data-copy-email="{{ site.email }}" data-sketch="rect" data-seed="copy-btn" aria-label="Copy email address">
+          <button class="contact__copy" type="button" data-copy-email="{{ site.email }}" data-sketch="rect" data-seed="copy-btn">
             <svg class="doodle contact__copy__icon contact__copy__icon--copy" aria-hidden="true" focusable="false"><use href="#d-copy"></use></svg>
             <svg class="doodle contact__copy__icon contact__copy__icon--check" aria-hidden="true" focusable="false"><use href="#d-check"></use></svg>
-            <span class="contact__copy__text">copy</span>
+            <span class="contact__copy__text">copy</span><span class="sr-only"> email address</span>
           </button>
+          <span class="sr-only" role="status" aria-live="polite"></span>
         </div>
         <div class="social-grid">
           <a class="social-btn sticker social-btn--github" href="https://github.com/{{ site.github_username }}" target="_blank" rel="noopener">
