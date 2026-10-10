@@ -40,3 +40,6 @@ yarn-error.log*
 dist/
 build/
 *.map
+
+# Local Claude Code session config
+.claude/
