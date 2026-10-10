@@ -1,9 +1,9 @@
 // Delivery-loop flowchart: four real HTML labels, boxed and connected with
 // Rough.js arrows drawn into an overlay SVG; re-drawn when the figure resizes.
-import rough from "roughjs/bundled/rough.esm.js";
+import { RoughGenerator } from "roughjs/bin/generator.js";
 
 var SVG_NS = "http://www.w3.org/2000/svg";
-var gen = rough.generator();
+var gen = new RoughGenerator({});
 var column = window.matchMedia("(max-width: 760px)");
 var reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
 

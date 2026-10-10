@@ -1592,6 +1592,14 @@ section {
   transform: none;
 }
 
+/* Above the fold the strokes draw in; the text itself must paint at once
+   (a faded hero delays the largest contentful paint by seconds). */
+.hero .reveal {
+  opacity: 1;
+  transform: none;
+  transition: none;
+}
+
 .reveal--d1 {
   transition-delay: 60ms;
 }

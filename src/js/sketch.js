@@ -2,11 +2,12 @@
 // aria-hidden <svg class="sk"> as the first child and fill it with Rough.js
 // paths generated from the host's box. Only presentation attributes are
 // written (CSP: style-src 'self'); colours come from the stylesheet.
-import rough from "roughjs/bundled/rough.esm.js";
+// Only the generator is imported, not the canvas/svg renderers.
+import { RoughGenerator } from "roughjs/bin/generator.js";
 
 var SVG_NS = "http://www.w3.org/2000/svg";
 var OUTSET = 6;
-var gen = rough.generator();
+var gen = new RoughGenerator({});
 var reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
 var hoverable = window.matchMedia("(hover: hover)");
 var narrow = window.matchMedia("(max-width: 760px)");
@@ -40,9 +41,13 @@ function baseOpts(seed) {
   };
 }
 
-// "x" marks a fill path; it is never written to the DOM.
+// "x" marks a fill path; it is never written to the DOM. Phones get a
+// coarser hachure: fewer lines to generate and to animate.
 function fillOpts(o, extra) {
-  return Object.assign({}, o, { fill: "x", fillStyle: "hachure", stroke: "none" }, extra);
+  var gapScale = narrow.matches ? 1.5 : 1;
+  var merged = Object.assign({}, o, { fill: "x", fillStyle: "hachure", stroke: "none" }, extra);
+  merged.hachureGap = (merged.hachureGap || 8) * gapScale;
+  return merged;
 }
 
 function shapes(kind, w, h, seed) {
@@ -72,14 +77,22 @@ function shapes(kind, w, h, seed) {
   }
 }
 
-function render(host) {
+// Phase 1 (read): measure. Returns null when nothing needs drawing.
+function measure(host) {
   var kind = host.dataset.sketch;
-  if (!kind) return;
+  if (!kind) return null;
   var w = Math.round(host.offsetWidth);
   var h = Math.round(host.offsetHeight);
-  if (!w || !h) return;
+  if (!w || !h) return null;
   var svg = host.querySelector(":scope > svg.sk");
-  if (svg && host.dataset.skW === String(w) && host.dataset.skH === String(h) && !host.dataset.skDirty) return;
+  if (svg && host.dataset.skW === String(w) && host.dataset.skH === String(h) && !host.dataset.skDirty) return null;
+  return { host: host, kind: kind, w: w, h: h, svg: svg };
+}
+
+// Phase 2 (write): build the overlay. Never reads layout.
+function paint(m) {
+  var host = m.host;
+  var svg = m.svg;
   if (!svg) {
     svg = document.createElementNS(SVG_NS, "svg");
     svg.setAttribute("class", "sk");
@@ -87,8 +100,8 @@ function render(host) {
     svg.setAttribute("focusable", "false");
     host.insertBefore(svg, host.firstChild);
   }
-  var W = w + OUTSET * 2;
-  var H = h + OUTSET * 2;
+  var W = m.w + OUTSET * 2;
+  var H = m.h + OUTSET * 2;
   svg.setAttribute("viewBox", "0 0 " + W + " " + H);
   svg.setAttribute("width", String(W));
   svg.setAttribute("height", String(H));
@@ -96,7 +109,7 @@ function render(host) {
   var seed = seedFor(host) + (Number(host.dataset.skBump) || 0);
   var frag = document.createDocumentFragment();
   var i = 0;
-  shapes(kind, w, h, seed).forEach(function (drawable) {
+  shapes(m.kind, m.w, m.h, seed).forEach(function (drawable) {
     gen.toPaths(drawable).forEach(function (info) {
       var p = document.createElementNS(SVG_NS, "path");
       p.setAttribute("d", info.d);
@@ -110,8 +123,8 @@ function render(host) {
   while (svg.firstChild) svg.removeChild(svg.firstChild);
   svg.appendChild(frag);
 
-  host.dataset.skW = String(w);
-  host.dataset.skH = String(h);
+  host.dataset.skW = String(m.w);
+  host.dataset.skH = String(m.h);
   delete host.dataset.skDirty;
   host.classList.add("is-sketched");
   if (!host.classList.contains("is-drawn")) {
@@ -123,6 +136,16 @@ function render(host) {
   }
 }
 
+// Reads for every host first, then writes, so a batch costs one layout.
+function renderAll(hosts) {
+  var jobs = [];
+  hosts.forEach(function (host) {
+    var m = measure(host);
+    if (m) jobs.push(m);
+  });
+  jobs.forEach(paint);
+}
+
 var pending = [];
 var rafId = 0;
 var ro = null;
@@ -131,7 +154,7 @@ function flush() {
   rafId = 0;
   var batch = pending;
   pending = [];
-  batch.forEach(render);
+  renderAll(batch);
 }
 
 function queue(host) {
@@ -158,7 +181,7 @@ function markDirty(host) {
 
 export function sketchNow(host, kind) {
   if (kind) host.dataset.sketch = kind;
-  render(host);
+  renderAll([host]);
   observe(host);
 }
 
@@ -174,7 +197,7 @@ export function clearSketch(host) {
 export function resketch(host) {
   host.dataset.skBump = String(((Number(host.dataset.skBump) || 0) + 1) % 3);
   host.dataset.skDirty = "1";
-  render(host);
+  renderAll([host]);
 }
 
 export function initSketch() {
@@ -185,12 +208,17 @@ export function initSketch() {
   var io = null;
   if ("IntersectionObserver" in window) {
     io = new IntersectionObserver(function (entries) {
+      var visible = [];
       entries.forEach(function (entry) {
         if (entry.isIntersecting) {
           io.unobserve(entry.target);
-          sketchNow(entry.target);
+          visible.push(entry.target);
         }
       });
+      if (visible.length) {
+        renderAll(visible);
+        visible.forEach(observe);
+      }
     }, { rootMargin: "200px 0px" });
   }
 
@@ -198,10 +226,8 @@ export function initSketch() {
   var start = function () {
     if (started) return;
     started = true;
-    hosts.forEach(function (host) {
-      if (io) io.observe(host);
-      else sketchNow(host);
-    });
+    if (io) hosts.forEach(function (host) { io.observe(host); });
+    else { renderAll(hosts); hosts.forEach(observe); }
   };
   // Measure against the real fonts; never wait longer than 400 ms.
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(start);
