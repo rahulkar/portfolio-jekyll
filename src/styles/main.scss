@@ -1,18 +1,34 @@
-/* Self-hosted variable fonts (latin subset) — replaces the Google Fonts CDN
-   for privacy, a strict CSP, and one fewer render-blocking third party. */
+/* Self-hosted fonts (latin subsets, OFL-1.1; notices in assets/fonts/).
+   Excalifont = handwriting for display/labels only; Nunito = everything read. */
 @font-face {
-  font-family: "Inter";
+  font-family: "Excalifont";
   font-style: normal;
-  font-weight: 400 600;
+  font-weight: 400;
   font-display: swap;
-  src: url("/assets/fonts/inter.woff2") format("woff2");
+  src: url("/assets/fonts/excalifont.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+2013-2014, U+2018-201D, U+2022, U+2026, U+2190-2193, U+2212;
 }
 @font-face {
-  font-family: "JetBrains Mono";
+  font-family: "Nunito";
   font-style: normal;
-  font-weight: 400 600;
+  font-weight: 400 800;
   font-display: swap;
-  src: url("/assets/fonts/jetbrains-mono.woff2") format("woff2");
+  src: url("/assets/fonts/nunito.woff2") format("woff2");
+}
+/* Metric-matched local fallbacks so the swap does not reflow the page. */
+@font-face {
+  font-family: "Excalifont Fallback";
+  src: local("Segoe Print"), local("Bradley Hand"), local("Comic Sans MS");
+  size-adjust: 104%;
+  ascent-override: 90%;
+  descent-override: 28%;
+}
+@font-face {
+  font-family: "Nunito Fallback";
+  src: local("Segoe UI"), local("Arial");
+  size-adjust: 102%;
+  ascent-override: 100%;
+  descent-override: 32%;
 }
 
 :root {
