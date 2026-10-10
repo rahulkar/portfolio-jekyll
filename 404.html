@@ -1,40 +1,48 @@
 ---
 layout: error
 title: 404 — page not found
-description: That route returned a non-zero exit. The page may have moved or never existed.
+description: That page fell out of the notebook. It may have moved or never existed.
 sitemap: false
+noindex: true
 ---
 <section class="error">
-  <div id="particles-js" aria-hidden="true"></div>
+  <div class="error__coffee" aria-hidden="true">
+    <svg class="doodle doodle--auto" viewBox="0 0 220 220" focusable="false"><use href="#d-coffee"></use></svg>
+  </div>
+  <div class="error__bonsai" aria-hidden="true">
+    <svg class="doodle doodle--auto" viewBox="0 0 180 120" focusable="false"><use href="#d-bonsai"></use></svg>
+  </div>
 
   <div class="wrap error__inner">
-    <p class="error__code" aria-hidden="true">404</p>
+    <p class="error__code" aria-hidden="true">
+      <span class="error__code-inner" data-sketch="highlight" data-seed="code-404">404</span>
+      <svg class="doodle doodle--auto error__x" focusable="false"><use href="#d-x"></use></svg>
+    </p>
 
-    <aside class="term error__term" aria-label="Error output">
-      <div class="term__top">
-        <div class="lights" aria-hidden="true"><span></span><span></span><span></span></div>
-        <span class="path">~/rahul-kar/404</span>
-      </div>
-      <div class="term__body">
-        <span class="ln"><span class="c-prompt">rahul@architect</span> <span class="c-mute">~</span> $ open <span class="c-str" id="err-path">requested-path</span></span>
-        <span class="ln"><span class="c-err">error</span>: 404 &mdash; no such file or directory</span>
-        <span class="ln"><span class="c-prompt">rahul@architect</span> <span class="c-mute">~</span> $ suggest</span>
-        <span class="ln"><span class="c-ok">try</span> heading back to the homepage<span class="caret"></span></span>
+    <aside class="note error__note" aria-label="Lost and found">
+      <div class="note__visual">
+        <span class="stamp stamp--red">lost &amp; found</span>
+        <dl class="card__body">
+          <div class="ln"><dt>looking for</dt><dd id="err-path">requested-path</dd></div>
+          <div class="ln"><dt>found</dt><dd>not in this notebook</dd></div>
+          <div class="ln"><dt>try</dt><dd>the first page<span class="caret"></span></dd></div>
+        </dl>
       </div>
     </aside>
 
-    <h1 class="error__title"><span class="prompt">$ </span>page not found</h1>
+    <h1 class="error__title">page not found</h1>
     <p class="error__sub">
       The page you were looking for moved, was renamed, or never existed.
       Let's get you back to something that resolves.
     </p>
 
     <div class="error__cta">
-      <a href="{{ "/" | prepend: site.baseurl }}" class="btn btn--primary" data-scroll>
-        <span>cd ~/</span><span class="arrow">-&gt;</span>
+      <a href="{{ "/" | prepend: site.baseurl }}" class="btn btn--primary" data-sketch="rect-fill" data-seed="cta-home">
+        <span>home</span>
+        <svg class="doodle doodle--auto" aria-hidden="true" focusable="false"><use href="#d-arrow"></use></svg>
       </a>
-      <a href="{{ "/#connect" | prepend: site.baseurl }}" class="btn">
-        <span>connect</span><span class="key">C</span>
+      <a href="{{ "/#connect" | prepend: site.baseurl }}" class="btn" data-sketch="rect" data-seed="cta-err-connect">
+        <span>connect</span>
       </a>
     </div>
   </div>

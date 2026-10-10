@@ -1,66 +1,19 @@
+import { initSketch, sketchNow, clearSketch } from "./sketch.js";
+import { initDiagram } from "./diagram.js";
+
 document.addEventListener("DOMContentLoaded", function () {
-  var prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  var allowParticles = !prefersReducedMotion && window.matchMedia("(min-width: 760px)").matches;
+  var reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
+  var prefersReducedMotion = reduced.matches;
+  var root = document.documentElement;
 
-  var initParticles = function () {
-    if (typeof particlesJS === "undefined") return;
-    particlesJS("particles-js", {
-      particles: {
-        number: { value: 24, density: { enable: true, value_area: 1100 } },
-        color: { value: ["#6ee7a0", "#e6e6e3"] },
-        shape: { type: "circle" },
-        opacity: {
-          value: 0.25,
-          random: true,
-          anim: { enable: true, speed: 0.4, opacity_min: 0.04, sync: false }
-        },
-        size: { value: 1.6, random: true },
-        line_linked: {
-          enable: true,
-          distance: 140,
-          color: "#6ee7a0",
-          opacity: 0.06,
-          width: 1
-        },
-        move: {
-          enable: true,
-          speed: 0.45,
-          direction: "none",
-          random: true,
-          straight: false,
-          out_mode: "out",
-          bounce: false
-        }
-      },
-      interactivity: {
-        detect_on: "canvas",
-        events: {
-          onhover: { enable: true, mode: "grab" },
-          onclick: { enable: false, mode: "push" },
-          resize: true
-        },
-        modes: {
-          grab: { distance: 180, line_linked: { opacity: 0.4 } },
-          push: { particles_nb: 2 }
-        }
-      },
-      retina_detect: true
-    });
-  };
+  // Hand-drawn layer (Rough.js) and the delivery-loop figure.
+  initSketch();
+  initDiagram(document.getElementById("delivery-loop"));
 
-  // Load the particles library only where it is actually used (desktop, motion
-  // allowed). This keeps ~23 KB of JS off phones, where particles never render.
-  if (allowParticles) {
-    if (typeof particlesJS !== "undefined") {
-      initParticles();
-    } else {
-      var pScript = document.createElement("script");
-      pScript.src = "/assets/js/particles.min.js";
-      pScript.defer = true;
-      pScript.onload = initParticles;
-      document.body.appendChild(pScript);
-    }
-  }
+  // Hero / bar doodles draw in once the real fonts are on screen.
+  var ready = function () { root.classList.add("is-ready"); };
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(ready);
+  window.setTimeout(ready, 600);
 
   var reveals = document.querySelectorAll(".reveal");
   if ("IntersectionObserver" in window) {
@@ -82,21 +35,21 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  // Terminal "typing" reveal — drives the latent CSS hooks (.is-typing/.has-typed).
-  var termLines = document.querySelectorAll(".term__body .ln");
-  if (termLines.length && !prefersReducedMotion) {
-    termLines.forEach(function (ln) {
+  // Pen-reveal of the index-card lines (profile card, 404 note).
+  var cardLines = document.querySelectorAll(".card__body .ln");
+  if (cardLines.length && !prefersReducedMotion) {
+    cardLines.forEach(function (ln) {
       ln.classList.add("is-typing");
     });
-    termLines.forEach(function (ln, i) {
+    cardLines.forEach(function (ln, i) {
       window.setTimeout(function () {
         ln.classList.remove("is-typing");
         ln.classList.add("has-typed");
-      }, 130 * i + 160);
+      }, 130 * i + 260);
     });
   }
 
-  // Scroll-spy — reflect the active section in the brand segment + top-bar nav.
+  // Scroll-spy: annotate the brand and circle the active nav word.
   var brandSeg = document.getElementById("brand-seg");
   var navLinks = document.querySelectorAll(".bar__nav a");
   var spyTargets = ["top", "about", "stack", "connect"]
@@ -105,11 +58,15 @@ document.addEventListener("DOMContentLoaded", function () {
   if (spyTargets.length && "IntersectionObserver" in window) {
     var setActiveSection = function (id) {
       if (brandSeg) {
-        brandSeg.textContent = id === "top" ? "" : "/" + id;
+        brandSeg.textContent = id === "top" ? "" : "→ " + id;
         brandSeg.classList.toggle("is-active", id !== "top");
       }
       navLinks.forEach(function (a) {
-        a.classList.toggle("is-active", a.getAttribute("href") === "#" + id);
+        var active = a.getAttribute("href") === "#" + id;
+        var was = a.classList.contains("is-active");
+        a.classList.toggle("is-active", active);
+        if (active && !was) sketchNow(a, "circle");
+        else if (!active && was) clearSketch(a);
       });
     };
     var spy = new IntersectionObserver(function (entries) {
@@ -122,14 +79,18 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
+  // Clocks show real India time, whatever the visitor's zone.
   var clock = document.getElementById("local-time");
   var barClock = document.getElementById("bar-time");
+  var fmt = null;
+  try {
+    fmt = new Intl.DateTimeFormat("en-GB", { timeZone: "Asia/Kolkata", hour: "2-digit", minute: "2-digit", hour12: false });
+  } catch (e) { fmt = null; }
   var tick = function () {
     var d = new Date();
-    var h = String(d.getHours()).padStart(2, "0");
-    var m = String(d.getMinutes()).padStart(2, "0");
-    if (clock) clock.textContent = h + ":" + m + " IST";
-    if (barClock) barClock.textContent = h + ":" + m;
+    var text = fmt ? fmt.format(d) : String(d.getHours()).padStart(2, "0") + ":" + String(d.getMinutes()).padStart(2, "0");
+    if (clock) clock.textContent = text + " IST";
+    if (barClock) barClock.textContent = text + " IST";
   };
   tick();
   window.setInterval(tick, 30000);
@@ -183,6 +144,8 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
+  // Ctrl/Cmd+K jumps to connect. (The bare "c" shortcut was removed: it
+  // could not be disabled or remapped, which fails WCAG 2.1.4.)
   document.addEventListener("keydown", function (event) {
     var target = event.target;
     var isEditable = target && (
@@ -196,11 +159,6 @@ document.addEventListener("DOMContentLoaded", function () {
       event.preventDefault();
       var commandTarget = document.getElementById("connect");
       if (commandTarget) commandTarget.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-
-    if (!event.metaKey && !event.ctrlKey && !event.altKey && event.key.toLowerCase() === "c") {
-      var contactTarget = document.getElementById("connect");
-      if (contactTarget) contactTarget.scrollIntoView({ behavior: "smooth", block: "start" });
     }
   });
 
@@ -232,4 +190,55 @@ document.addEventListener("DOMContentLoaded", function () {
   // 404 page: surface the path that failed to resolve (CSP-safe, no inline JS).
   var errPath = document.getElementById("err-path");
   if (errPath) errPath.textContent = window.location.pathname;
+
+  // Pencil line across the top that tracks reading progress.
+  var progress = document.getElementById("scroll-progress");
+  if (progress && !prefersReducedMotion) {
+    var progressRaf = 0;
+    var paint = function () {
+      progressRaf = 0;
+      var max = root.scrollHeight - window.innerHeight;
+      progress.style.width = (max > 0 ? (window.scrollY / max) * 100 : 0) + "%";
+    };
+    window.addEventListener("scroll", function () {
+      if (!progressRaf) progressRaf = window.requestAnimationFrame(paint);
+    }, { passive: true });
+    paint();
+  }
+
+  // Pencil scribble trail: fine pointers only, never under reduced motion.
+  if (!prefersReducedMotion && window.matchMedia("(pointer: fine)").matches) {
+    var trail = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    trail.setAttribute("class", "trail");
+    trail.setAttribute("aria-hidden", "true");
+    trail.setAttribute("focusable", "false");
+    var trailPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    trail.appendChild(trailPath);
+    document.body.appendChild(trail);
+    var points = [];
+    var trailRaf = 0;
+    var drawTrail = function () {
+      trailRaf = 0;
+      var now = Date.now();
+      points = points.filter(function (p) { return now - p.t < 480; });
+      if (points.length < 2) {
+        trailPath.setAttribute("d", "");
+        return;
+      }
+      var d = "M" + points[0].x + " " + points[0].y;
+      for (var i = 1; i < points.length - 1; i++) {
+        var cx = (points[i].x + points[i + 1].x) / 2;
+        var cy = (points[i].y + points[i + 1].y) / 2;
+        d += " Q" + points[i].x + " " + points[i].y + " " + cx + " " + cy;
+      }
+      trailPath.setAttribute("d", d);
+      trailRaf = window.requestAnimationFrame(drawTrail);
+    };
+    window.addEventListener("pointermove", function (event) {
+      if (event.pointerType && event.pointerType !== "mouse") return;
+      points.push({ x: event.clientX, y: event.clientY, t: Date.now() });
+      if (points.length > 24) points.shift();
+      if (!trailRaf) trailRaf = window.requestAnimationFrame(drawTrail);
+    }, { passive: true });
+  }
 });
