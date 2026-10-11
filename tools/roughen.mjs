@@ -34,6 +34,18 @@ const doodles = {
   "d-ext": { vb: "0 0 24 24", draw: () => [gen.line(7, 17, 17, 7, S(91, { roughness: 0.9 })), gen.path("M8 7 H17 V16", S(92, { roughness: 0.9 }))] },
   "d-clip": { vb: "0 0 26 64", draw: () => [gen.path("M18 10 v38 a6 6 0 0 1 -12 0 V16 a4 4 0 0 1 8 0 v30", S(101, { roughness: 0.8, bowing: 0.8 }))] },
   "d-coffee": { vb: "0 0 220 220", dp: 0, draw: () => [gen.ellipse(110, 110, 180, 168, S(111, { roughness: 2.6, bowing: 2, disableMultiStroke: true })), gen.ellipse(112, 108, 170, 158, S(112, { roughness: 2.2, bowing: 2, disableMultiStroke: true }))] },
+  "d-sun": {
+    vb: "0 0 40 40",
+    draw: () => {
+      const rays = [];
+      for (let i = 0; i < 8; i++) {
+        const a = (i * Math.PI) / 4;
+        rays.push(gen.line(20 + Math.cos(a) * 12.5, 20 + Math.sin(a) * 12.5, 20 + Math.cos(a) * 18, 20 + Math.sin(a) * 18, S(150 + i, { roughness: 1 })));
+      }
+      return [gen.circle(20, 20, 15, S(141, { roughness: 1.1 })), ...rays];
+    },
+  },
+  "d-moon": { vb: "0 0 40 40", draw: () => [gen.path("M25 5 a15 15 0 1 0 10 27 a11.5 11.5 0 0 1 -10 -27 Z", S(161, { roughness: 1 }))] },
   "d-rule": { vb: "0 0 600 16", draw: () => [gen.curve([[4, 8], [120, 6], [240, 10], [360, 6], [480, 10], [596, 8]], S(131, { roughness: 1.6, bowing: 1, disableMultiStroke: true }))] },
   "d-bonsai": {
     vb: "0 0 180 120",

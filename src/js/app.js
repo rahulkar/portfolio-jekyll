@@ -195,6 +195,30 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 
+  // Theme toggle: OS preference by default, a manual choice persists and is
+  // applied before paint by /assets/js/theme.js.
+  var themeBtn = document.getElementById("theme-btn");
+  if (themeBtn) {
+    var darkQuery = window.matchMedia("(prefers-color-scheme: dark)");
+    var themeMetas = document.querySelectorAll('meta[name="theme-color"]');
+    var isDark = function () {
+      var t = root.getAttribute("data-theme");
+      return t === "dark" || (t !== "light" && darkQuery.matches);
+    };
+    var reflectTheme = function () {
+      themeBtn.setAttribute("aria-pressed", String(isDark()));
+    };
+    themeBtn.addEventListener("click", function () {
+      var next = isDark() ? "light" : "dark";
+      root.setAttribute("data-theme", next);
+      try { localStorage.setItem("theme", next); } catch (e) {}
+      themeMetas.forEach(function (m) { m.setAttribute("content", next === "dark" ? "#1C2522" : "#F8F3E7"); });
+      reflectTheme();
+    });
+    if (darkQuery.addEventListener) darkQuery.addEventListener("change", reflectTheme);
+    reflectTheme();
+  }
+
   var year = document.getElementById("year");
   if (year) year.textContent = new Date().getFullYear();
 

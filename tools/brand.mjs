@@ -65,17 +65,21 @@ function render(svg, width, fontFiles) {
 }
 
 // ---------------------------------------------------------------- favicon --
-function faviconSvg({ opaque = false } = {}) {
+function faviconSvg({ opaque = false, darkStyle = false } = {}) {
   const S = (seed, extra = {}) => ({ roughness: 1.4, bowing: 1.4, seed, fixedDecimalPlaceDigits: 1, ...extra });
-  const border = paths([gen.rectangle(18, 18, 144, 144, S(1, { stroke: INK, strokeWidth: 7 }))]);
+  const border = paths([gen.rectangle(18, 18, 144, 144, S(1, { stroke: INK, strokeWidth: 7 }))], ' class="ink"');
   const chevron = paths([
     gen.linearPath([[54, 56], [96, 90], [54, 124]], S(2, { stroke: BALLPOINT, strokeWidth: 13 })),
   ]);
   const dash = paths([gen.line(104, 124, 138, 124, S(3, { stroke: HL, strokeWidth: 15, disableMultiStroke: true }))]);
   const bg = opaque
-    ? `<rect width="180" height="180" fill="${PAPER}"/>`
-    : `<rect x="4" y="4" width="172" height="172" rx="38" fill="${PAPER}"/>`;
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180" role="img" aria-label="rahul kar">${bg}${dash}${border}${chevron}</svg>\n`;
+    ? `<rect class="paper" width="180" height="180" fill="${PAPER}"/>`
+    : `<rect class="paper" x="4" y="4" width="172" height="172" rx="38" fill="${PAPER}"/>`;
+  // Browser tabs in dark mode get a slate tile; the raster renders stay light.
+  const style = darkStyle
+    ? "<style>@media (prefers-color-scheme: dark){.paper{fill:#1C2522}.ink{stroke:#F1EDE4}}</style>"
+    : "";
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180" role="img" aria-label="rahul kar">${style}${bg}${dash}${border}${chevron}</svg>\n`;
 }
 
 // --------------------------------------------------------------- og card --
@@ -118,7 +122,7 @@ async function main() {
 
   // Favicon family.
   const svgRounded = faviconSvg();
-  writeFileSync("assets/icons/favicon-v2.svg", svgRounded);
+  writeFileSync("assets/icons/favicon-v2.svg", faviconSvg({ darkStyle: true }));
   const icoPngs = [16, 32, 48].map((w) => render(svgRounded, w, fonts));
   const ico = await pngToIco(icoPngs);
   writeFileSync("assets/favicon-v2.ico", ico);
