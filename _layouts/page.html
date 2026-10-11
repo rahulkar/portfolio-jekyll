@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+  {% include head.html %}
+  <body>
+    {% include sketch-defs.html %}
+    <a class="skip-link" href="#main">skip to content</a>
+    <div class="scroll-progress" id="scroll-progress" aria-hidden="true"></div>
+    {% include bar.html %}
+    <main id="main" class="page">
+      {{ content }}
+    </main>
+    {% include footer.html %}
+  </body>
+</html>

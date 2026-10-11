@@ -107,7 +107,7 @@ export function initDiagram(fig) {
     fig.classList.add("is-sketched");
     if (!fig.classList.contains("is-drawn")) {
       window.requestAnimationFrame(function () { fig.classList.add("is-drawn"); });
-      if (reduced.matches) fig.classList.add("is-settled");
+      if (reduced.matches || document.documentElement.classList.contains("is-calm")) fig.classList.add("is-settled");
       else window.setTimeout(function () { fig.classList.add("is-settled"); }, 2200);
     }
   }

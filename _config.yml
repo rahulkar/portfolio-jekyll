@@ -39,4 +39,5 @@ defaults:
         height: 630
         alt: "Rahul Kar - Enterprise Solution Architect & Technology Lead"
 
-exclude: ['package.json', 'package-lock.json', 'src', 'node_modules', 'rahul', 'tools', 'LOCAL_SETUP.md', 'LICENSE.txt', '*.heic']
+include: ['.well-known']
+exclude: ['package.json', 'package-lock.json', 'src', 'node_modules', 'rahul', 'tools', 'tests', 'playwright.config.js', 'lighthouserc.json', 'test-results', 'playwright-report', 'LOCAL_SETUP.md', 'LICENSE.txt', '*.heic']
