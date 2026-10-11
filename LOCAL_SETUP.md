@@ -48,6 +48,7 @@ committed `assets/css/main.css` or `assets/js/main.js` differ from `src/`.
 | `npm run sketch` | Pre-roughens the doodles into `_includes/sketch-defs.html` (`node tools/roughen.mjs icons` redraws the six generic stack icons) | after editing a doodle in `tools/roughen.mjs` |
 | `npm run brand` | Renders `assets/icons/favicon-v2.svg`, the `.ico` files, `apple-touch-icon-v2.png` and `assets/og-sketch.png` | after changing the mark or the share card |
 | `npm run fonts -- <Excalifont-Regular.woff2>` | Subsets Excalifont to Latin into `assets/fonts/excalifont.woff2` | only when the font file changes |
+| `node tools/photo.mjs <photo.heic> <name> [maxWidth]` | Decodes a phone photo (HEIC too), strips metadata, writes `assets/img/<name>-{640,1280}.{webp,jpg}` for a taped-in polaroid | when adding a photo (keep the `.heic` source out of git; it is ignored) |
 
 The runtime sketch layer lives in `src/js/sketch.js` (Rough.js frames,
 underlines, highlighter) and `src/js/diagram.js` (the delivery loop). Any

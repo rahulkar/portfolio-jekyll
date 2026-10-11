@@ -8,13 +8,36 @@
     </div>
 
     <div class="about__body reveal reveal--d1">
-      <p>{{ site.user_description }}</p>
-      <p>
-        Outside the editor, I am usually exploring DIY builds, biotech, retro
-        computing, bonsai, or going deep on a new tool. I write occasionally
-        about systems, taste, and the craft of building useful software.
-      </p>
+      <div class="about__text">
+        <p>{{ site.user_description }}</p>
+        <p>
+          Outside the editor, I am usually exploring DIY builds, biotech, retro
+          computing, bonsai, or going deep on a new tool. I write occasionally
+          about systems, taste, and the craft of building useful software.
+        </p>
+      </div>
+      <figure class="polaroid taped">
+        <a class="polaroid__open" href="{{ "/assets/img/6502-1280.jpg" | prepend: site.baseurl }}" data-lightbox="sbc-lightbox">
+          <picture>
+            <source type="image/webp" srcset="{{ "/assets/img/6502-640.webp" | prepend: site.baseurl }} 640w, {{ "/assets/img/6502-1280.webp" | prepend: site.baseurl }} 1280w" sizes="(max-width: 760px) calc(100vw - 48px), 320px">
+            <img src="{{ "/assets/img/6502-640.jpg" | prepend: site.baseurl }}" srcset="{{ "/assets/img/6502-640.jpg" | prepend: site.baseurl }} 640w, {{ "/assets/img/6502-1280.jpg" | prepend: site.baseurl }} 1280w" sizes="(max-width: 760px) calc(100vw - 48px), 320px" width="640" height="419" alt="A 6502 computer built on two breadboards: a W65C02 CPU, EEPROM and RAM chips wired with blue and yellow jumpers, and a green LCD reading 6502 SBC www.rahulkar.com" loading="lazy" decoding="async">
+          </picture>
+          <span class="sr-only">(open a larger view)</span>
+        </a>
+        <figcaption class="polaroid__caption">the 6502 breadboard build &middot; it even knows the address</figcaption>
+      </figure>
     </div>
+
+    <dialog class="lightbox" id="sbc-lightbox" aria-label="The 6502 breadboard computer, larger view">
+      <button class="lightbox__close" type="button" aria-label="Close">
+        <svg class="doodle" aria-hidden="true" focusable="false"><use href="#d-x"></use></svg>
+      </button>
+      <picture>
+        <source type="image/webp" srcset="{{ "/assets/img/6502-1280.webp" | prepend: site.baseurl }}">
+        <img src="{{ "/assets/img/6502-1280.jpg" | prepend: site.baseurl }}" width="1280" height="838" alt="A 6502 computer built on two breadboards: a W65C02 CPU, EEPROM and RAM chips wired with blue and yellow jumpers, and a green LCD reading 6502 SBC www.rahulkar.com" loading="lazy" decoding="async">
+      </picture>
+      <p class="lightbox__caption">W65C02 CPU, EEPROM, RAM, a 74HC00, a crystal and a 1602 LCD &mdash; all on breadboards.</p>
+    </dialog>
 
     <div class="board reveal reveal--d2">
       <aside class="note note--when board__when" aria-label="Where and when">

@@ -137,7 +137,9 @@
 .card,
 .sticker__visual,
 .key,
-.skip-link {
+.skip-link,
+.polaroid,
+.lightbox {
   --ink: #2A2622;
   --ink-2: #4F4A44;
   --ink-3: #6B655D;
@@ -1195,17 +1197,116 @@ section {
 .about__body {
   position: relative;
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 32px;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 32px 48px;
+  align-items: start;
   margin-top: 34px;
   color: var(--ink-2);
   font-size: 17px;
   line-height: 1.7;
 }
 
+.about__text {
+  display: grid;
+  gap: 20px;
+}
+
 .about__body p {
   margin: 0;
   max-width: 60ch;
+}
+
+/* A real photo taped into the notebook. */
+.polaroid {
+  position: relative;
+  width: 100%;
+  max-width: 320px;
+  margin: 8px 0 0;
+  justify-self: end;
+  padding: 10px 10px 12px;
+  background: var(--sticker);
+  box-shadow: 3px 4px 0 var(--shadow);
+  rotate: 2deg;
+  transition: rotate var(--med), box-shadow var(--med);
+}
+
+.polaroid__open {
+  display: block;
+  cursor: zoom-in;
+}
+
+.polaroid img {
+  display: block;
+  width: 100%;
+  height: auto;
+  background: var(--paper-2);
+}
+
+.polaroid__caption {
+  margin: 10px 2px 0;
+  font-family: var(--hand);
+  font-size: 17px;
+  line-height: 1.2;
+  color: var(--ink-3);
+}
+
+.lightbox {
+  position: fixed;
+  inset: 0;
+  margin: auto;
+  width: min(92vw, 1100px);
+  max-height: 92vh;
+  padding: 12px 12px 14px;
+  border: 0;
+  background: var(--sticker);
+  color: #2A2622;
+  box-shadow: 4px 6px 0 var(--shadow);
+  overflow: visible;
+}
+
+.lightbox::backdrop {
+  background: rgba(28, 37, 34, 0.72);
+}
+
+.lightbox img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: calc(92vh - 80px);
+  object-fit: contain;
+}
+
+.lightbox__caption {
+  margin: 10px 2px 0;
+  font-family: var(--hand);
+  font-size: 18px;
+  line-height: 1.25;
+  color: #6B655D;
+}
+
+.lightbox__close {
+  position: absolute;
+  top: -18px;
+  right: -18px;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--sticky);
+  color: #2A2622;
+  box-shadow: 2px 3px 0 var(--shadow);
+  cursor: pointer;
+}
+
+.lightbox__close .doodle {
+  width: 18px;
+  height: 18px;
+  stroke-width: 2.4;
+  opacity: 1;
+  animation: none;
 }
 
 /* Pinboard under the paragraphs: a where/when note and the hobby shelf. */
@@ -1935,6 +2036,11 @@ section {
     box-shadow: 3px 5px 0 var(--shadow);
   }
 
+  .polaroid:hover {
+    rotate: 0deg;
+    box-shadow: 4px 6px 0 var(--shadow);
+  }
+
   .sticker:hover .sticker__visual {
     animation: wobble 320ms ease-out;
     box-shadow: 0 0 0 2.5px #fff, 0 3px 0 2.5px var(--shadow);
@@ -2036,6 +2142,12 @@ section {
 
   .board {
     align-items: start;
+  }
+
+  .polaroid {
+    justify-self: start;
+    max-width: 360px;
+    margin-top: 16px;
   }
 
   .loop {
@@ -2176,7 +2288,9 @@ section {
 
   .note__visual,
   .sticker__visual,
-  .card {
+  .card,
+  .polaroid,
+  .lightbox {
     border: 1px solid CanvasText;
   }
 
@@ -2202,7 +2316,8 @@ section {
   .stamp,
   .contact__email,
   .skip-link,
-  .shelf__label {
+  .shelf__label,
+  .polaroid {
     rotate: 0deg;
   }
 

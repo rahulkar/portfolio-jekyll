@@ -235,6 +235,22 @@ document.addEventListener("DOMContentLoaded", function () {
     reflectTheme();
   }
 
+  // Polaroid lightbox: the link opens the full-size file without JS; with JS
+  // it opens a <dialog> (Escape closes, focus returns to the link).
+  document.querySelectorAll("[data-lightbox]").forEach(function (opener) {
+    var box = document.getElementById(opener.getAttribute("data-lightbox"));
+    if (!box || typeof box.showModal !== "function") return;
+    opener.addEventListener("click", function (event) {
+      event.preventDefault();
+      box.showModal();
+    });
+    var closeBtn = box.querySelector(".lightbox__close");
+    if (closeBtn) closeBtn.addEventListener("click", function () { box.close(); });
+    box.addEventListener("click", function (event) {
+      if (event.target === box) box.close();
+    });
+  });
+
   var year = document.getElementById("year");
   if (year) year.textContent = new Date().getFullYear();
 

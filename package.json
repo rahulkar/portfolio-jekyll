@@ -23,9 +23,11 @@
     "@resvg/resvg-js": "^2.6.2",
     "concurrently": "^9.1.2",
     "esbuild": "^0.25.0",
+    "heic-convert": "^2.1.0",
     "png-to-ico": "^3.0.2",
     "roughjs": "^4.6.6",
     "sass": "^1.83.4",
+    "sharp": "^0.34.4",
     "subset-font": "^2.9.0"
   }
 }
