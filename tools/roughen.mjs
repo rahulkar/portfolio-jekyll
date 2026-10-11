@@ -46,6 +46,72 @@ const doodles = {
     },
   },
   "d-moon": { vb: "0 0 40 40", draw: () => [gen.path("M25 5 a15 15 0 1 0 10 27 a11.5 11.5 0 0 1 -10 -27 Z", S(161, { roughness: 1 }))] },
+  // Desk scene (hero) and hobby shelf (about).
+  "d-desk": {
+    vb: "0 0 520 130",
+    dp: 0,
+    draw: () => [
+      gen.rectangle(12, 8, 496, 9, M(301, { roughness: 1.1 })),
+      gen.line(44, 18, 44, 122, M(302, { roughness: 1.1 })),
+      gen.line(476, 18, 476, 122, M(303, { roughness: 1.1 })),
+      gen.line(44, 60, 476, 60, M(304, { roughness: 1.1 })),
+    ],
+  },
+  "d-monitor": {
+    vb: "0 0 170 130",
+    draw: () => [
+      gen.rectangle(10, 8, 150, 98, M(311, { roughness: 1.1 })),
+      gen.line(85, 108, 85, 120, M(312)),
+      gen.line(52, 122, 118, 122, M(313)),
+      gen.path("M28 30 H92 M28 48 H124 M40 66 H104 M28 84 H72", M(314, { roughness: 1 })),
+    ],
+  },
+  "d-mug": {
+    vb: "0 0 54 50",
+    draw: () => [
+      gen.rectangle(8, 18, 30, 26, S(321, { roughness: 1 })),
+      gen.path("M38 24 a8 8 0 0 1 0 16", S(322, { roughness: 1 })),
+      gen.curve([[16, 14], [13, 9], [17, 4]], S(323, { roughness: 1 })),
+      gen.curve([[26, 14], [23, 9], [27, 4]], S(324, { roughness: 1 })),
+    ],
+  },
+  "d-chip": {
+    vb: "0 0 60 42",
+    draw: () => [
+      gen.rectangle(10, 9, 40, 24, S(331, { roughness: 1 })),
+      gen.path("M10 17 a4 4 0 0 0 0 8", S(332, { roughness: 1 })),
+      gen.path("M16 9 V3 M23 9 V3 M30 9 V3 M37 9 V3 M44 9 V3 M16 33 V39 M23 33 V39 M30 33 V39 M37 33 V39 M44 33 V39", M(333, { roughness: 0.9 })),
+    ],
+  },
+  "d-tools": {
+    vb: "0 0 120 120",
+    draw: () => [
+      gen.line(24, 96, 80, 40, M(341, { roughness: 1.2, strokeWidth: 2 })),
+      gen.circle(90, 30, 24, S(342, { roughness: 1.2 })),
+      gen.path("M80 20 L96 36", M(343)),
+      gen.line(96, 96, 42, 42, M(344, { roughness: 1.2 })),
+      gen.polygon([[22, 34], [36, 20], [52, 36], [38, 50]], S(345, { roughness: 1.1 })),
+    ],
+  },
+  "d-petri": {
+    vb: "0 0 120 120",
+    draw: () => [
+      gen.ellipse(60, 64, 98, 66, S(351, { roughness: 1.2 })),
+      gen.ellipse(60, 56, 98, 66, S(352, { roughness: 1.2 })),
+      gen.circle(44, 58, 18, S(353, { roughness: 1.4 })),
+      gen.circle(72, 50, 14, S(354, { roughness: 1.4 })),
+      gen.circle(68, 70, 10, S(355, { roughness: 1.4 })),
+    ],
+  },
+  "d-pen": {
+    vb: "0 0 120 120",
+    draw: () => [
+      gen.polygon([[30, 98], [22, 90], [80, 32], [88, 40]], S(361, { roughness: 1 })),
+      gen.polygon([[80, 32], [88, 40], [102, 18]], S(362, { roughness: 1 })),
+      gen.line(88, 32, 96, 24, M(363)),
+      gen.curve([[14, 110], [40, 104], [62, 112], [90, 106]], S(364, { roughness: 1.4 })),
+    ],
+  },
   "d-rule": { vb: "0 0 600 16", draw: () => [gen.curve([[4, 8], [120, 6], [240, 10], [360, 6], [480, 10], [596, 8]], S(131, { roughness: 1.6, bowing: 1, disableMultiStroke: true }))] },
   "d-bonsai": {
     vb: "0 0 180 120",

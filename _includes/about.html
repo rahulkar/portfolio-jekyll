@@ -7,15 +7,6 @@
       <span class="sec-head__count" data-sketch="circle" data-seed="page-1">p.1/3</span>
     </div>
 
-    <div class="kv reveal">
-      <div class="kv__cell note"><div class="note__visual"><span class="kv__k">role</span><span class="kv__v">{{ site.user_title }}</span></div></div>
-      <div class="kv__cell note"><div class="note__visual"><span class="kv__k">years</span><span class="kv__v"><span class="hl--static">11+</span> in IT delivery</span></div></div>
-      <div class="kv__cell note"><div class="note__visual"><span class="kv__k">focus</span><span class="kv__v">Architecture, tooling, agentic AI</span></div></div>
-      <div class="kv__cell note"><div class="note__visual"><span class="kv__k">time</span><span class="kv__v" id="local-time">--:-- IST</span></div></div>
-      <div class="kv__cell note"><div class="note__visual"><span class="kv__k">platforms</span><span class="kv__v">Web / API / Mobile</span></div></div>
-      <div class="kv__cell note"><div class="note__visual"><span class="kv__k">delivery</span><span class="kv__v">PoCs, platforms, cloud, DevOps</span></div></div>
-    </div>
-
     <div class="about__body reveal reveal--d1">
       <p>{{ site.user_description }}</p>
       <p>
@@ -23,8 +14,29 @@
         computing, bonsai, or going deep on a new tool. I write occasionally
         about systems, taste, and the craft of building useful software.
       </p>
-      <div class="about__coffee" aria-hidden="true">
-        <svg class="doodle" viewBox="0 0 220 220" focusable="false"><use href="#d-coffee"></use></svg>
+    </div>
+
+    <div class="board reveal reveal--d2">
+      <aside class="note note--when board__when" aria-label="Where and when">
+        <div class="note__visual">
+          <svg class="doodle when__sun" aria-hidden="true" focusable="false"><use href="#d-sun"></use></svg>
+          <svg class="doodle when__moon" aria-hidden="true" focusable="false"><use href="#d-moon"></use></svg>
+          <span class="when__place">based in Bengaluru, India</span>
+          <span class="when__time">it's <time id="local-time">--:--</time> here</span>
+          <span class="when__state" id="local-state">probably at the desk</span>
+        </div>
+      </aside>
+
+      <div class="shelf board__shelf">
+        <span class="anno shelf__label" aria-hidden="true">outside the editor</span>
+        <ul class="shelf__items">
+          <li class="shelf__item"><svg class="doodle" viewBox="0 0 180 120" aria-hidden="true" focusable="false"><use href="#d-bonsai"></use></svg><span class="shelf__caption">bonsai</span></li>
+          <li class="shelf__item"><svg class="doodle" viewBox="0 0 60 42" aria-hidden="true" focusable="false"><use href="#d-chip"></use></svg><span class="shelf__caption">retro computing</span></li>
+          <li class="shelf__item"><svg class="doodle" viewBox="0 0 120 120" aria-hidden="true" focusable="false"><use href="#d-tools"></use></svg><span class="shelf__caption">DIY builds</span></li>
+          <li class="shelf__item"><svg class="doodle" viewBox="0 0 120 120" aria-hidden="true" focusable="false"><use href="#d-petri"></use></svg><span class="shelf__caption">biotech</span></li>
+          <li class="shelf__item"><svg class="doodle" viewBox="0 0 120 120" aria-hidden="true" focusable="false"><use href="#d-pen"></use></svg><span class="shelf__caption">writing</span></li>
+        </ul>
+        <svg class="doodle shelf__plank" viewBox="0 0 600 16" preserveAspectRatio="none" aria-hidden="true" focusable="false"><use href="#d-rule"></use></svg>
       </div>
     </div>
 

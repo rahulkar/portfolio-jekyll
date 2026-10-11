@@ -79,18 +79,34 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  // Clocks show real India time, whatever the visitor's zone.
+  // Where/when note: real India time plus a playful guess at what is going on.
   var clock = document.getElementById("local-time");
-  var barClock = document.getElementById("bar-time");
+  var stateLabel = document.getElementById("local-state");
+  var whenNote = document.querySelector(".note--when");
   var fmt = null;
+  var hourFmt = null;
   try {
-    fmt = new Intl.DateTimeFormat("en-GB", { timeZone: "Asia/Kolkata", hour: "2-digit", minute: "2-digit", hour12: false });
-  } catch (e) { fmt = null; }
+    fmt = new Intl.DateTimeFormat("en-GB", { timeZone: "Asia/Kolkata", hour: "2-digit", minute: "2-digit", hourCycle: "h23" });
+    hourFmt = new Intl.DateTimeFormat("en-GB", { timeZone: "Asia/Kolkata", hour: "numeric", hourCycle: "h23" });
+  } catch (e) { fmt = null; hourFmt = null; }
+  var STATES = {
+    asleep: "probably asleep",
+    coffee: "probably on coffee",
+    desk: "probably at the desk",
+    tinkering: "probably tinkering"
+  };
   var tick = function () {
     var d = new Date();
     var text = fmt ? fmt.format(d) : String(d.getHours()).padStart(2, "0") + ":" + String(d.getMinutes()).padStart(2, "0");
-    if (clock) clock.textContent = text + " IST";
-    if (barClock) barClock.textContent = text + " IST";
+    var hour = hourFmt ? parseInt(hourFmt.format(d), 10) : d.getHours();
+    if (isNaN(hour)) hour = d.getHours();
+    var key = hour < 6 ? "asleep" : hour < 9 ? "coffee" : hour < 19 ? "desk" : "tinkering";
+    if (clock) {
+      clock.textContent = text;
+      clock.setAttribute("datetime", text);
+    }
+    if (stateLabel) stateLabel.textContent = STATES[key];
+    if (whenNote) whenNote.setAttribute("data-state", key);
   };
   tick();
   window.setInterval(tick, 30000);
