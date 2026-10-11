@@ -7,6 +7,7 @@
   <span class="bar__nav">
     <a href="{{ "/" | prepend: site.baseurl }}#about" data-seed="nav-about">about</a>
     <a href="{{ "/" | prepend: site.baseurl }}#stack" data-seed="nav-stack">stack</a>
+    <a href="{{ "/how-i-work/" | prepend: site.baseurl }}" data-seed="nav-play"{% if page.url == "/how-i-work/" %} aria-current="page"{% endif %}>how I work</a>
     <a href="{{ "/" | prepend: site.baseurl }}#connect" data-seed="nav-connect">connect</a>
   </span>
   <button class="bar__theme bar__calm" id="calm-btn" type="button" aria-pressed="false" aria-label="Calm mode: less motion">
@@ -25,10 +26,11 @@
   </span>
 </nav>
 
-<div class="sheet" id="menu-sheet" aria-hidden="true">
+<div class="sheet" id="menu-sheet" inert>
   <div class="sheet__inner">
     <a href="{{ "/" | prepend: site.baseurl }}#about">about</a>
     <a href="{{ "/" | prepend: site.baseurl }}#stack">stack</a>
+    <a href="{{ "/how-i-work/" | prepend: site.baseurl }}">how I work</a>
     <a href="{{ "/" | prepend: site.baseurl }}#connect">connect</a>
     <a href="{{ "/scribbles/" | prepend: site.baseurl }}">scribbles</a>
   </div>

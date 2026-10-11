@@ -112,6 +112,15 @@ const doodles = {
       gen.curve([[14, 110], [40, 104], [62, 112], [90, 106]], S(364, { roughness: 1.4 })),
     ],
   },
+  "d-lamp": {
+    vb: "0 0 80 120",
+    draw: () => [
+      gen.ellipse(40, 112, 48, 12, M(371, { roughness: 1 })),
+      gen.line(40, 106, 40, 70, M(372, { roughness: 0.9 })),
+      gen.line(40, 70, 18, 30, M(373, { roughness: 0.9 })),
+      gen.polygon([[2, 30], [26, 12], [42, 34], [18, 52]], S(374, { roughness: 1 })),
+    ],
+  },
   // Bar and connect extras.
   "d-calm": {
     vb: "0 0 40 40",

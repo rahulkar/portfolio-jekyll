@@ -1,9 +1,9 @@
 name: Verify site
 
 # Two guards: (1) the committed CSS/JS bundles match src/ and the markup is
-# CSP-clean; (2) the built site passes Playwright + axe checks at phone and
-# desktop widths and Lighthouse CI thresholds. Screenshots and reports are
-# kept as artifacts for a human look.
+# CSP-clean; (2) the built site validates, has no broken links, and passes
+# Playwright + axe checks at phone and desktop widths plus Lighthouse CI
+# thresholds. Screenshots and reports are kept as artifacts for a human look.
 on:
   push:
     branches: [master]
@@ -40,7 +40,7 @@ jobs:
           echo "Built assets are in sync with source."
 
   site:
-    name: Playwright, axe and Lighthouse on the built site
+    name: Validate, links, Playwright, axe and Lighthouse
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -61,6 +61,15 @@ jobs:
         run: bundle exec jekyll build
         env:
           JEKYLL_ENV: production
+
+      - name: Validate HTML
+        run: npm run validate:html
+
+      - name: Check links
+        uses: lycheeverse/lychee-action@v2
+        with:
+          args: --no-progress --exclude-mail --exclude 'linkedin\.com' --root-dir "${{ github.workspace }}/_site" './_site/**/*.html'
+          fail: true
 
       - run: npx playwright install --with-deps chromium
 

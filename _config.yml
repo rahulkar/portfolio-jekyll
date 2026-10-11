@@ -23,6 +23,19 @@ linkedin_handle: "in/karrahul"
 credly_url: "https://www.credly.com/users/rahul-kar"
 credly_handle: "rahul-kar"
 
+# Scribbles: short pieces, one markdown file each under _scribbles/.
+collections:
+  scribbles:
+    output: true
+    permalink: /scribbles/:name/
+
+# The main feed is the scribbles feed; the (empty) posts feed moves aside.
+feed:
+  path: /feed/posts.xml
+  collections:
+    scribbles:
+      path: /feed.xml
+
 plugins:
   - jekyll-seo-tag
   - jekyll-sitemap
@@ -30,6 +43,11 @@ plugins:
 
 # Default OG/Twitter share image for every page (consumed by jekyll-seo-tag)
 defaults:
+  - scope:
+      path: ""
+      type: scribbles
+    values:
+      layout: scribble
   - scope:
       path: ""
     values:

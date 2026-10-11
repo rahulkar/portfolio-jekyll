@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Scribbles
-description: Small stories from the margins of Rahul Kar's notebook - a 6502 on breadboards, a bonsai, and how this site is drawn.
+description: Short pieces from the margins of Rahul Kar's notebook - a 6502 on breadboards, a bonsai, and how this site is drawn.
 permalink: /scribbles/
 ---
 <section class="page-section scribbles" id="scribbles">
@@ -12,24 +12,20 @@ permalink: /scribbles/
       </h1>
       <span class="sec-head__count" data-sketch="circle" data-seed="page-4">p.4/3</span>
     </div>
-    <p class="scribbles__intro reveal">The extra page: small things from the margins that did not fit anywhere else.</p>
+    <p class="scribbles__intro reveal">The extra page: short pieces from the margins that did not fit anywhere else. There is an <a href="{{ "/feed.xml" | prepend: site.baseurl }}">RSS feed</a> if you want the next one delivered.</p>
 
-    <article class="card taped scribble reveal reveal--d1" data-sketch="rect" data-seed="scribble-6502">
-      <h2 class="scribble__title">the 6502 on two breadboards</h2>
-      {% include polaroid-6502.html id="scribble-lightbox" class="scribble__photo" caption="boots up, says hello" %}
-      <p>A W65C02 running at a crystal's pace, an EEPROM holding the program, 32K of RAM, one 74HC00 doing the glue logic, and a 16&times;2 LCD that boots up and says hello. Everything is point-to-point jumper wire, which is exactly the point: nothing sits between you and the bus.</p>
-      <p>It is the best teacher I know for the things cloud consoles hide: address decoding, timing, what a byte actually costs. The "it just works" in my day job started out as a wire like one of these.</p>
-    </article>
-
-    <article class="card taped scribble reveal reveal--d2" data-sketch="rect" data-seed="scribble-bonsai">
-      <h2 class="scribble__title">the bonsai</h2>
-      <p>The bonsai on the desk is the slowest feedback loop I own. A cut made today shows up as a branch in two years, and there is no rolling back. It is a good antidote to sprint thinking, and a reminder that the systems worth building are the ones you are still tending long after the launch.</p>
-    </article>
-
-    <article class="card taped scribble reveal reveal--d3" data-sketch="rect" data-seed="scribble-site">
-      <h2 class="scribble__title">how this notebook is drawn</h2>
-      <p>The page is plain HTML and CSS with a small amount of JavaScript that draws the wobbly frames at runtime using Rough.js. The doodles are drawn once at build time and shipped as static paths. Nothing loads from a CDN, and a strict Content-Security-Policy keeps it that way. The handwriting is Excalifont, the body text is Nunito, and it all builds with Jekyll on GitHub Pages.</p>
-      <p>The moon turns it into a chalkboard. If the drawing-in gets in the way, the wave button turns the motion down.</p>
-    </article>
+    {% assign items = site.scribbles | sort: "date" | reverse %}
+    <ul class="scribbles__list">
+      {% for item in items %}
+      <li class="scribbles__item reveal{% cycle ' reveal--d1', ' reveal--d2', ' reveal--d3' %}">
+        <article class="card taped scribble scribble--summary" data-sketch="rect" data-seed="list-{{ item.slug | default: item.title }}">
+          <h2 class="scribble__title"><a href="{{ item.url | prepend: site.baseurl }}">{{ item.title }}</a></h2>
+          <p class="scribble__meta"><time class="stamp" datetime="{{ item.date | date: '%Y-%m-%d' }}">{{ item.date | date: "%-d %b %Y" }}</time></p>
+          <p>{{ item.summary }}</p>
+          <p class="scribble__more"><a href="{{ item.url | prepend: site.baseurl }}">read it <svg class="doodle" aria-hidden="true" focusable="false"><use href="#d-arrow"></use></svg></a></p>
+        </article>
+      </li>
+      {% endfor %}
+    </ul>
   </div>
 </section>
