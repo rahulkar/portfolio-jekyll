@@ -71,3 +71,12 @@ favicon and share image, hence the `-v2` names).
   stay off; the CSP would block them.
 - GitHub Pages publishes root `.md` files as pages, which is why
   `LOCAL_SETUP.md` and `LICENSE.txt` are excluded in `_config.yml`.
+
+## Colour schemes
+
+The page follows `prefers-color-scheme` (cream paper, or chalk on slate). The
+moon/sun button in the bar stores an override in `localStorage`, which the tiny
+synchronous `assets/js/theme.js` applies before first paint (same-origin, so the
+CSP allows it). Dark tokens live in the `:root[data-theme="dark"]` block and
+the matching media-query block in `src/styles/main.scss`; paper objects (notes,
+cards, stickers, tape labels) keep their light inks in both schemes.

@@ -69,6 +69,85 @@
   --rad-a: 255px 15px 225px 15px / 15px 225px 15px 255px;
   --rad-b: 15px 225px 15px 255px / 255px 15px 225px 15px;
   --rad-c: 225px 25px 245px 15px / 25px 235px 15px 245px;
+  /* Scheme-dependent extras (the dark block below flips them). */
+  --bar-bg: rgba(248, 243, 231, 0.96);
+  --grain: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/><feColorMatrix values='0 0 0 0 0.25 0 0 0 0 0.2 0 0 0 0 0.12 0 0 0 0.08 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  --blend: multiply;
+  --hl-fill: var(--hl);
+  --hl-pink-fill: var(--hl-pink);
+  --coffee-display: block;
+  --sun-display: none;
+  --moon-display: block;
+}
+
+/* Dark: chalk on a slate board. Paper objects (notes, cards, stickers, tape
+   labels) stay light because they are things pinned on the board. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #1C2522;
+    --paper-2: #232E2A;
+    --ink: #F1EDE4;
+    --ink-2: #CFC9BD;
+    --ink-3: #B9B3A7;
+    --pencil: #5F6A64;
+    --line: rgba(241, 237, 228, 0.14);
+    --ballpoint: #8FC7FF;
+    --redpen: #F5A3C7;
+    --marker-green: #8FE3B4;
+    --hl: #F6D86B;
+    --hl-fill: rgba(246, 216, 107, 0.45);
+    --hl-pink-fill: rgba(245, 163, 199, 0.45);
+    --shadow: rgba(0, 0, 0, 0.35);
+    --ring: 0 0 0 2px var(--paper), 0 0 0 4px var(--hl);
+    --bar-bg: rgba(28, 37, 34, 0.96);
+    --grain: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/><feColorMatrix values='0 0 0 0 0.95 0 0 0 0 0.93 0 0 0 0 0.88 0 0 0 0.05 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+    --blend: normal;
+    --coffee-display: none;
+    --sun-display: block;
+    --moon-display: none;
+  }
+}
+
+:root[data-theme="dark"] {
+  --paper: #1C2522;
+  --paper-2: #232E2A;
+  --ink: #F1EDE4;
+  --ink-2: #CFC9BD;
+  --ink-3: #B9B3A7;
+  --pencil: #5F6A64;
+  --line: rgba(241, 237, 228, 0.14);
+  --ballpoint: #8FC7FF;
+  --redpen: #F5A3C7;
+  --marker-green: #8FE3B4;
+  --hl: #F6D86B;
+  --hl-fill: rgba(246, 216, 107, 0.45);
+  --hl-pink-fill: rgba(245, 163, 199, 0.45);
+  --shadow: rgba(0, 0, 0, 0.35);
+  --ring: 0 0 0 2px var(--paper), 0 0 0 4px var(--hl);
+  --bar-bg: rgba(28, 37, 34, 0.96);
+  --grain: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/><feColorMatrix values='0 0 0 0 0.95 0 0 0 0 0.93 0 0 0 0 0.88 0 0 0 0.05 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  --blend: normal;
+  --coffee-display: none;
+  --sun-display: block;
+  --moon-display: none;
+}
+
+/* Physical paper objects keep their light inks in both schemes. */
+.note__visual,
+.card,
+.sticker__visual,
+.tag,
+.key,
+.skip-link {
+  --ink: #2A2622;
+  --ink-2: #4F4A44;
+  --ink-3: #6B655D;
+  --line: rgba(42, 38, 34, 0.14);
+  --ballpoint: #1F4E9C;
+  --redpen: #B03A2E;
+  --marker-green: #1F6F48;
+  --hl: #FFE766;
+  --hl-fill: #FFE766;
 }
 
 * {
@@ -76,7 +155,7 @@
 }
 
 html {
-  color-scheme: only light;
+  color-scheme: light dark;
   scroll-behavior: smooth;
   scrollbar-color: var(--pencil) var(--paper);
   scrollbar-width: thin;
@@ -90,8 +169,8 @@ body {
 
 body {
   background-color: var(--paper);
-  /* Paper grain: a static noise tile, rasterised once by the browser. */
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/><feColorMatrix values='0 0 0 0 0.25 0 0 0 0 0.2 0 0 0 0 0.12 0 0 0 0.08 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  /* Paper grain (or chalk dust): a static noise tile, rasterised once. */
+  background-image: var(--grain);
   color: var(--ink);
   font-family: var(--sans);
   font-size: 16px;
@@ -108,7 +187,7 @@ a {
 
 ::selection {
   background: var(--hl);
-  color: var(--ink);
+  color: #2A2622;
 }
 
 /* Transparent outline: invisible normally, force-coloured (and so visible)
@@ -258,11 +337,11 @@ a {
 [data-sketch="highlight"] {
   border: 0;
   border-radius: 0;
-  background-image: linear-gradient(104deg, transparent 1%, var(--hl) 3%, var(--hl) 95%, transparent 97%);
+  background-image: linear-gradient(104deg, transparent 1%, var(--hl-fill) 3%, var(--hl-fill) 95%, transparent 97%);
 }
 
 [data-sketch="rect-fill"] {
-  background-image: linear-gradient(var(--hl), var(--hl));
+  background-image: linear-gradient(var(--hl-fill), var(--hl-fill));
 }
 
 [data-sketch].is-sketched {
@@ -291,12 +370,12 @@ a {
 
 .sk__fill {
   fill: none;
-  stroke: var(--hl);
+  stroke: var(--hl-fill);
   stroke-linecap: round;
 }
 
 .hl--pink .sk__fill {
-  stroke: var(--hl-pink);
+  stroke: var(--hl-pink-fill);
 }
 
 .sk path {
@@ -328,7 +407,8 @@ a {
 
 /* Static highlighter for words that do not get a runtime scribble. */
 .hl--static {
-  background-image: linear-gradient(104deg, transparent 1%, var(--hl) 3%, var(--hl) 95%, transparent 97%);
+  background-image: linear-gradient(104deg, transparent 1%, #FFE766 3%, #FFE766 95%, transparent 97%);
+  color: #2A2622;
   padding: 0.02em 0.3em;
   margin: 0 -0.1em;
   border-radius: 0.6em 0.3em;
@@ -379,7 +459,7 @@ a {
   rotate: -3deg;
   background: repeating-linear-gradient(45deg, var(--tape) 0 6px, var(--tape-2) 6px 12px);
   clip-path: polygon(1% 0, 99% 5%, 100% 100%, 0 94%);
-  mix-blend-mode: multiply;
+  mix-blend-mode: var(--blend);
   pointer-events: none;
   z-index: 2;
 }
@@ -476,7 +556,7 @@ a {
   border: 2.5px double currentColor;
   border-radius: 6px;
   rotate: -6deg;
-  mix-blend-mode: multiply;
+  mix-blend-mode: var(--blend);
 }
 
 .stamp--red {
@@ -662,7 +742,7 @@ a {
   align-items: center;
   gap: 18px;
   padding: 0 20px;
-  background: rgba(248, 243, 231, 0.96);
+  background: var(--bar-bg);
   font-size: 15px;
 }
 
@@ -762,6 +842,37 @@ a {
   color: var(--ink-3);
   font-size: 13px;
   font-weight: 700;
+}
+
+.bar__theme {
+  display: inline-grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--ink-2);
+  cursor: pointer;
+  transition: color var(--fast);
+}
+
+.bar__theme .doodle {
+  width: 22px;
+  height: 22px;
+  stroke-width: 2.2;
+}
+
+.bar__theme-sun {
+  display: var(--sun-display);
+}
+
+.bar__theme-moon {
+  display: var(--moon-display);
+}
+
+.bar__theme:focus-visible {
+  color: var(--ink);
 }
 
 .bar__menu {
@@ -882,7 +993,7 @@ a {
   right: 0;
   bottom: 0;
   height: 140px;
-  background: linear-gradient(to bottom, rgba(248, 243, 231, 0), var(--paper));
+  background: linear-gradient(to bottom, transparent, var(--paper));
   z-index: 1;
   pointer-events: none;
 }
@@ -1152,7 +1263,8 @@ section {
   bottom: -120px;
   width: 200px;
   color: var(--coffee);
-  mix-blend-mode: multiply;
+  display: var(--coffee-display);
+  mix-blend-mode: var(--blend);
   opacity: 0.16;
   pointer-events: none;
   z-index: 0;
@@ -1297,7 +1409,7 @@ section {
   flex: 0 0 18px;
   display: inline-block;
   object-fit: contain;
-  mix-blend-mode: multiply;
+  mix-blend-mode: multiply; /* always on a white sticker */
 }
 
 /* ---------------------------------------------------------------------------
@@ -1725,7 +1837,8 @@ section {
   top: 90px;
   width: 180px;
   color: var(--coffee);
-  mix-blend-mode: multiply;
+  display: var(--coffee-display);
+  mix-blend-mode: var(--blend);
   opacity: 0.14;
   z-index: 1;
   pointer-events: none;
@@ -1768,7 +1881,8 @@ section {
     box-shadow: 0 0 0 2.5px #fff, 0 3px 0 2.5px var(--shadow);
   }
 
-  .bar__nav a:hover {
+  .bar__nav a:hover,
+  .bar__theme:hover {
     color: var(--ink);
   }
 
@@ -2040,8 +2154,23 @@ section {
 }
 
 @media print {
-  :root {
+  :root,
+  :root[data-theme="dark"] {
     --paper: #fff;
+    --paper-2: #f3f3f3;
+    --ink: #2A2622;
+    --ink-2: #4F4A44;
+    --ink-3: #6B655D;
+    --pencil: #A39C91;
+    --line: rgba(42, 38, 34, 0.14);
+    --ballpoint: #1F4E9C;
+    --redpen: #B03A2E;
+    --marker-green: #1F6F48;
+    --hl: #FFE766;
+    --hl-fill: #FFE766;
+    --hl-pink-fill: #FFB3D1;
+    --shadow: rgba(42, 38, 34, 0.18);
+    --blend: multiply;
   }
 
   body {
