@@ -12,6 +12,10 @@ var reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
 var hoverable = window.matchMedia("(hover: hover)");
 var narrow = window.matchMedia("(max-width: 760px)");
 
+function calm() {
+  return reduced.matches || document.documentElement.classList.contains("is-calm");
+}
+
 function fnv1a(str) {
   var h = 0x811c9dc5;
   for (var i = 0; i < str.length; i++) {
@@ -135,7 +139,7 @@ function paint(m) {
     window.requestAnimationFrame(function () {
       host.classList.add("is-drawn");
     });
-    if (reduced.matches) host.classList.add("is-settled");
+    if (calm()) host.classList.add("is-settled");
     else window.setTimeout(function () { host.classList.add("is-settled"); }, 1100);
   }
 }
@@ -247,7 +251,7 @@ export function initSketch() {
     document.querySelectorAll(".btn[data-sketch], .contact__copy[data-sketch]").forEach(function (el) {
       var last = 0;
       el.addEventListener("mouseenter", function () {
-        if (reduced.matches) return;
+        if (calm()) return;
         var now = Date.now();
         if (now - last < 400) return;
         last = now;

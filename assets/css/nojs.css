@@ -25,3 +25,7 @@
 .when__state {
   display: none;
 }
+
+.name__glyph {
+  fill-opacity: 1;
+}

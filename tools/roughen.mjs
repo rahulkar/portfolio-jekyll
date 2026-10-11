@@ -3,7 +3,7 @@
 //   node tools/roughen.mjs          -> writes _includes/sketch-defs.html
 //   node tools/roughen.mjs icons    -> rewrites the 6 generic stack icons in place
 // Not part of `npm run build`; outputs are committed.
-import { readFileSync, writeFileSync } from "node:fs";
+import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import rough from "roughjs/bundled/rough.esm.js";
 
 const gen = rough.generator();
@@ -112,6 +112,30 @@ const doodles = {
       gen.curve([[14, 110], [40, 104], [62, 112], [90, 106]], S(364, { roughness: 1.4 })),
     ],
   },
+  // Bar and connect extras.
+  "d-calm": {
+    vb: "0 0 40 40",
+    draw: () => [
+      gen.curve([[4, 16], [12, 10], [20, 16], [28, 10], [36, 16]], S(401, { roughness: 1 })),
+      gen.curve([[4, 27], [12, 21], [20, 27], [28, 21], [36, 27]], S(402, { roughness: 1 })),
+    ],
+  },
+  "d-calendar": {
+    vb: "0 0 24 24",
+    draw: () => [
+      gen.rectangle(3, 5, 18, 16, S(411, { roughness: 0.9 })),
+      gen.line(3, 10, 21, 10, S(412, { roughness: 0.9 })),
+      gen.path("M8 3 V7 M16 3 V7 M8 14 H10 M13 14 H15 M8 18 H10", M(413, { roughness: 0.8 })),
+    ],
+  },
+  "d-card": {
+    vb: "0 0 24 24",
+    draw: () => [
+      gen.rectangle(2, 5, 20, 14, S(421, { roughness: 0.9 })),
+      gen.circle(8, 12, 6, S(422, { roughness: 0.9 })),
+      gen.path("M13 10 H19 M13 14 H19", M(423, { roughness: 0.8 })),
+    ],
+  },
   "d-rule": { vb: "0 0 600 16", draw: () => [gen.curve([[4, 8], [120, 6], [240, 10], [360, 6], [480, 10], [596, 8]], S(131, { roughness: 1.6, bowing: 1, disableMultiStroke: true }))] },
   "d-bonsai": {
     vb: "0 0 180 120",
@@ -172,6 +196,20 @@ const doodles = {
 // toPaths() ignores fixedDecimalPlaceDigits and emits full doubles; round the
 // coordinates ourselves (1 dp for icons, 0 dp for the large margin doodles).
 const round = (d, dp) => d.replace(/-?\d+\.\d+/g, (m) => String(+(+m).toFixed(dp)));
+// Tally marks 1..5 (the fifth is the diagonal strike).
+for (let n = 1; n <= 5; n++) {
+  doodles[`d-tally-${n}`] = {
+    vb: "0 0 40 32",
+    draw: () => {
+      const strokes = [];
+      const bars = Math.min(n, 4);
+      for (let i = 0; i < bars; i++) strokes.push(gen.line(7 + i * 8, 4, 7 + i * 8, 28, M(430 + n * 10 + i, { roughness: 1.1 })));
+      if (n === 5) strokes.push(gen.line(2, 25, 36, 7, M(480, { roughness: 1.2 })));
+      return strokes;
+    },
+  };
+}
+
 const pathsOf = (drawables, dp = 1) =>
   drawables.flatMap((d) => gen.toPaths(d)).map((p) => `<path pathLength="1" d="${round(p.d, dp)}"/>`).join("");
 
@@ -191,6 +229,15 @@ function writeDefs() {
   ].join("\n");
   writeFileSync("_includes/sketch-defs.html", out);
   console.log(`sketch-defs.html: ${symbols.length} symbols, ${out.length} bytes`);
+
+  // Local-only preview sheet: every symbol on a grid (open the file directly).
+  const svgDefs = out.replace(/\{%[\s\S]*?%\}\n?/g, "");
+  const cells = Object.entries(doodles).map(([id, def]) =>
+    `<figure><svg viewBox="${def.vb}"><use href="#${id}"/></svg><figcaption>${id}</figcaption></figure>`).join("");
+  const preview = `<!doctype html><meta charset="utf-8"><title>doodle preview</title><style>body{margin:24px;font:14px system-ui;background:#F8F3E7;color:#2A2622}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:18px}figure{margin:0;text-align:center}svg{width:100%;height:96px;fill:none;stroke:#2A2622;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;overflow:visible}.sk-defs{position:absolute;width:0;height:0}</style>${svgDefs}<h1>doodle preview (${symbols.length})</h1><div class="grid">${cells}</div>`;
+  mkdirSync("node_modules/.cache/brand", { recursive: true });
+  writeFileSync("node_modules/.cache/brand/doodles-preview.html", preview);
+  console.log("preview -> node_modules/.cache/brand/doodles-preview.html");
 }
 
 // Generic Lucide-style icons: parse primitives, roughen, bake ink + one accent.

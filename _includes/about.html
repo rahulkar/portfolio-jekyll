@@ -16,28 +16,8 @@
           about systems, taste, and the craft of building useful software.
         </p>
       </div>
-      <figure class="polaroid taped">
-        <a class="polaroid__open" href="{{ "/assets/img/6502-1280.jpg" | prepend: site.baseurl }}" data-lightbox="sbc-lightbox">
-          <picture>
-            <source type="image/webp" srcset="{{ "/assets/img/6502-640.webp" | prepend: site.baseurl }} 640w, {{ "/assets/img/6502-1280.webp" | prepend: site.baseurl }} 1280w" sizes="(max-width: 760px) calc(100vw - 48px), 320px">
-            <img src="{{ "/assets/img/6502-640.jpg" | prepend: site.baseurl }}" srcset="{{ "/assets/img/6502-640.jpg" | prepend: site.baseurl }} 640w, {{ "/assets/img/6502-1280.jpg" | prepend: site.baseurl }} 1280w" sizes="(max-width: 760px) calc(100vw - 48px), 320px" width="640" height="419" alt="A 6502 computer built on two breadboards: a W65C02 CPU, EEPROM and RAM chips wired with blue and yellow jumpers, and a green LCD reading 6502 SBC www.rahulkar.com" loading="lazy" decoding="async">
-          </picture>
-          <span class="sr-only">(open a larger view)</span>
-        </a>
-        <figcaption class="polaroid__caption">the 6502 breadboard build &middot; it even knows the address</figcaption>
-      </figure>
+      {% include polaroid-6502.html id="sbc-lightbox" %}
     </div>
-
-    <dialog class="lightbox" id="sbc-lightbox" aria-label="The 6502 breadboard computer, larger view">
-      <button class="lightbox__close" type="button" aria-label="Close">
-        <svg class="doodle" aria-hidden="true" focusable="false"><use href="#d-x"></use></svg>
-      </button>
-      <picture>
-        <source type="image/webp" srcset="{{ "/assets/img/6502-1280.webp" | prepend: site.baseurl }}">
-        <img src="{{ "/assets/img/6502-1280.jpg" | prepend: site.baseurl }}" width="1280" height="838" alt="A 6502 computer built on two breadboards: a W65C02 CPU, EEPROM and RAM chips wired with blue and yellow jumpers, and a green LCD reading 6502 SBC www.rahulkar.com" loading="lazy" decoding="async">
-      </picture>
-      <p class="lightbox__caption">W65C02 CPU, EEPROM, RAM, a 74HC00, a crystal and a 1602 LCD &mdash; all on breadboards.</p>
-    </dialog>
 
     <div class="board reveal reveal--d2">
       <aside class="note note--when board__when" aria-label="Where and when">
@@ -65,14 +45,15 @@
 
     <figure class="loop reveal reveal--d2" id="delivery-loop">
       <div class="loop__grid">
-        <span class="loop__node">discover</span>
-        <span class="loop__node">prototype</span>
-        <span class="loop__node">architect</span>
-        <span class="loop__node">scale</span>
+        <button type="button" class="loop__node" data-note="whiteboards and awkward questions until the real problem shows up">discover</button>
+        <button type="button" class="loop__node" data-note="a working proof-of-concept in days, so the decision is made on evidence">prototype</button>
+        <button type="button" class="loop__node" data-note="the boring parts done properly: boundaries, decisions written down, platforms that outlive the project">architect</button>
+        <button type="button" class="loop__node" data-note="tooling, pipelines and hand-over, so the team runs it without me">scale</button>
       </div>
       <span class="loop__back" aria-hidden="true">enterprise feedback</span>
-      <figcaption class="sr-only">Diagram: the four stages run left to right, and enterprise feedback loops from scale back to discover.</figcaption>
+      <figcaption class="sr-only">Diagram: the four stages run left to right, and enterprise feedback loops from scale back to discover. Activate a stage to read a note about it.</figcaption>
     </figure>
+    <p class="loop__detail" id="loop-detail" aria-live="polite">tap a stage for a note on what happens there</p>
   </div>
 </section>
 
@@ -90,51 +71,19 @@
       <span class="sec-head__count" data-sketch="circle" data-seed="page-2">p.2/3</span>
     </div>
 
-    <div class="stack-groups">
-      <div class="stack-group reveal">
-        <div class="stack-group__label"><svg class="doodle" aria-hidden="true" focusable="false"><use href="#d-arrow-curl"></use></svg>architecture and delivery</div>
+    <p class="anno cake__intro" aria-hidden="true">the stack, literally stacked &middot; tally marks are depth, out of five</p>
+    <div class="cake">
+      {% for group in site.data.stack %}
+      <div class="cake__tier reveal" data-sketch="rect" data-seed="tier-{{ forloop.index }}">
+        <span class="cake__label"><svg class="doodle" aria-hidden="true" focusable="false"><use href="#d-arrow-curl"></use></svg>{{ group.label }}</span>
         <ul class="chips">
-          <li class="chip sticker"><span class="sticker__visual"><img class="stack-icon" src="{{ "/assets/icons/stack/solution-architecture.svg" | prepend: site.baseurl }}" alt="" width="18" height="18" loading="lazy" decoding="async">Solution Architecture</span></li>
-          <li class="chip sticker"><span class="sticker__visual"><img class="stack-icon" src="{{ "/assets/icons/stack/proof-of-concepts.svg" | prepend: site.baseurl }}" alt="" width="18" height="18" loading="lazy" decoding="async">Proof-of-Concepts</span></li>
-          <li class="chip sticker"><span class="sticker__visual"><img class="stack-icon" src="{{ "/assets/icons/stack/enterprise-delivery.svg" | prepend: site.baseurl }}" alt="" width="18" height="18" loading="lazy" decoding="async">Enterprise Delivery</span></li>
-          <li class="chip sticker"><span class="sticker__visual"><img class="stack-icon" src="{{ "/assets/icons/stack/platform-strategy.svg" | prepend: site.baseurl }}" alt="" width="18" height="18" loading="lazy" decoding="async">Platform Strategy</span></li>
-          <li class="chip sticker"><span class="sticker__visual"><img class="stack-icon" src="{{ "/assets/icons/stack/roadmapping.svg" | prepend: site.baseurl }}" alt="" width="18" height="18" loading="lazy" decoding="async">Roadmapping</span></li>
+          {% for item in group.items %}
+          <li class="chip sticker"><span class="sticker__visual"><img class="stack-icon" src="{{ "/assets/icons/stack/" | append: item.icon | append: ".svg" | prepend: site.baseurl }}" alt="" width="18" height="18" loading="lazy" decoding="async">{{ item.label }}<svg class="doodle tally" aria-hidden="true" focusable="false"><use href="#d-tally-{{ item.depth }}"></use></svg><span class="sr-only">, depth {{ item.depth }} of 5</span></span></li>
+          {% endfor %}
         </ul>
       </div>
-
-      <div class="stack-group reveal reveal--d1">
-        <div class="stack-group__label"><svg class="doodle" aria-hidden="true" focusable="false"><use href="#d-arrow-curl"></use></svg>tooling and engineering</div>
-        <ul class="chips">
-          <li class="chip sticker"><span class="sticker__visual"><img class="stack-icon" src="{{ "/assets/icons/stack/java.svg" | prepend: site.baseurl }}" alt="" width="18" height="18" loading="lazy" decoding="async">Java</span></li>
-          <li class="chip sticker"><span class="sticker__visual"><img class="stack-icon" src="{{ "/assets/icons/stack/python.svg" | prepend: site.baseurl }}" alt="" width="18" height="18" loading="lazy" decoding="async">Python</span></li>
-          <li class="chip sticker"><span class="sticker__visual"><img class="stack-icon" src="{{ "/assets/icons/stack/javascript.svg" | prepend: site.baseurl }}" alt="" width="18" height="18" loading="lazy" decoding="async">JavaScript</span></li>
-          <li class="chip sticker"><span class="sticker__visual"><img class="stack-icon" src="{{ "/assets/icons/stack/postman.svg" | prepend: site.baseurl }}" alt="" width="18" height="18" loading="lazy" decoding="async">API Tooling</span></li>
-          <li class="chip sticker"><span class="sticker__visual"><img class="stack-icon" src="{{ "/assets/icons/stack/selenium.svg" | prepend: site.baseurl }}" alt="" width="18" height="18" loading="lazy" decoding="async">Automation Frameworks</span></li>
-        </ul>
-      </div>
-
-      <div class="stack-group reveal reveal--d2">
-        <div class="stack-group__label"><svg class="doodle" aria-hidden="true" focusable="false"><use href="#d-arrow-curl"></use></svg>devops and cloud</div>
-        <ul class="chips">
-          <li class="chip sticker"><span class="sticker__visual"><img class="stack-icon" src="{{ "/assets/icons/stack/jenkins.svg" | prepend: site.baseurl }}" alt="" width="18" height="18" loading="lazy" decoding="async">Jenkins</span></li>
-          <li class="chip sticker"><span class="sticker__visual"><img class="stack-icon" src="{{ "/assets/icons/stack/gitlab.svg" | prepend: site.baseurl }}" alt="" width="18" height="18" loading="lazy" decoding="async">GitLab CI/CD</span></li>
-          <li class="chip sticker"><span class="sticker__visual"><img class="stack-icon" src="{{ "/assets/icons/stack/azure-devops.svg" | prepend: site.baseurl }}" alt="" width="18" height="18" loading="lazy" decoding="async">Azure DevOps</span></li>
-          <li class="chip sticker"><span class="sticker__visual"><img class="stack-icon" src="{{ "/assets/icons/stack/docker.svg" | prepend: site.baseurl }}" alt="" width="18" height="18" loading="lazy" decoding="async">Docker</span></li>
-          <li class="chip sticker"><span class="sticker__visual"><img class="stack-icon" src="{{ "/assets/icons/stack/aws.svg" | prepend: site.baseurl }}" alt="" width="18" height="18" loading="lazy" decoding="async">AWS</span></li>
-          <li class="chip sticker"><span class="sticker__visual"><img class="stack-icon" src="{{ "/assets/icons/stack/azure.svg" | prepend: site.baseurl }}" alt="" width="18" height="18" loading="lazy" decoding="async">Azure</span></li>
-        </ul>
-      </div>
-
-      <div class="stack-group reveal reveal--d3">
-        <div class="stack-group__label"><svg class="doodle" aria-hidden="true" focusable="false"><use href="#d-arrow-curl"></use></svg>agentic ai and tooling</div>
-        <ul class="chips">
-          <li class="chip sticker"><span class="sticker__visual"><img class="stack-icon" src="{{ "/assets/icons/stack/openai.svg" | prepend: site.baseurl }}" alt="" width="18" height="18" loading="lazy" decoding="async">Generative AI</span></li>
-          <li class="chip sticker"><span class="sticker__visual"><img class="stack-icon" src="{{ "/assets/icons/stack/langchain.svg" | prepend: site.baseurl }}" alt="" width="18" height="18" loading="lazy" decoding="async">AI Agents</span></li>
-          <li class="chip sticker"><span class="sticker__visual"><img class="stack-icon" src="{{ "/assets/icons/stack/google-adk.svg" | prepend: site.baseurl }}" alt="" width="18" height="18" loading="lazy" decoding="async">Google ADK</span></li>
-          <li class="chip sticker"><span class="sticker__visual"><img class="stack-icon" src="{{ "/assets/icons/stack/llm.svg" | prepend: site.baseurl }}" alt="" width="18" height="18" loading="lazy" decoding="async">LLMs</span></li>
-          <li class="chip sticker"><span class="sticker__visual"><img class="stack-icon" src="{{ "/assets/icons/stack/playwright.svg" | prepend: site.baseurl }}" alt="" width="18" height="18" loading="lazy" decoding="async">Playwright</span></li>
-        </ul>
-      </div>
+      {% endfor %}
+      <svg class="doodle doodle--auto cake__plate" viewBox="0 0 600 16" preserveAspectRatio="none" aria-hidden="true" focusable="false"><use href="#d-rule"></use></svg>
     </div>
   </div>
 </section>
@@ -215,6 +164,26 @@
                 <span class="social-btn__handle">{{ site.credly_handle }}</span>
               </span>
               <svg class="doodle doodle--hover social-btn__ext" aria-hidden="true" focusable="false"><use href="#d-ext"></use></svg>
+            </span>
+          </a>
+        </div>
+        <div class="social-grid social-grid--extras">
+          <a class="social-btn sticker social-btn--book" href="mailto:{{ site.email }}?subject=20%20minutes%3F&amp;body=Hi%20Rahul%2C%0A%0ACould%20we%20find%2020%20minutes%20to%20talk%20about%20...%0A%0AA%20few%20slots%20that%20work%20for%20me%3A%0A-%20%0A-%20%0A%0AThanks!">
+            <span class="sticker__visual">
+              <span class="social-btn__icon" aria-hidden="true"><svg class="doodle" focusable="false"><use href="#d-calendar"></use></svg></span>
+              <span class="social-btn__text">
+                <span class="social-btn__label">book 20 minutes</span>
+                <span class="social-btn__handle">an email, subject filled in</span>
+              </span>
+            </span>
+          </a>
+          <a class="social-btn sticker social-btn--vcard" href="{{ "/assets/rahul-kar.vcf" | prepend: site.baseurl }}" download="rahul-kar.vcf">
+            <span class="sticker__visual">
+              <span class="social-btn__icon" aria-hidden="true"><svg class="doodle" focusable="false"><use href="#d-card"></use></svg></span>
+              <span class="social-btn__text">
+                <span class="social-btn__label">add to contacts</span>
+                <span class="social-btn__handle">vCard, under 1 KB</span>
+              </span>
             </span>
           </a>
         </div>

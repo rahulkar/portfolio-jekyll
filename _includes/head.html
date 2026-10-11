@@ -20,17 +20,23 @@
   <link rel="shortcut icon" type="image/x-icon" href="{{ "/assets/favicon-v2.ico" | prepend: site.baseurl }}">
   <link rel="apple-touch-icon" href="{{ "/assets/icons/apple-touch-icon-v2.png" | prepend: site.baseurl }}">
 
-  <!-- Structured Data (JSON-LD) for Person Schema -->
+  <!-- Structured data: a ProfilePage whose main entity is the Person -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "Person",
-    "name": {{ site.username | jsonify }},
+    "@type": "ProfilePage",
     "url": {{ site.url | jsonify }},
-    "jobTitle": {{ site.user_title | jsonify }},
-    "description": {{ site.user_description | jsonify }},
-    "email": {{ site.email | jsonify }}{% assign social_profiles = '' %}{% if site.github_username %}{% assign social_profiles = social_profiles | append: '"https://github.com/' | append: site.github_username | append: '"' %}{% endif %}{% if site.linkedin_url %}{% if social_profiles != '' %}{% assign social_profiles = social_profiles | append: ',' %}{% endif %}{% assign social_profiles = social_profiles | append: '"' | append: site.linkedin_url | append: '"' %}{% endif %}{% if site.credly_url %}{% if social_profiles != '' %}{% assign social_profiles = social_profiles | append: ',' %}{% endif %}{% assign social_profiles = social_profiles | append: '"' | append: site.credly_url | append: '"' %}{% endif %}{% if social_profiles != '' %},
-    "sameAs": [{{ social_profiles }}]{% endif %}
+    "mainEntity": {
+      "@type": "Person",
+      "name": {{ site.username | jsonify }},
+      "url": {{ site.url | jsonify }},
+      "jobTitle": {{ site.user_title | jsonify }},
+      "description": {{ site.user_description | jsonify }},
+      "email": {{ site.email | jsonify }},
+      "address": { "@type": "PostalAddress", "addressLocality": "Kolkata", "addressCountry": "IN" },
+      "knowsAbout": [{% for group in site.data.stack %}{% for item in group.items %}{{ item.label | jsonify }}{% unless forloop.last and forloop.parentloop.last %}, {% endunless %}{% endfor %}{% endfor %}]{% assign social_profiles = '' %}{% if site.github_username %}{% assign social_profiles = social_profiles | append: '"https://github.com/' | append: site.github_username | append: '"' %}{% endif %}{% if site.linkedin_url %}{% if social_profiles != '' %}{% assign social_profiles = social_profiles | append: ',' %}{% endif %}{% assign social_profiles = social_profiles | append: '"' | append: site.linkedin_url | append: '"' %}{% endif %}{% if site.credly_url %}{% if social_profiles != '' %}{% assign social_profiles = social_profiles | append: ',' %}{% endif %}{% assign social_profiles = social_profiles | append: '"' | append: site.credly_url | append: '"' %}{% endif %}{% if social_profiles != '' %},
+      "sameAs": [{{ social_profiles }}]{% endif %}
+    }
   }
   </script>
 </head>

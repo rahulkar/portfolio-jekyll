@@ -41,6 +41,21 @@ next to `jekyll serve --force_polling` for quick iteration without reload.
 **Run `npm run build` before every commit.** CI rebuilds and fails if the
 committed `assets/css/main.css` or `assets/js/main.js` differ from `src/`.
 
+## Tests
+
+The site tests itself with Playwright (`tests/site.spec.js`): console and CSP
+cleanliness, no horizontal overflow, axe accessibility checks, keyboard paths,
+the toggles and the lightbox, at phone and desktop widths, plus full-page
+screenshots kept as CI artifacts. Lighthouse CI asserts accessibility and SEO
+scores (`lighthouserc.json`). Locally:
+
+```powershell
+npx playwright install chromium     # once
+bundle exec jekyll build
+npm test                            # Playwright + axe against _site
+npm run lhci                        # Lighthouse CI (reports in .lighthouseci/)
+```
+
 ## Hand-drawn assets
 
 | Script | What it does | When to run |
@@ -49,6 +64,16 @@ committed `assets/css/main.css` or `assets/js/main.js` differ from `src/`.
 | `npm run brand` | Renders `assets/icons/favicon-v2.svg`, the `.ico` files, `apple-touch-icon-v2.png` and `assets/og-sketch.png` | after changing the mark or the share card |
 | `npm run fonts -- <Excalifont-Regular.woff2>` | Subsets Excalifont to Latin into `assets/fonts/excalifont.woff2` | only when the font file changes |
 | `node tools/photo.mjs <photo.heic> <name> [maxWidth]` | Decodes a phone photo (HEIC too), strips metadata, writes `assets/img/<name>-{640,1280}.{webp,jpg}` for a taped-in polaroid | when adding a photo (keep the `.heic` source out of git; it is ignored) |
+| `node tools/name.mjs [word]` | Converts the hero name to Excalifont glyph outlines (`_includes/name-paths.html`) so it can draw itself in | only if the name changes |
+
+`npm run brand` also renders `assets/brand/linkedin-banner.png` (1584×396, left side kept
+clear for the profile photo), `assets/brand/github-header.png` (1280×320) and
+`assets/brand/email-signature.png` (600×200 at 2×), plus the pencil cursors. `npm run
+sketch` writes a local-only `node_modules/.cache/brand/doodles-preview.html` with every
+symbol on a grid; open it in a browser to check new doodles.
+
+Content that is data rather than markup lives in `_data/`: `stack.yml` holds the four
+stack tiers, their stickers and the tally-mark depth (1–5) shown on each.
 
 The runtime sketch layer lives in `src/js/sketch.js` (Rough.js frames,
 underlines, highlighter) and `src/js/diagram.js` (the delivery loop). Any
@@ -72,6 +97,27 @@ favicon and share image, hence the `-v2` names).
   stay off; the CSP would block them.
 - GitHub Pages publishes root `.md` files as pages, which is why
   `LOCAL_SETUP.md` and `LICENSE.txt` are excluded in `_config.yml`.
+
+## Security headers (Cloudflare)
+
+GitHub Pages cannot send custom response headers, so the Content-Security-Policy ships
+as a `<meta>` tag. A meta policy cannot express `frame-ancestors` or reporting, and the
+other hardening headers need the edge. In the Cloudflare dashboard, add a **Rules →
+Transform Rules → Modify Response Header** rule for `www.rahulkar.com` that sets:
+
+| Header | Value |
+|---|---|
+| `Content-Security-Policy` | `default-src 'self'; img-src 'self' data:; font-src 'self'; style-src 'self'; script-src 'self' static.cloudflareinsights.com; connect-src 'self' cloudflareinsights.com; base-uri 'self'; form-action 'self'; object-src 'none'; frame-ancestors 'none'; upgrade-insecure-requests` |
+| `Strict-Transport-Security` | `max-age=31536000; includeSubDomains; preload` |
+| `X-Content-Type-Options` | `nosniff` |
+| `Referrer-Policy` | `strict-origin-when-cross-origin` |
+| `Permissions-Policy` | `camera=(), microphone=(), geolocation=(), payment=(), usb=()` |
+| `Cross-Origin-Opener-Policy` | `same-origin` |
+
+Keep the header policy identical to the meta policy (plus `frame-ancestors`), otherwise
+the stricter of the two wins and something will silently stop working. Rocket Loader,
+Mirage and other script-injecting features must stay off. `/.well-known/security.txt`
+is published from the repo and expires yearly; bump the date when it does.
 
 ## Colour schemes
 

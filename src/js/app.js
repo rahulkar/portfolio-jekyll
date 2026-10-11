@@ -3,12 +3,44 @@ import { initDiagram } from "./diagram.js";
 
 document.addEventListener("DOMContentLoaded", function () {
   var reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
-  var prefersReducedMotion = reduced.matches;
   var root = document.documentElement;
+  // Calm mode: the OS preference, or the in-page toggle (applied before paint
+  // by theme.js). Checked live where it matters, captured once at load elsewhere.
+  var isCalm = function () { return reduced.matches || root.classList.contains("is-calm"); };
+  var prefersReducedMotion = isCalm();
+  var hoverable = window.matchMedia("(hover: hover)").matches;
 
   // Hand-drawn layer (Rough.js) and the delivery-loop figure.
   initSketch();
   initDiagram(document.getElementById("delivery-loop"));
+
+  // Delivery loop: each stage carries a one-line margin note.
+  var loopDetail = document.getElementById("loop-detail");
+  var loopNodes = document.querySelectorAll(".loop__node[data-note]");
+  if (loopDetail && loopNodes.length) {
+    var showNote = function (node) {
+      loopNodes.forEach(function (n) { n.classList.toggle("is-active", n === node); });
+      loopDetail.textContent = node.getAttribute("data-note");
+    };
+    loopNodes.forEach(function (node) {
+      node.addEventListener("click", function () { showNote(node); });
+      node.addEventListener("focus", function () { showNote(node); });
+      node.addEventListener("mouseenter", function () { if (hoverable) showNote(node); });
+    });
+  }
+
+  // Calm-mode toggle (persisted; theme.js re-applies it before first paint).
+  var calmBtn = document.getElementById("calm-btn");
+  if (calmBtn) {
+    var reflectCalm = function () { calmBtn.setAttribute("aria-pressed", String(root.classList.contains("is-calm"))); };
+    calmBtn.addEventListener("click", function () {
+      var next = !root.classList.contains("is-calm");
+      root.classList.toggle("is-calm", next);
+      try { localStorage.setItem("motion", next ? "calm" : "full"); } catch (e) {}
+      reflectCalm();
+    });
+    reflectCalm();
+  }
 
   // Hero / bar doodles draw in once the real fonts are on screen.
   var ready = function () { root.classList.add("is-ready"); };
@@ -62,7 +94,8 @@ document.addEventListener("DOMContentLoaded", function () {
         brandSeg.classList.toggle("is-active", id !== "top");
       }
       navLinks.forEach(function (a) {
-        var active = a.getAttribute("href") === "#" + id;
+        var href = a.getAttribute("href") || "";
+        var active = href.slice(href.indexOf("#")) === "#" + id;
         var was = a.classList.contains("is-active");
         a.classList.toggle("is-active", active);
         if (active && !was) sketchNow(a, "circle");
@@ -305,6 +338,7 @@ document.addEventListener("DOMContentLoaded", function () {
       trailRaf = window.requestAnimationFrame(drawTrail);
     };
     window.addEventListener("pointermove", function (event) {
+      if (isCalm()) return;
       if (event.pointerType && event.pointerType !== "mouse") return;
       points.push({ x: event.clientX, y: event.clientY, t: Date.now() });
       if (points.length > 24) points.shift();

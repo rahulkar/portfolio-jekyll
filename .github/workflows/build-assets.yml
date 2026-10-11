@@ -1,7 +1,9 @@
-name: Verify built assets
+name: Verify site
 
-# Guards against editing src/ but forgetting to run `npm run build`, which would
-# ship a stale assets/css/main.css or assets/js/main.js to GitHub Pages.
+# Two guards: (1) the committed CSS/JS bundles match src/ and the markup is
+# CSP-clean; (2) the built site passes Playwright + axe checks at phone and
+# desktop widths and Lighthouse CI thresholds. Screenshots and reports are
+# kept as artifacts for a human look.
 on:
   push:
     branches: [master]
@@ -11,7 +13,8 @@ permissions:
   contents: read
 
 jobs:
-  build:
+  assets:
+    name: Built assets and CSP lint
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -35,3 +38,48 @@ jobs:
             exit 1
           fi
           echo "Built assets are in sync with source."
+
+  site:
+    name: Playwright, axe and Lighthouse on the built site
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.3"
+          bundler-cache: true
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Build the site
+        run: bundle exec jekyll build
+        env:
+          JEKYLL_ENV: production
+
+      - run: npx playwright install --with-deps chromium
+
+      - name: Playwright + axe
+        run: npx playwright test
+        env:
+          CI: "1"
+
+      - name: Lighthouse CI
+        run: npx lhci autorun
+
+      - name: Upload screenshots and reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: site-checks
+          path: |
+            test-results/**/*.png
+            playwright-report/
+            .lighthouseci/
+          if-no-files-found: ignore
+          retention-days: 14

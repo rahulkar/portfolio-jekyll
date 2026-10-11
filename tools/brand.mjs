@@ -117,8 +117,57 @@ ${sticker(88, 380, 236, "architecture", 1)}${sticker(344, 380, 160, "tooling", 2
 </svg>`;
 }
 
+// ------------------------------------------------- wide cards and banners --
+// One layout routine for the LinkedIn banner, the GitHub profile header and
+// the email signature card: paper, dots, rough frame, highlighted name,
+// title, sticker row, URL line and the bonsai at the right.
+const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;");
+
+function wideSvg(o, bonsaiInner) {
+  const S = (seed, extra = {}) => ({ roughness: 1.3, bowing: 1.3, seed, fixedDecimalPlaceDigits: 1, ...extra });
+  const frame = paths([gen.rectangle(o.pad, o.pad, o.w - o.pad * 2, o.h - o.pad * 2, S(o.seed, { stroke: INK, strokeWidth: 3 }))]);
+  const hlWidth = o.name.size * 2.95;
+  const hl = paths([
+    gen.rectangle(o.x - 4, o.name.y - o.name.size * 0.74, hlWidth, o.name.size * 0.86, S(o.seed + 1, { fill: HL, fillStyle: "hachure", hachureAngle: -4, hachureGap: o.name.size / 10, fillWeight: o.name.size / 10, stroke: "none", roughness: 1.6 })),
+  ]);
+  const sticker = (x, y, w, label, seed) =>
+    `<g transform="translate(${x} ${y}) rotate(${seed % 2 ? -1.5 : 1.2})"><rect x="0" y="3" width="${w}" height="${o.stickerH}" rx="${o.stickerH / 2}" fill="rgba(42,38,34,.18)"/><rect x="0" y="0" width="${w}" height="${o.stickerH}" rx="${o.stickerH / 2}" fill="#fff" stroke="#fff" stroke-width="4"/><text x="${w / 2}" y="${o.stickerH * 0.66}" text-anchor="middle" font-family="${NUNITO}" font-weight="700" font-size="${o.stickerH * 0.44}" fill="${INK}">${label}</text></g>`;
+  let stickers = "";
+  if (o.stickers) {
+    let x = o.x;
+    for (const [i, [label, w]] of [["architecture", 5.2], ["tooling", 3.6], ["agentic AI", 4.6]].entries()) {
+      const width = Math.round(w * o.stickerH);
+      stickers += sticker(x, o.stickers.y, width, label, i + 1);
+      x += width + o.stickerH * 0.45;
+    }
+  }
+  const bonsai = bonsaiInner
+    ? `<g transform="translate(${o.bonsai.x} ${o.bonsai.y}) scale(${o.bonsai.scale})" fill="none" stroke="${GREEN}" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" opacity="0.75">${bonsaiInner}</g>`
+    : "";
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${o.w}" height="${o.h}" viewBox="0 0 ${o.w} ${o.h}">
+<defs><pattern id="dots" width="26" height="26" patternUnits="userSpaceOnUse"><circle cx="13" cy="13" r="1.4" fill="rgba(42,38,34,.16)"/></pattern></defs>
+<rect width="${o.w}" height="${o.h}" fill="${PAPER}"/><rect width="${o.w}" height="${o.h}" fill="url(#dots)"/>
+${frame}${hl}
+<text x="${o.x}" y="${o.name.y}" font-family="Excalifont" font-size="${o.name.size}" fill="${INK}">Rahul Kar</text>
+<text x="${o.x + 2}" y="${o.title.y}" font-family="${NUNITO}" font-weight="700" font-size="${o.title.size}" fill="${INK2}">Enterprise Solution Architect &amp; Technology Lead</text>
+${stickers}
+<text x="${o.x + 2}" y="${o.url.y}" font-family="Excalifont" font-size="${o.url.size}" fill="${INK3}">${esc(o.url.text)}</text>
+${bonsai}
+</svg>`;
+}
+
+// A small pencil for the custom cursor (hotspot at the tip, bottom-left).
+function pencilSvg(tipColor) {
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M12 20 L26 6" stroke="#fff" stroke-width="9" stroke-linecap="round"/><path d="M12 20 L26 6" stroke="${INK}" stroke-width="5" stroke-linecap="round"/><path d="M4 28 L8 17 L15 24 Z" fill="${tipColor}" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/><path d="M4 28 L6 23 L9 26 Z" fill="${INK}"/><path d="M24 4 L28 8" stroke="${HL}" stroke-width="5" stroke-linecap="round"/></svg>`;
+}
+
 async function main() {
   const fonts = await prepareFonts();
+
+  // Cursors (32 px, hotspot 2,30 in CSS).
+  mkdirSync("assets/brand", { recursive: true });
+  writeFileSync("assets/icons/cursor-pencil.png", render(pencilSvg("#E8C27A"), 32, fonts));
+  writeFileSync("assets/icons/cursor-pencil-point.png", render(pencilSvg(BALLPOINT), 32, fonts));
 
   // Favicon family.
   const svgRounded = faviconSvg();
@@ -136,7 +185,16 @@ async function main() {
   const og = ogSvg(bonsai);
   writeFileSync(join("node_modules", ".cache", "brand", "og.svg"), og);
   writeFileSync("assets/og-sketch.png", render(og, 1200, fonts));
-  console.log("brand assets written: favicon-v2.svg, favicon-v2.ico, favicon.ico, apple-touch-icon-v2.png, og-sketch.png");
+
+  // Same look for other channels. LinkedIn keeps the left 440 px clear for the
+  // profile photo overlay; GitHub centres; the signature is a compact card.
+  const linkedin = wideSvg({ w: 1584, h: 396, pad: 28, seed: 21, x: 470, name: { y: 168, size: 92 }, title: { y: 214, size: 30 }, stickers: { y: 246 }, stickerH: 44, url: { y: 338, size: 26, text: "11+ years · Kolkata, India · www.rahulkar.com" }, bonsai: { x: 1300, y: 210, scale: 1.3 } }, bonsai);
+  writeFileSync("assets/brand/linkedin-banner.png", render(linkedin, 1584, fonts));
+  const github = wideSvg({ w: 1280, h: 320, pad: 24, seed: 31, x: 72, name: { y: 132, size: 84 }, title: { y: 176, size: 28 }, stickers: { y: 206 }, stickerH: 42, url: { y: 286, size: 24, text: "engineer & tinkerer · www.rahulkar.com" }, bonsai: { x: 1030, y: 150, scale: 1.2 } }, bonsai);
+  writeFileSync("assets/brand/github-header.png", render(github, 1280, fonts));
+  const signature = wideSvg({ w: 600, h: 200, pad: 10, seed: 41, x: 30, name: { y: 78, size: 50 }, title: { y: 108, size: 17 }, stickers: null, stickerH: 0, url: { y: 160, size: 19, text: "kar.rahul@pm.me · www.rahulkar.com" }, bonsai: { x: 470, y: 60, scale: 0.62 } }, bonsai);
+  writeFileSync("assets/brand/email-signature.png", render(signature, 1200, fonts));
+  console.log("brand assets written: favicons, og-sketch.png, cursors, linkedin-banner.png, github-header.png, email-signature.png");
 }
 
 main().catch((err) => {

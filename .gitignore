@@ -49,3 +49,8 @@ node_modules/.cache/
 
 # Scratch photos never belong in the published tree
 *.heic
+
+# Test and audit output
+test-results/
+playwright-report/
+.lighthouseci/

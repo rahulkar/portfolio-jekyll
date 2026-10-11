@@ -1,35 +1,3 @@
-<nav class="bar" aria-label="Primary" data-sketch="underline" data-seed="bar">
-  <a class="bar__brand" href="#top" data-scroll>
-    <svg class="doodle doodle--auto" aria-hidden="true" focusable="false"><use href="#d-star"></use></svg>
-    <span class="bar__name">rahul kar</span><span class="bar__seg" id="brand-seg" aria-hidden="true"></span>
-  </a>
-  <span class="bar__spacer"></span>
-  <span class="bar__nav">
-    <a href="#about" data-scroll data-seed="nav-about">about</a>
-    <a href="#stack" data-scroll data-seed="nav-stack">stack</a>
-    <a href="#connect" data-scroll data-seed="nav-connect">connect</a>
-  </span>
-  <button class="bar__theme" id="theme-btn" type="button" aria-pressed="false" aria-label="Dark theme">
-    <svg class="doodle doodle--auto bar__theme-moon" aria-hidden="true" focusable="false"><use href="#d-moon"></use></svg>
-    <svg class="doodle doodle--auto bar__theme-sun" aria-hidden="true" focusable="false"><use href="#d-sun"></use></svg>
-  </button>
-  <button class="bar__menu" id="menu-btn" type="button" aria-label="Open menu" aria-expanded="false">
-    <span class="bar__menu-icon" aria-hidden="true"></span>
-    <span class="bar__menu-label">menu</span>
-  </button>
-  <span class="bar__cmd" title="Press Ctrl+K to connect" aria-hidden="true">
-    <span class="key">K</span>
-  </span>
-</nav>
-
-<div class="sheet" id="menu-sheet" aria-hidden="true">
-  <div class="sheet__inner">
-    <a href="#about" data-scroll>about</a>
-    <a href="#stack" data-scroll>stack</a>
-    <a href="#connect" data-scroll>connect</a>
-  </div>
-</div>
-
 <header class="hero" id="top">
   <div class="hero__doodle hero__doodle--circuit" aria-hidden="true">
     <svg class="doodle doodle--auto" viewBox="0 0 320 280" focusable="false"><use href="#d-circuit"></use></svg>
@@ -45,7 +13,7 @@
       <div>
         <h1 class="hero__heading reveal reveal--d1">
           <span class="hero__hello">hello, I'm</span>
-          <span class="hl" data-sketch="highlight" data-seed="hero-name">rahul</span>
+          <span class="hl" data-sketch="highlight" data-seed="hero-name"><span class="sr-only">rahul</span>{% include name-paths.html %}</span>
           <span class="hero__role">engineer &amp; tinkerer<span class="caret"></span></span>
         </h1>
 

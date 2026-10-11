@@ -253,7 +253,10 @@ a {
 .error__title,
 .error__code,
 .loop__node,
-.loop__back {
+.loop__back,
+.loop__detail,
+.cake__label,
+.scribble__title {
   font-family: var(--hand);
   font-weight: 400;
   font-synthesis: none;
@@ -1512,27 +1515,67 @@ section {
   stroke-width: 2.2;
 }
 
-.stack-groups {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 36px 56px;
+/* The stack as a layer cake: newest tier on top, foundations at the base. */
+.cake__intro {
+  display: inline-block;
+  margin: -22px 0 26px;
+  rotate: -1.5deg;
 }
 
-.stack-group__label {
-  display: flex;
+.cake {
+  position: relative;
+  display: grid;
+  gap: 24px;
+  padding: 12px 0 6px;
+}
+
+.cake__tier {
+  width: 100%;
+  margin: 0 auto;
+  padding: 28px 22px 20px;
+}
+
+.cake__tier:nth-child(1) { width: 76%; }
+.cake__tier:nth-child(2) { width: 84%; }
+.cake__tier:nth-child(3) { width: 92%; }
+
+.cake__label {
+  position: absolute;
+  top: -15px;
+  left: 20px;
+  z-index: 1;
+  display: inline-flex;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 14px;
-  font-size: 23px;
-  line-height: 1;
+  gap: 6px;
+  padding: 0 8px;
+  background: var(--paper);
+  font-size: 22px;
+  line-height: 1.2;
   color: var(--ink);
 }
 
-.stack-group__label .doodle {
-  width: 26px;
-  height: 26px;
+.cake__label .doodle {
+  width: 24px;
+  height: 24px;
   color: var(--ballpoint);
   stroke-width: 2;
+}
+
+.cake__plate {
+  display: block;
+  width: 100%;
+  height: 14px;
+  margin-top: -8px;
+  color: var(--pencil);
+  stroke-width: 2.4;
+}
+
+.tally {
+  width: 28px;
+  height: 14px;
+  margin-left: 2px;
+  color: var(--ink-3);
+  stroke-width: 2.2;
 }
 
 .chips {
@@ -1550,18 +1593,18 @@ section {
   transition: opacity 420ms cubic-bezier(.2,.7,.2,1), transform 420ms cubic-bezier(.2,.7,.2,1);
 }
 
-.stack-group.is-in .chip {
+.cake__tier.is-in .chip {
   opacity: 1;
   transform: none;
 }
 
-.stack-group.is-in .chip:nth-child(1) { transition-delay: 40ms; }
-.stack-group.is-in .chip:nth-child(2) { transition-delay: 80ms; }
-.stack-group.is-in .chip:nth-child(3) { transition-delay: 120ms; }
-.stack-group.is-in .chip:nth-child(4) { transition-delay: 160ms; }
-.stack-group.is-in .chip:nth-child(5) { transition-delay: 200ms; }
-.stack-group.is-in .chip:nth-child(6) { transition-delay: 240ms; }
-.stack-group.is-in .chip:nth-child(n+7) { transition-delay: 280ms; }
+.cake__tier.is-in .chip:nth-child(1) { transition-delay: 40ms; }
+.cake__tier.is-in .chip:nth-child(2) { transition-delay: 80ms; }
+.cake__tier.is-in .chip:nth-child(3) { transition-delay: 120ms; }
+.cake__tier.is-in .chip:nth-child(4) { transition-delay: 160ms; }
+.cake__tier.is-in .chip:nth-child(5) { transition-delay: 200ms; }
+.cake__tier.is-in .chip:nth-child(6) { transition-delay: 240ms; }
+.cake__tier.is-in .chip:nth-child(n+7) { transition-delay: 280ms; }
 
 .stack-icon {
   width: 18px;
@@ -2020,6 +2063,270 @@ section {
 }
 
 /* ---------------------------------------------------------------------------
+   Delivery-loop notes, connect extras, bar calm button, footer link
+   --------------------------------------------------------------------------- */
+.loop__node {
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  font-family: var(--hand);
+  font-weight: 400;
+  cursor: pointer;
+  transition: color var(--fast);
+}
+
+.loop__node.is-active {
+  color: var(--ballpoint);
+}
+
+.loop__detail {
+  min-height: 1.5em;
+  margin: 4px 0 0;
+  text-align: center;
+  font-size: 19px;
+  line-height: 1.3;
+  color: var(--ink-3);
+}
+
+.social-grid--extras {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.social-btn--book .social-btn__icon {
+  color: var(--redpen);
+}
+
+.social-btn--vcard .social-btn__icon {
+  color: var(--marker-green);
+}
+
+.social-btn__icon .doodle {
+  width: 100%;
+  height: 100%;
+  stroke-width: 2;
+}
+
+.bar__calm .doodle {
+  width: 24px;
+  height: 24px;
+}
+
+.bar__calm[aria-pressed="true"] {
+  color: var(--ballpoint);
+}
+
+.foot__more {
+  color: var(--ballpoint);
+}
+
+/* ---------------------------------------------------------------------------
+   Inner pages (scribbles)
+   --------------------------------------------------------------------------- */
+.page {
+  padding-top: var(--bar-h);
+}
+
+.page-section {
+  position: relative;
+  z-index: 2;
+  padding: 72px 0 64px;
+}
+
+.scribbles__intro {
+  max-width: 60ch;
+  margin: -16px 0 40px;
+  font-size: 17px;
+  line-height: 1.6;
+  color: var(--ink-2);
+}
+
+.scribble {
+  max-width: 780px;
+  margin: 0 0 44px;
+  padding: 26px 28px 24px;
+  rotate: -0.4deg;
+}
+
+.scribble:nth-of-type(even) {
+  rotate: 0.5deg;
+}
+
+.scribble__title {
+  margin: 0 0 14px;
+  font-size: clamp(26px, 22px + 1vw, 34px);
+  line-height: 1.1;
+  color: var(--ink);
+}
+
+.scribble p {
+  margin: 0 0 12px;
+  font-size: 16.5px;
+  line-height: 1.7;
+  color: var(--ink-2);
+}
+
+.scribble p:last-child {
+  margin-bottom: 0;
+}
+
+.scribble__photo {
+  float: right;
+  width: 44%;
+  max-width: 300px;
+  margin: 4px 0 14px 26px;
+  rotate: 1.5deg;
+}
+
+/* ---------------------------------------------------------------------------
+   The pen writes the name: glyph outlines draw, then fill.
+   --------------------------------------------------------------------------- */
+.name {
+  display: inline-block;
+  height: 1.26em;
+  width: auto;
+  vertical-align: -0.37em;
+  overflow: visible;
+}
+
+.name__glyph {
+  fill: currentColor;
+  fill-opacity: 0;
+  stroke: currentColor;
+  stroke-width: 16;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.is-ready .name__glyph {
+  animation: name-draw 520ms cubic-bezier(.2,.7,.2,1) backwards, name-fill 320ms ease-out forwards;
+}
+
+.is-ready .name__glyph:nth-child(1) { animation-delay: 0ms, 440ms; }
+.is-ready .name__glyph:nth-child(2) { animation-delay: 140ms, 580ms; }
+.is-ready .name__glyph:nth-child(3) { animation-delay: 280ms, 720ms; }
+.is-ready .name__glyph:nth-child(4) { animation-delay: 420ms, 860ms; }
+.is-ready .name__glyph:nth-child(5) { animation-delay: 560ms, 1000ms; }
+.is-ready .name__glyph:nth-child(n+6) { animation-delay: 700ms, 1140ms; }
+
+@keyframes name-draw {
+  from {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+  }
+
+  to {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes name-fill {
+  to {
+    fill-opacity: 1;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Pencil cursor on precise pointers
+   --------------------------------------------------------------------------- */
+@media (pointer: fine) {
+  body {
+    cursor: url("/assets/icons/cursor-pencil.png") 2 30, auto;
+  }
+
+  a,
+  button,
+  summary,
+  [role="button"] {
+    cursor: url("/assets/icons/cursor-pencil-point.png") 2 30, pointer;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Calm mode (in-page toggle): the same resets as prefers-reduced-motion.
+   --------------------------------------------------------------------------- */
+html.is-calm {
+  scroll-behavior: auto;
+}
+
+html.is-calm .reveal,
+html.is-calm .chip {
+  opacity: 1;
+  transform: none;
+  transition: none;
+}
+
+html.is-calm .doodle,
+html.is-calm .sk path,
+html.is-calm .desk__item,
+html.is-calm .desk__note,
+html.is-calm .name__glyph {
+  opacity: 1 !important;
+  fill-opacity: 1;
+  animation: none !important;
+  transition: none !important;
+  stroke-dasharray: none !important;
+}
+
+html.is-calm .is-in .doodle--hover,
+html.is-calm .social-btn__ext,
+html.is-calm .contact__email__arrow {
+  opacity: 0 !important;
+}
+
+html.is-calm .social-btn:hover .social-btn__ext,
+html.is-calm .social-btn:focus-visible .social-btn__ext,
+html.is-calm .contact__email:hover .contact__email__arrow,
+html.is-calm .contact__email:focus-within .contact__email__arrow {
+  opacity: 1 !important;
+}
+
+html.is-calm .hero__doodle {
+  animation: none;
+}
+
+html.is-calm .scroll-progress,
+html.is-calm .trail {
+  display: none;
+}
+
+html.is-calm .card__body .ln.is-typing {
+  opacity: 1;
+}
+
+html.is-calm .card__body .ln.has-typed {
+  animation: none;
+}
+
+html.is-calm .caret {
+  animation: none;
+}
+
+html.is-calm .sheet {
+  display: none;
+  visibility: visible;
+  clip-path: none;
+  transition: none;
+}
+
+html.is-calm .sheet.is-open {
+  display: flex;
+}
+
+html.is-calm .note__visual,
+html.is-calm .sticker__visual,
+html.is-calm .polaroid {
+  transition: none;
+}
+
+html.is-calm *,
+html.is-calm *::before,
+html.is-calm *::after {
+  animation-duration: 0.001ms !important;
+  transition-duration: 0.001ms !important;
+}
+
+/* ---------------------------------------------------------------------------
    Hover (pointer devices only)
    --------------------------------------------------------------------------- */
 @media (hover: hover) {
@@ -2150,6 +2457,19 @@ section {
     margin-top: 16px;
   }
 
+  .cake__tier:nth-child(1),
+  .cake__tier:nth-child(2),
+  .cake__tier:nth-child(3) {
+    width: 100%;
+  }
+
+  .scribble__photo {
+    float: none;
+    width: 100%;
+    max-width: 360px;
+    margin: 0 0 16px;
+  }
+
   .loop {
     padding: 10px 96px 10px 10px;
   }
@@ -2234,6 +2554,27 @@ section {
 
   .shelf__caption {
     font-size: 15px;
+  }
+
+  .cake__tier {
+    padding: 24px 14px 16px;
+  }
+
+  .cake__label {
+    left: 12px;
+    font-size: 19px;
+  }
+
+  .page-section {
+    padding: 56px 0 48px;
+  }
+
+  .scribble {
+    padding: 20px 16px 18px;
+  }
+
+  .social-grid--extras {
+    grid-template-columns: 1fr;
   }
 
   .contact__email {
@@ -2374,8 +2715,10 @@ section {
   .sk path,
   .desk__item,
   .desk__note,
+  .name__glyph,
   .card__body .ln {
     opacity: 1 !important;
+    fill-opacity: 1;
     transform: none;
     animation: none !important;
     stroke-dasharray: none;
@@ -2397,8 +2740,10 @@ section {
   .doodle,
   .sk path,
   .desk__item,
-  .desk__note {
+  .desk__note,
+  .name__glyph {
     opacity: 1 !important;
+    fill-opacity: 1;
     animation: none !important;
     transition: none !important;
     stroke-dasharray: none !important;
