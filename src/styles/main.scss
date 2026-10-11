@@ -72,6 +72,10 @@
   /* Scheme-dependent extras (the dark block below flips them). */
   --bar-bg: rgba(248, 243, 231, 0.96);
   --grain: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/><feColorMatrix values='0 0 0 0 0.25 0 0 0 0 0.2 0 0 0 0 0.12 0 0 0 0.08 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  /* Low-frequency unevenness under the grain: the pulp of the paper (or, on
+     the board, the haze of wiped chalk). Seamless 480px tile. */
+  --mottle: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='480' height='480'><filter id='m' x='0' y='0' width='100%' height='100%'><feTurbulence type='fractalNoise' baseFrequency='0.012' numOctaves='3' seed='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.36 0 0 0 0 0.27 0 0 0 0 0.14 0 0 0 0.1 0'/></filter><rect width='100%' height='100%' filter='url(%23m)'/></svg>");
+  --vignette: rgba(42, 38, 34, 0.07);
   --blend: multiply;
   --hl-fill: var(--hl);
   --hl-pink-fill: var(--hl-pink);
@@ -103,6 +107,8 @@
     --ring: 0 0 0 2px var(--paper), 0 0 0 4px var(--hl);
     --bar-bg: rgba(28, 37, 34, 0.96);
     --grain: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/><feColorMatrix values='0 0 0 0 0.95 0 0 0 0 0.93 0 0 0 0 0.88 0 0 0 0.05 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+    --mottle: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='480' height='480'><filter id='m' x='0' y='0' width='100%' height='100%'><feTurbulence type='fractalNoise' baseFrequency='0.012' numOctaves='3' seed='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.95 0 0 0 0 0.93 0 0 0 0 0.88 0 0 0 0.11 0'/></filter><rect width='100%' height='100%' filter='url(%23m)'/></svg>");
+    --vignette: rgba(0, 0, 0, 0.34);
     --blend: normal;
     --coffee-display: none;
     --sun-display: block;
@@ -130,6 +136,8 @@
   --ring: 0 0 0 2px var(--paper), 0 0 0 4px var(--hl);
   --bar-bg: rgba(28, 37, 34, 0.96);
   --grain: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/><feColorMatrix values='0 0 0 0 0.95 0 0 0 0 0.93 0 0 0 0 0.88 0 0 0 0.05 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  --mottle: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='480' height='480'><filter id='m' x='0' y='0' width='100%' height='100%'><feTurbulence type='fractalNoise' baseFrequency='0.012' numOctaves='3' seed='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.95 0 0 0 0 0.93 0 0 0 0 0.88 0 0 0 0.11 0'/></filter><rect width='100%' height='100%' filter='url(%23m)'/></svg>");
+  --vignette: rgba(0, 0, 0, 0.34);
   --blend: normal;
   --coffee-display: none;
   --sun-display: block;
@@ -177,7 +185,7 @@ body {
 body {
   background-color: var(--paper);
   /* Paper grain (or chalk dust): a static noise tile, rasterised once. */
-  background-image: var(--grain);
+  background-image: var(--grain), var(--mottle);
   color: var(--ink);
   font-family: var(--sans);
   font-size: 16px;
@@ -948,8 +956,8 @@ a {
   display: flex;
   align-items: center;
   overflow: hidden;
-  background-image: radial-gradient(var(--line) 1.1px, transparent 1.5px);
-  background-size: 24px 24px;
+  /* A soft pool of light on the first page; the edges fall away a little. */
+  background-image: radial-gradient(ellipse 80% 90% at 50% 45%, transparent 40%, var(--vignette) 100%);
 }
 
 .hero::after {
@@ -2050,8 +2058,7 @@ section {
   display: flex;
   align-items: center;
   padding: 110px 0 72px;
-  background-image: radial-gradient(var(--line) 1.1px, transparent 1.5px);
-  background-size: 24px 24px;
+  background-image: radial-gradient(ellipse 80% 90% at 50% 45%, transparent 40%, var(--vignette) 100%);
 }
 
 .error__inner {
@@ -2678,7 +2685,6 @@ html.is-calm *::after {
     min-height: auto;
     padding-top: 92px;
     padding-bottom: 48px;
-    background-size: 28px 28px;
   }
 
   .hero__doodle,
@@ -2768,7 +2774,6 @@ html.is-calm *::after {
 
   .hero {
     padding-top: 80px;
-    background-size: 24px 24px;
   }
 
   .hero__heading {
@@ -2954,7 +2959,9 @@ html.is-calm *::after {
     --blend: multiply;
   }
 
-  body {
+  body,
+  .hero,
+  .error {
     background-image: none;
   }
 
