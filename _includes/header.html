@@ -35,17 +35,40 @@
 
       <figure class="desk reveal reveal--d2">
         <svg class="desk__scene" viewBox="0 0 520 300" aria-hidden="true" focusable="false">
+          <polygon class="desk__light" points="448,142 470,148 436,205 322,205"></polygon>
+          <rect class="desk__glow" x="82" y="61" width="176" height="115" rx="6"></rect>
           <use class="desk__item desk__item--desk" href="#d-desk" x="0" y="196" width="520" height="130"></use>
-          <use class="desk__item desk__item--monitor" href="#d-monitor" x="70" y="52" width="200" height="153"></use>
-          <use class="desk__item desk__item--bonsai" href="#d-bonsai" x="332" y="97" width="180" height="120"></use>
-          <use class="desk__item desk__item--mug" href="#d-mug" x="272" y="153" width="56" height="52"></use>
-          <use class="desk__item desk__item--chip" href="#d-chip" x="8" y="160" width="64" height="45"></use>
+          <g class="desk__hot">
+            <use class="desk__item desk__item--monitor" href="#d-monitor" x="70" y="52" width="200" height="153"></use>
+            <rect class="desk__hit" x="70" y="52" width="200" height="153"></rect>
+            <text class="desk__tip" x="60" y="270">a PoC becomes a platform, or gets deleted. both are fine.</text>
+          </g>
+          <g class="desk__hot">
+            <use class="desk__item desk__item--bonsai" href="#d-bonsai" x="300" y="115" width="150" height="100"></use>
+            <rect class="desk__hit" x="300" y="115" width="150" height="90"></rect>
+            <text class="desk__tip" x="60" y="270">the slowest feedback loop in the house.</text>
+          </g>
+          <g class="desk__hot">
+            <use class="desk__item desk__item--mug" href="#d-mug" x="272" y="153" width="56" height="52"></use>
+            <rect class="desk__hit" x="268" y="150" width="60" height="55"></rect>
+            <text class="desk__tip" x="60" y="270">refilled more often than it should be.</text>
+          </g>
+          <g class="desk__hot">
+            <use class="desk__item desk__item--chip" href="#d-chip" x="8" y="160" width="64" height="45"></use>
+            <rect class="desk__hit" x="8" y="156" width="64" height="49"></rect>
+            <text class="desk__tip" x="60" y="270">W65C02, hand-wired, says hello on the LCD.</text>
+          </g>
+          <g class="desk__hot">
+            <use class="desk__item desk__item--lamp" href="#d-lamp" x="446" y="97" width="72" height="108"></use>
+            <rect class="desk__hit" x="446" y="97" width="72" height="108"></rect>
+            <text class="desk__tip" x="60" y="270">comes on with the chalkboard. try the moon.</text>
+          </g>
           <text class="desk__note" x="80" y="40">a PoC in progress</text>
-          <text class="desk__note" x="376" y="86">bonsai</text>
+          <text class="desk__note" x="312" y="104">bonsai</text>
           <text class="desk__note" x="270" y="142">coffee</text>
           <text class="desk__note" x="14" y="242">6502 &middot; retro computing</text>
         </svg>
-        <figcaption class="sr-only">A doodle of my desk: a monitor with a proof-of-concept in progress, a bonsai, coffee and a 6502 chip.</figcaption>
+        <figcaption class="sr-only">A doodle of my desk: a monitor with a proof-of-concept in progress, a bonsai, coffee, a 6502 chip and a desk lamp that comes on in dark mode.</figcaption>
       </figure>
     </div>
   </div>

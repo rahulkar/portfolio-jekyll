@@ -10,6 +10,7 @@
 
   {% seo %}{% if page.noindex %}
   <meta name="robots" content="noindex">{% endif %}
+  <link type="application/atom+xml" rel="alternate" href="{{ "/feed.xml" | absolute_url }}" title="{{ site.title }} | Scribbles">
 
   <link rel="preload" as="font" type="font/woff2" href="{{ "/assets/fonts/excalifont.woff2" | prepend: site.baseurl }}" crossorigin>
   <link rel="preload" as="font" type="font/woff2" href="{{ "/assets/fonts/nunito.woff2" | prepend: site.baseurl }}" crossorigin>

@@ -21,7 +21,7 @@ async function openPage(page, path) {
   return errors;
 }
 
-for (const path of ["/", "/scribbles/", "/404.html"]) {
+for (const path of ["/", "/scribbles/", "/scribbles/the-bonsai/", "/how-i-work/", "/404.html"]) {
   test.describe(`page ${path}`, () => {
     test("loads clean: no console errors, no CSP violations, no horizontal overflow", async ({ page }) => {
       const errors = await openPage(page, path);

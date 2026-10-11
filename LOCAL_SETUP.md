@@ -75,6 +75,23 @@ symbol on a grid; open it in a browser to check new doodles.
 Content that is data rather than markup lives in `_data/`: `stack.yml` holds the four
 stack tiers, their stickers and the tally-mark depth (1–5) shown on each.
 
+## Writing a scribble
+
+Scribbles are a Jekyll collection: one markdown file per piece under `_scribbles/`,
+with `title`, `date` and a one-line `summary` in the front matter. The index at
+`/scribbles/` lists them newest first, each gets its own page at `/scribbles/<name>/`,
+and `/feed.xml` is their Atom feed (linked from every page's head). Liquid includes
+work inside the markdown, so a polaroid is `{% include polaroid-6502.html id="..." %}`.
+
+## Guard rails
+
+- A **pre-commit hook** (installed by `npm install` via simple-git-hooks) runs the build
+  and the CSP lint and stages the rebuilt bundles, so a stale `assets/js/main.js` can
+  no longer be committed.
+- CI validates the built HTML (`npm run validate:html`, config in `.htmlvalidate.json`),
+  checks every link with lychee (LinkedIn is excluded because it blocks bots), runs the
+  Playwright suite and Lighthouse CI, and Dependabot also watches the GitHub Actions.
+
 The runtime sketch layer lives in `src/js/sketch.js` (Rough.js frames,
 underlines, highlighter) and `src/js/diagram.js` (the delivery loop). Any
 element with `data-sketch="rect|rect-fill|highlight|underline|circle|squiggle"`

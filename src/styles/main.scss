@@ -78,6 +78,8 @@
   --coffee-display: block;
   --sun-display: none;
   --moon-display: block;
+  --lamp-light: transparent;
+  --screen-glow: transparent;
 }
 
 /* Dark: chalk on a slate board. Paper objects (notes, cards, stickers, tape
@@ -105,6 +107,8 @@
     --coffee-display: none;
     --sun-display: block;
     --moon-display: none;
+    --lamp-light: rgba(246, 216, 107, 0.16);
+    --screen-glow: rgba(200, 230, 140, 0.22);
   }
 }
 
@@ -130,6 +134,8 @@
   --coffee-display: none;
   --sun-display: block;
   --moon-display: none;
+  --lamp-light: rgba(246, 216, 107, 0.16);
+  --screen-glow: rgba(200, 230, 140, 0.22);
 }
 
 /* Physical paper objects keep their light inks in both schemes. */
@@ -779,8 +785,16 @@ a {
 }
 
 .bar__nav a:focus-visible,
-.bar__nav a.is-active {
+.bar__nav a.is-active,
+.bar__nav a[aria-current="page"] {
   color: var(--ink);
+}
+
+.bar__nav a[aria-current="page"] {
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
+  text-decoration-color: var(--ballpoint);
 }
 
 .bar__nav a .sk {
@@ -1152,6 +1166,89 @@ a {
 
 .is-ready .desk__note {
   opacity: 1;
+}
+
+/* Night: the lamp throws light and the screen glows (dark-scheme tokens). */
+.desk__item--lamp {
+  color: var(--ink-2);
+}
+
+.desk__light {
+  fill: var(--lamp-light);
+  stroke: none;
+  transition: fill 400ms ease;
+}
+
+.desk__glow {
+  fill: var(--screen-glow);
+  stroke: none;
+  transition: fill 400ms ease;
+}
+
+/* Hover callouts: an invisible hit area per object, one shared tip line. */
+.desk__hit {
+  fill: transparent;
+  stroke: none;
+  pointer-events: all;
+}
+
+.desk__tip {
+  font-family: var(--hand);
+  font-size: 16px;
+  fill: var(--ballpoint);
+  stroke: none;
+  opacity: 0;
+  transition: opacity 180ms ease;
+  pointer-events: none;
+}
+
+.desk__hot:hover .desk__tip {
+  opacity: 1;
+}
+
+/* ---------------------------------------------------------------------------
+   Turning the page: cross-document view transitions (CSS only; browsers
+   without support simply navigate). The bar stays put, the page leafs.
+   --------------------------------------------------------------------------- */
+@view-transition {
+  navigation: auto;
+}
+
+.bar {
+  view-transition-name: bar;
+}
+
+::view-transition-old(root) {
+  animation: 200ms ease-in both leaf-out;
+}
+
+::view-transition-new(root) {
+  animation: 260ms ease-out both leaf-in;
+}
+
+@keyframes leaf-out {
+  to {
+    opacity: 0;
+    transform: translateX(-2.5%) rotate(-0.6deg);
+  }
+}
+
+@keyframes leaf-in {
+  from {
+    opacity: 0;
+    transform: translateX(3%) rotate(0.6deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @view-transition {
+    navigation: none;
+  }
+}
+
+html.is-calm::view-transition-old(root),
+html.is-calm::view-transition-new(root) {
+  animation: none;
 }
 
 /* ---------------------------------------------------------------------------
@@ -2177,6 +2274,166 @@ section {
   rotate: 1.5deg;
 }
 
+.scribble__meta {
+  margin: -6px 0 14px;
+}
+
+.scribble__meta .stamp {
+  font-size: 11px;
+  rotate: -3deg;
+}
+
+.scribble__title a {
+  color: inherit;
+}
+
+.scribble__more {
+  font-family: var(--hand);
+  font-size: 18px;
+}
+
+.scribble__more .doodle {
+  width: 1.5em;
+  height: 0.8em;
+  stroke-width: 2.2;
+  color: var(--ballpoint);
+}
+
+.scribbles__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.scribbles__intro a {
+  color: var(--ballpoint);
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+}
+
+.scribbles__crumb {
+  margin: 0 0 24px;
+  font-family: var(--hand);
+  font-size: 20px;
+}
+
+.scribbles__crumb a {
+  color: var(--ballpoint);
+}
+
+.scribble--full {
+  rotate: 0deg;
+}
+
+.scribbles__next {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 8px 0 0;
+}
+
+.scribbles__next .sticker__visual {
+  padding: 8px 18px;
+}
+
+/* The playbook */
+.play__intro {
+  max-width: 66ch;
+  margin: -16px 0 40px;
+  font-size: 17px;
+  line-height: 1.65;
+  color: var(--ink-2);
+}
+
+.play__stages {
+  display: grid;
+  gap: 36px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.play__stage:nth-child(even) .play__card {
+  margin-left: auto;
+  rotate: 0.5deg;
+}
+
+.play__card {
+  position: relative;
+  max-width: 760px;
+  padding: 26px 28px 24px 30px;
+  rotate: -0.4deg;
+}
+
+.play__num {
+  position: absolute;
+  top: -18px;
+  left: 18px;
+  padding: 0 8px;
+  background: var(--paper);
+  font-size: 22px;
+  color: var(--ballpoint);
+}
+
+.play__title {
+  margin: 0 0 12px;
+  font-family: var(--hand);
+  font-weight: 400;
+  font-size: clamp(28px, 22px + 1.2vw, 36px);
+  line-height: 1.1;
+  color: var(--ink);
+}
+
+.play__when {
+  display: block;
+  font-size: 0.6em;
+  color: var(--ink-3);
+}
+
+.play__card p {
+  margin: 0 0 12px;
+  max-width: 62ch;
+  font-size: 16.5px;
+  line-height: 1.7;
+  color: var(--ink-2);
+}
+
+.play__card p:last-of-type {
+  margin-bottom: 0;
+}
+
+.play__card strong {
+  color: var(--ink);
+  font-weight: 800;
+}
+
+.play__doodle {
+  position: absolute;
+  right: 22px;
+  top: 22px;
+  width: 64px;
+  height: 48px;
+  stroke-width: 1.6;
+  color: var(--ink-3);
+}
+
+.play__foot {
+  max-width: 760px;
+  margin-top: 44px;
+}
+
+.play__origin {
+  margin: 0 0 20px;
+  font-size: 17px;
+  line-height: 1.65;
+  color: var(--ink-2);
+}
+
+.social-btn--connect .social-btn__icon {
+  color: var(--ballpoint);
+}
+
 /* ---------------------------------------------------------------------------
    The pen writes the name: glyph outlines draw, then fill.
    --------------------------------------------------------------------------- */
@@ -2571,6 +2828,16 @@ html.is-calm *::after {
 
   .scribble {
     padding: 20px 16px 18px;
+  }
+
+  .play__card {
+    padding: 22px 16px 18px;
+  }
+
+  .play__doodle {
+    position: static;
+    display: block;
+    margin: 10px 0 0;
   }
 
   .social-grid--extras {

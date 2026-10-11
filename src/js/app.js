@@ -153,7 +153,9 @@ document.addEventListener("DOMContentLoaded", function () {
       var isOpen = typeof open === "boolean" ? open : !sheet.classList.contains("is-open");
       sheet.classList.toggle("is-open", isOpen);
       menuBtn.setAttribute("aria-expanded", String(isOpen));
-      sheet.setAttribute("aria-hidden", String(!isOpen));
+      // Closed: inert (unfocusable, hidden from assistive tech); open: live.
+      if (isOpen) sheet.removeAttribute("inert");
+      else sheet.setAttribute("inert", "");
       if (isOpen) {
         if (sheetLinks.length) sheetLinks[0].focus();
       } else if (sheet.contains(document.activeElement)) {
