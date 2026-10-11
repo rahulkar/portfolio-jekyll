@@ -1,0 +1,10 @@
+# Generated assets are diffed byte-for-byte in CI; keep them LF on every OS.
+assets/css/*.css text eol=lf
+assets/js/*.js text eol=lf
+
+# Binary assets
+*.woff2 binary
+*.png binary
+*.ico binary
+*.heic binary
+Gemfile.lock text eol=lf

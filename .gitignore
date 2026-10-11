@@ -40,3 +40,12 @@ yarn-error.log*
 dist/
 build/
 *.map
+
+# Local Claude Code session config
+.claude/
+
+# Brand tooling cache
+node_modules/.cache/
+
+# Scratch photos never belong in the published tree
+*.heic

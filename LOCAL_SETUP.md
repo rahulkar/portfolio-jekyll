@@ -1,99 +1,73 @@
-# Local Development Setup Guide
+# Local development
+
+The site is a Jekyll build (GitHub Pages runs Jekyll 3.10 with jekyll-seo-tag,
+jekyll-sitemap and jekyll-feed) with a small Node toolchain for the CSS, the
+bundled JavaScript and the hand-drawn assets. Locally you run Jekyll 4.4; the
+output is the same apart from the generator meta tag.
 
 ## Prerequisites
 
-To test your Jekyll site locally, you need:
+- Node.js 20+ and npm (CI uses Node 22)
+- Ruby 3.1+ with the MSYS2 devkit (RubyInstaller "Ruby+Devkit"), then `gem install bundler`
+- Python 3 (only for the lightweight static server in `npm run serve:light`)
 
-1. **Ruby** (for Jekyll)
-2. **Jekyll** (static site generator)
-3. **Node.js and npm** (already installed ✓)
+## One-time setup
 
-## Option 1: Install Ruby and Jekyll on Windows (Recommended)
-
-### Step 1: Install Ruby
-1. Download RubyInstaller from: https://rubyinstaller.org/downloads/
-2. Download **Ruby+Devkit 3.1.x** (or latest stable version)
-3. Run the installer and check "Add Ruby executables to your PATH"
-4. After installation, a new terminal will open - run the `ridk install` command when prompted
-
-### Step 2: Install Jekyll
-Open a new terminal and run:
-```powershell
-gem install jekyll bundler
-```
-
-### Step 3: Install Jekyll Dependencies
-Create a `Gemfile` in your project root (if it doesn't exist):
-```ruby
-source "https://rubygems.org"
-gem "jekyll", "~> 4.3"
-```
-
-Then run:
-```powershell
-bundle install
-```
-
-### Step 4: Install Node Dependencies
 ```powershell
 npm install
-```
-
-### Step 5: Run the Development Server
-
-**Option A: Using Gulp (includes live reload)**
-```powershell
-npm run dev
-```
-
-**Option B: Using Jekyll directly**
-```powershell
-bundle exec jekyll serve
-```
-Then open http://localhost:4000 in your browser
-
-## Option 2: Using Docker (Alternative)
-
-If you have Docker installed:
-
-```powershell
-docker run --rm -it -v ${PWD}:/srv/jekyll -p 4000:4000 jekyll/jekyll:latest jekyll serve
-```
-
-## Option 3: Using GitHub Codespaces (Cloud-based)
-
-1. Push your code to GitHub
-2. Open your repository on GitHub
-3. Click "Code" → "Codespaces" → "Create codespace"
-4. In the terminal, run: `npm run dev` or `bundle exec jekyll serve`
-
-## Troubleshooting
-
-### node-sass build errors
-The project uses deprecated `node-sass`. If you encounter build errors, you can:
-- Ignore the warnings (they're just deprecation notices)
-- Or update `gulp-sass` to use `sass` instead (requires code changes)
-
-### Jekyll not found
-Make sure Ruby is in your PATH. Restart your terminal after installing Ruby.
-
-### Port already in use
-If port 4000 is busy, use a different port:
-```powershell
-bundle exec jekyll serve --port 4001
-```
-
-## Quick Start (Once Everything is Installed)
-
-```powershell
-# Install dependencies (one time)
-npm install
 bundle install
-
-# Start development server
-npm run dev
-# OR
-bundle exec jekyll serve
 ```
 
-Visit http://localhost:4000 to see your site!
+If `bundle install` has to compile native gems and fails, make sure the devkit
+is installed (`ridk install` from the RubyInstaller prompt). As a last resort
+Jekyll can run against the globally installed gems by bypassing Bundler:
+`$env:JEKYLL_NO_BUNDLER_REQUIRE='true'; jekyll build`.
+
+## Everyday loop
+
+```powershell
+npm run build          # sass + esbuild -> assets/css/main.css, assets/js/main.js
+npm run check:csp      # lint markup and the bundle for CSP regressions
+bundle exec jekyll build
+npm run serve:light    # builds, then serves _site on http://127.0.0.1:4001
+```
+
+Open http://127.0.0.1:4001/ and http://127.0.0.1:4001/404.html. The strict
+Content-Security-Policy meta tag blocks Jekyll's live-reload script, so do
+browser checks (console must show no CSP violations) against this static
+server, not `jekyll serve`. `npm run dev` still runs the sass/esbuild watchers
+next to `jekyll serve --force_polling` for quick iteration without reload.
+
+**Run `npm run build` before every commit.** CI rebuilds and fails if the
+committed `assets/css/main.css` or `assets/js/main.js` differ from `src/`.
+
+## Hand-drawn assets
+
+| Script | What it does | When to run |
+|---|---|---|
+| `npm run sketch` | Pre-roughens the doodles into `_includes/sketch-defs.html` (`node tools/roughen.mjs icons` redraws the six generic stack icons) | after editing a doodle in `tools/roughen.mjs` |
+| `npm run brand` | Renders `assets/icons/favicon-v2.svg`, the `.ico` files, `apple-touch-icon-v2.png` and `assets/og-sketch.png` | after changing the mark or the share card |
+| `npm run fonts -- <Excalifont-Regular.woff2>` | Subsets Excalifont to Latin into `assets/fonts/excalifont.woff2` | only when the font file changes |
+
+The runtime sketch layer lives in `src/js/sketch.js` (Rough.js frames,
+underlines, highlighter) and `src/js/diagram.js` (the delivery loop). Any
+element with `data-sketch="rect|rect-fill|highlight|underline|circle|squiggle"`
+gets drawn; `data-seed` keeps the wobble stable across reloads.
+
+## Fonts
+
+Excalifont (display) and Nunito (body) are self-hosted Latin subsets under
+`assets/fonts/` with their OFL notices beside them. Font files are immutable:
+the live site caches `/assets/*` for a year, so rename on change (same for the
+favicon and share image, hence the `-v2` names).
+
+## Production notes
+
+- The site is fronted by Cloudflare: purge the cache after deploying asset
+  changes, then re-scrape the LinkedIn / X / Facebook card validators.
+- Cloudflare Email Address Obfuscation rewrites the visible address after load
+  and injects a same-origin script; this is allowed by the CSP.
+- Cloudflare features that inject inline scripts (Rocket Loader, Mirage) must
+  stay off; the CSP would block them.
+- GitHub Pages publishes root `.md` files as pages, which is why
+  `LOCAL_SETUP.md` and `LICENSE.txt` are excluded in `_config.yml`.
