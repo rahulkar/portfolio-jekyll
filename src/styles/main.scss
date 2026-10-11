@@ -136,7 +136,6 @@
 .note__visual,
 .card,
 .sticker__visual,
-.tag,
 .key,
 .skip-link {
   --ink: #2A2622;
@@ -242,7 +241,6 @@ a {
 .hero__heading,
 .sec-head__name,
 .sec-head__count,
-.kv__k,
 .stack-group__label,
 .contact__title,
 .card__title,
@@ -425,29 +423,6 @@ a {
   color: var(--ink-3);
 }
 
-.tag {
-  display: inline-flex;
-  align-items: center;
-  padding: 5px 14px;
-  background: var(--hl-mint);
-  color: var(--ink);
-  font-size: 13.5px;
-  font-weight: 700;
-  line-height: 1.2;
-  clip-path: polygon(0 10%, 3% 0, 97% 4%, 100% 90%, 97% 100%, 3% 96%);
-  rotate: -1.5deg;
-}
-
-.tag:nth-child(2) {
-  background: var(--hl-sky);
-  rotate: 1deg;
-}
-
-.tag:nth-child(3) {
-  background: var(--hl-pink);
-  rotate: -0.8deg;
-}
-
 .taped::before {
   content: "";
   position: absolute;
@@ -569,22 +544,6 @@ a {
   color: var(--ink);
   box-shadow: 3px 4px 0 var(--shadow);
   padding: 18px 20px 16px;
-}
-
-.card--profile {
-  rotate: 1.2deg;
-  margin-top: 12px;
-}
-
-.card__clip {
-  position: absolute;
-  top: -16px;
-  left: 18px;
-  width: 22px;
-  height: 54px;
-  color: var(--ink);
-  stroke-width: 2;
-  z-index: 2;
 }
 
 .card__head {
@@ -786,18 +745,6 @@ a {
 
 .bar__seg.is-active {
   color: var(--ballpoint);
-}
-
-.bar__tag {
-  font-size: 12.5px;
-  padding: 3px 10px;
-}
-
-.bar__time {
-  font-size: 19px;
-  line-height: 1;
-  color: var(--ink-3);
-  white-space: nowrap;
 }
 
 .bar__spacer {
@@ -1026,36 +973,6 @@ a {
   stroke-width: 1.5;
 }
 
-.hero__doodle--probe {
-  right: 7%;
-  bottom: 70px;
-  width: 230px;
-  color: var(--ballpoint);
-  opacity: 0.55;
-  rotate: -8deg;
-  animation-delay: -2s;
-}
-
-.hero__doodle--bonsai {
-  left: 52px;
-  bottom: 110px;
-  width: 190px;
-  color: var(--marker-green);
-  opacity: 0.6;
-  rotate: 5deg;
-  animation-delay: -5s;
-}
-
-.hero__doodle--sbc {
-  left: 6%;
-  top: 120px;
-  width: 220px;
-  color: var(--redpen);
-  opacity: 0.45;
-  rotate: -4deg;
-  animation-delay: -8s;
-}
-
 .hero__doodle--circuit {
   top: 64px;
   right: -30px;
@@ -1084,13 +1001,6 @@ a {
   gap: 4px;
   rotate: -3deg;
   pointer-events: none;
-}
-
-.tag-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-bottom: 28px;
 }
 
 .hero__heading {
@@ -1176,6 +1086,69 @@ a {
   transform: translateY(1px);
 }
 
+/* Desk scene: pre-roughened objects placed on one SVG stage. */
+.desk {
+  width: 100%;
+  margin: 0;
+}
+
+.desk__scene {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  color: var(--ink);
+}
+
+.desk__item {
+  opacity: 0;
+}
+
+.desk__item--desk {
+  color: var(--pencil);
+  stroke-width: 2;
+}
+
+.desk__item--bonsai {
+  color: var(--marker-green);
+}
+
+.desk__item--mug {
+  color: var(--redpen);
+}
+
+.desk__item--chip {
+  color: var(--ballpoint);
+}
+
+.desk__note {
+  font-family: var(--hand);
+  font-size: 17px;
+  fill: var(--ink-3);
+  stroke: none;
+  opacity: 0;
+  transition: opacity 400ms ease 1s;
+}
+
+.is-ready .desk__item {
+  opacity: 1;
+  animation: sk-draw 900ms cubic-bezier(.2,.7,.2,1) backwards;
+}
+
+.is-ready .desk__item--monitor { animation-delay: 150ms; }
+.is-ready .desk__item--bonsai { animation-delay: 300ms; }
+.is-ready .desk__item--mug { animation-delay: 450ms; }
+.is-ready .desk__item--chip { animation-delay: 600ms; }
+
+.is-ready .desk__note {
+  opacity: 1;
+}
+
 /* ---------------------------------------------------------------------------
    Sections
    --------------------------------------------------------------------------- */
@@ -1219,28 +1192,6 @@ section {
   color: var(--ballpoint);
 }
 
-.kv {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 22px 20px;
-  padding: 6px 4px;
-}
-
-.kv__k {
-  display: block;
-  margin-bottom: 4px;
-  font-size: 19px;
-  line-height: 1.1;
-  color: var(--ink-3);
-}
-
-.kv__v {
-  display: block;
-  font-size: 15.5px;
-  font-weight: 600;
-  line-height: 1.4;
-}
-
 .about__body {
   position: relative;
   display: grid;
@@ -1257,24 +1208,132 @@ section {
   max-width: 60ch;
 }
 
-.about__coffee {
-  position: absolute;
-  right: -48px;
-  bottom: -120px;
-  width: 200px;
-  color: var(--coffee);
-  display: var(--coffee-display);
-  mix-blend-mode: var(--blend);
-  opacity: 0.16;
-  pointer-events: none;
-  z-index: 0;
+/* Pinboard under the paragraphs: a where/when note and the hobby shelf. */
+.board {
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr) 2fr;
+  gap: 32px 44px;
+  align-items: end;
+  margin-top: 40px;
 }
 
-.about__coffee .doodle {
+.note--when .note__visual {
+  --tilt: -1.4deg;
+  display: grid;
+  grid-template-columns: 44px 1fr;
+  gap: 2px 14px;
+  align-items: center;
+  min-height: 0;
+  padding: 16px 18px 24px;
+}
+
+.when__sun,
+.when__moon {
+  grid-row: 1 / span 3;
+  display: none;
+  width: 40px;
+  height: 40px;
+  stroke-width: 2;
+}
+
+.when__sun {
+  color: var(--redpen);
+}
+
+.when__moon {
+  color: var(--ballpoint);
+}
+
+.note--when:not([data-state="asleep"]):not([data-state="tinkering"]) .when__sun,
+.note--when[data-state="asleep"] .when__moon,
+.note--when[data-state="tinkering"] .when__moon {
+  display: block;
+}
+
+.when__place {
+  font-size: 15.5px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.when__time {
+  font-size: 15px;
+  line-height: 1.3;
+  color: var(--ink-2);
+}
+
+.when__time time {
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.when__state {
+  font-family: var(--hand);
+  font-size: 18px;
+  line-height: 1.2;
+  color: var(--ink-3);
+}
+
+.shelf {
+  position: relative;
+}
+
+.shelf__label {
+  display: inline-block;
+  margin-bottom: 8px;
+  rotate: -2deg;
+}
+
+.shelf__items {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 12px;
+  margin: 0;
+  padding: 0 10px 8px;
+  list-style: none;
+}
+
+.shelf__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  max-width: 96px;
+  text-align: center;
+}
+
+.shelf__item .doodle {
+  width: 84px;
+  height: 58px;
+  stroke-width: 1.6;
+  color: var(--ink-2);
+}
+
+.shelf__item:nth-child(1) .doodle { color: var(--marker-green); }
+.shelf__item:nth-child(2) .doodle { color: var(--ballpoint); width: 60px; }
+.shelf__item:nth-child(3) .doodle { color: var(--ink-2); }
+.shelf__item:nth-child(4) .doodle { color: var(--redpen); }
+.shelf__item:nth-child(5) .doodle { color: var(--ballpoint); }
+
+.is-in .shelf__item:nth-child(2) .doodle { animation-delay: 120ms; }
+.is-in .shelf__item:nth-child(3) .doodle { animation-delay: 240ms; }
+.is-in .shelf__item:nth-child(4) .doodle { animation-delay: 360ms; }
+.is-in .shelf__item:nth-child(5) .doodle { animation-delay: 480ms; }
+
+.shelf__caption {
+  font-family: var(--hand);
+  font-size: 17px;
+  line-height: 1.1;
+  color: var(--ink-3);
+}
+
+.shelf__plank {
   display: block;
   width: 100%;
-  height: auto;
-  stroke-width: 7;
+  height: 14px;
+  color: var(--pencil);
+  stroke-width: 2;
 }
 
 .loop {
@@ -1920,14 +1979,7 @@ section {
     grid-template-columns: 1fr;
   }
 
-  /* Single-column hero: keep only the faint circuit in the top-right margin. */
-  .hero__doodle--probe,
-  .hero__doodle--bonsai,
-  .hero__doodle--sbc {
-    display: none;
-  }
-
-  .card--profile {
+  .desk {
     max-width: 560px;
     margin-top: 28px;
   }
@@ -1943,8 +1995,6 @@ section {
     padding: 0 14px;
   }
 
-  .bar__tag,
-  .bar__time,
   .bar__nav,
   .bar__cmd {
     display: none;
@@ -1977,18 +2027,15 @@ section {
     margin-bottom: 28px;
   }
 
-  .kv {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
   .about__body,
+  .board,
   .stack-groups,
   .contact__row {
     grid-template-columns: 1fr;
   }
 
-  .about__coffee {
-    display: none;
+  .board {
+    align-items: start;
   }
 
   .loop {
@@ -2039,11 +2086,6 @@ section {
     font-size: clamp(40px, 20px + 7vw, 56px);
   }
 
-  .tag {
-    font-size: 12.5px;
-    padding: 4px 11px;
-  }
-
   .btn {
     width: 100%;
     justify-content: center;
@@ -2059,8 +2101,27 @@ section {
     gap: 2px;
   }
 
-  .kv {
-    grid-template-columns: 1fr;
+  .shelf__items {
+    gap: 6px;
+    padding: 0 2px 8px;
+  }
+
+  .shelf__item {
+    max-width: 66px;
+    gap: 6px;
+  }
+
+  .shelf__item .doodle {
+    width: 58px;
+    height: 40px;
+  }
+
+  .shelf__item:nth-child(2) .doodle {
+    width: 44px;
+  }
+
+  .shelf__caption {
+    font-size: 15px;
   }
 
   .contact__email {
@@ -2098,7 +2159,6 @@ section {
 @media (forced-colors: active) {
   .sk,
   .taped::before,
-  .about__coffee,
   .error__coffee,
   .trail,
   .scroll-progress {
@@ -2116,8 +2176,7 @@ section {
 
   .note__visual,
   .sticker__visual,
-  .card,
-  .tag {
+  .card {
     border: 1px solid CanvasText;
   }
 
@@ -2140,11 +2199,10 @@ section {
 
   .note__visual,
   .sticker__visual,
-  .card--profile,
-  .tag,
   .stamp,
   .contact__email,
-  .skip-link {
+  .skip-link,
+  .shelf__label {
     rotate: 0deg;
   }
 
@@ -2184,7 +2242,6 @@ section {
   .trail,
   .hero__doodle,
   .hero__annos,
-  .about__coffee,
   .error__coffee,
   .taped::before {
     display: none;
@@ -2200,6 +2257,8 @@ section {
   .chip,
   .doodle,
   .sk path,
+  .desk__item,
+  .desk__note,
   .card__body .ln {
     opacity: 1 !important;
     transform: none;
@@ -2221,9 +2280,12 @@ section {
   }
 
   .doodle,
-  .sk path {
+  .sk path,
+  .desk__item,
+  .desk__note {
     opacity: 1 !important;
     animation: none !important;
+    transition: none !important;
     stroke-dasharray: none !important;
   }
 
