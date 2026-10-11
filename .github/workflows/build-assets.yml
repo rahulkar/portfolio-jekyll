@@ -65,12 +65,6 @@ jobs:
       - name: Validate HTML
         run: npm run validate:html
 
-      - name: Check links
-        uses: lycheeverse/lychee-action@v2
-        with:
-          args: --no-progress --exclude-mail --exclude 'linkedin\.com' --root-dir "${{ github.workspace }}/_site" './_site/**/*.html'
-          fail: true
-
       - run: npx playwright install --with-deps chromium
 
       - name: Playwright + axe
@@ -80,6 +74,19 @@ jobs:
 
       - name: Lighthouse CI
         run: npx lhci autorun
+
+      # Runs last so the Playwright and Lighthouse reports exist even when a link is
+      # broken. Absolute www.rahulkar.com links (canonical, og:url, the feed) are remapped
+      # to the build output: the live site may not have deployed this commit yet.
+      - name: Check links
+        uses: lycheeverse/lychee-action@v2
+        with:
+          args: >-
+            --no-progress --exclude 'linkedin\.com'
+            --root-dir "${{ github.workspace }}/_site" --index-files index.html
+            --remap 'https://www\.rahulkar\.com(/.*)? file://${{ github.workspace }}/_site${1}'
+            './_site/**/*.html'
+          fail: true
 
       - name: Upload screenshots and reports
         if: always()

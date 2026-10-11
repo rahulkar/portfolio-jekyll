@@ -89,8 +89,11 @@ work inside the markdown, so a polaroid is `{% include polaroid-6502.html id="..
   and the CSP lint and stages the rebuilt bundles, so a stale `assets/js/main.js` can
   no longer be committed.
 - CI validates the built HTML (`npm run validate:html`, config in `.htmlvalidate.json`),
-  checks every link with lychee (LinkedIn is excluded because it blocks bots), runs the
-  Playwright suite and Lighthouse CI, and Dependabot also watches the GitHub Actions.
+  runs the Playwright suite and Lighthouse CI, then checks every link with lychee
+  (LinkedIn is excluded because it blocks bots; absolute `www.rahulkar.com` links are
+  remapped to `_site` so a page is checked against the build, not the not-yet-deployed
+  live site). Dependabot also watches the GitHub Actions. To run the link check locally:
+  `docker run --rm -v "$PWD/_site:/site:ro" -w /site lycheeverse/lychee:0.24.2 --root-dir /site --index-files index.html --remap 'https://www\.rahulkar\.com(/.*)? file:///site${1}' './**/*.html'`.
 
 The runtime sketch layer lives in `src/js/sketch.js` (Rough.js frames,
 underlines, highlighter) and `src/js/diagram.js` (the delivery loop). Any
