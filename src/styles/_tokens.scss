@@ -20,13 +20,13 @@
   --s-8: 4rem;
   --s-9: 6rem;
 
-  --container: 75rem;
+  --container: 96rem; // 1536px: wide screens use their width
   --measure: 32em; // about 68 characters of body text
   --margin: clamp(1.25rem, 5vw, 4rem);
   --cols: 4;
   --gutter: 1rem;
-  --section-space: clamp(4rem, 2.6667rem + 5.9259vw, 8rem);
-  --hero-top: clamp(3rem, 2rem + 4.4444vw, 6rem);
+  --section-space: clamp(3rem, 2.3333rem + 2.963vw, 5rem);   // 48 -> 80
+  --hero-top: clamp(2rem, 1.3333rem + 2.963vw, 4rem);         // 32 -> 64
 
   // Type, solved from 360px to 1440px. Print overrides these tokens.
   --fs-display: clamp(3.5rem, 2.3333rem + 5.1852vw, 7rem);    // 56 -> 112

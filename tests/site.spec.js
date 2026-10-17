@@ -145,7 +145,7 @@ test.describe("home page", () => {
 
   test("sections, approach and background", async ({ page }) => {
     await openPage(page, "/");
-    expect(await page.locator("main section[id]").evaluateAll((els) => els.map((el) => el.id))).toEqual(["approach", "background", "about", "notes", "contact"]);
+    expect(await page.locator("main section[id]").evaluateAll((els) => els.map((el) => el.id))).toEqual(["approach", "background", "about", "notes"]);
     await expect(page.locator("#approach .stage")).toHaveCount(4);
     for (const stage of await page.locator("#approach .stage").all()) await expect(stage).toBeVisible();
     await expect(page.locator("#approach button")).toHaveCount(0);
@@ -167,8 +167,9 @@ test.describe("home page", () => {
     await expect(page.locator("#notes .row")).toHaveCount(3);
     expect(await page.locator("#notes .row__link").first().evaluate((el) => getComputedStyle(el).textDecorationLine)).toBe("underline");
 
-    await expect(page.locator(".email__address")).toHaveText("kar.rahul@pm.me");
-    await expect(page.locator("#contact .book__hint")).toHaveCount(1);
+    // Contact sits in the hero, beside the intro, so it is on the first screen.
+    await expect(page.locator(".hero #contact .email__address")).toHaveText("kar.rahul@pm.me");
+    await expect(page.locator(".book__hint")).toHaveCount(1);
     for (const href of ["https://github.com/rahulkar", "https://www.linkedin.com/in/karrahul/", "https://www.credly.com/users/rahul-kar"]) {
       await expect(page.locator(`#contact a[href="${href}"]`)).toHaveCount(1);
     }

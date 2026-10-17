@@ -2,8 +2,24 @@
 
 /* Header ------------------------------------------------------------------ */
 
+// From 640px the header stays put, so the nav is one click away anywhere on
+// the page; on phones (two rows) it scrolls away to keep the screen free.
 .site-header {
   border-bottom: 1px solid var(--rule);
+  background: var(--bg);
+
+  @include mid {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+  }
+}
+
+// Anchored targets land below the sticky header.
+[id] {
+  scroll-margin-top: var(--s-5);
+
+  @include mid { scroll-margin-top: calc(64px + var(--s-5)); }
 }
 
 // The toggle's 44px track is always reserved, so unhiding it moves nothing.
@@ -16,7 +32,7 @@
   @include mid {
     grid-template-columns: auto 1fr 44px;
     grid-template-areas: "name nav toggle";
-    min-height: 72px;
+    min-height: 64px;
   }
 }
 
@@ -273,7 +289,7 @@
 }
 
 .email__address {
-  font-size: var(--fs-h2);
+  font-size: var(--fs-h3);
   font-weight: 600;
   line-height: 1.15;
   letter-spacing: -0.02em;
@@ -301,39 +317,30 @@
   @include label;
 }
 
+// Profiles in one row: every link a 44px target, nothing stacked.
 .links {
-  border-top: 1px solid var(--rule);
-
-  li { border-bottom: 1px solid var(--rule); }
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: var(--s-5);
 
   a {
-    display: flex;
-    flex-wrap: wrap;
+    display: inline-flex;
     align-items: center;
-    column-gap: var(--s-4);
-    min-height: 48px;
-    padding: var(--s-2) 0;
+    gap: 0.3rem;
+    min-height: 44px;
+    min-width: 44px;
     text-decoration: none;
   }
 
-  .icon {
-    margin-left: auto;
-    color: var(--ink-3);
-  }
+  .icon { color: var(--ink-3); }
 }
 
 .links__name {
-  min-width: 9rem;
   font-weight: 500;
   text-decoration: underline 1px var(--ink-3);
   text-underline-offset: 0.18em;
 
   a:hover & { text-decoration: underline 2px var(--ink); }
-}
-
-.links__handle {
-  @include data;
-  color: var(--ink-2);
 }
 
 /* Colophon ---------------------------------------------------------------- */
@@ -356,4 +363,14 @@
 
 .colophon__clock {
   @include data;
+}
+
+.colophon__contact {
+  color: var(--ink);
+
+  a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
 }

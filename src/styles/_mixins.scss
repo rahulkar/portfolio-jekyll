@@ -3,6 +3,7 @@
 
 @mixin mid { @media (min-width: 40em) { @content; } }   // 640px, 6 columns
 @mixin wide { @media (min-width: 64em) { @content; } }  // 1024px, 12 columns
+@mixin xl { @media (min-width: 80em) { @content; } }    // 1280px
 @mixin narrow { @media (max-width: 39.99em) { @content; } }
 
 @mixin cols($a, $b) { grid-column: #{$a} / #{$b + 1}; }
