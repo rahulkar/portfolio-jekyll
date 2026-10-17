@@ -1,5 +1,5 @@
 // Turn a phone photo (HEIC/JPEG/PNG) into web-ready, metadata-stripped
-// WebP + JPEG renditions for the sketchbook's taped-in polaroids.
+// WebP + JPEG renditions for photos on the site (plain figures).
 //   node tools/photo.mjs <input> <name> [maxWidth=1280]
 // Writes assets/img/<name>-{640,<maxWidth>}.{webp,jpg}.
 // Not part of `npm run build`; outputs are committed. EXIF (including GPS)
