@@ -116,6 +116,7 @@ for (const bundle of ["assets/js/main.js", "assets/js/theme.js"]) {
   const patterns = [
     [/setAttribute\(\s*["'`]style["'`]/, 'setAttribute("style")'],
     [/\.cssText\s*\+?=/, "cssText assignment"],
+    [/\.style\.(?!setProperty\(\s*["'`]--)/, "inline style property (only custom properties via setProperty are allowed)"],
     [/style\s*=\s*\\?["']/, "inline style inside an HTML string"],
     [/\b(innerHTML|outerHTML|insertAdjacentHTML)\b|document\.write\b/, "HTML string injection"],
   ];

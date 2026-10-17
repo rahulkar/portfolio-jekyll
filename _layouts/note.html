@@ -1,31 +1,24 @@
-<!DOCTYPE html>
-<html lang="en">
-  {% include head.html %}
-  <body>
-    {% include sketch-defs.html %}
-    <a class="skip-link" href="#main">skip to content</a>
-    <div class="scroll-progress" id="scroll-progress" aria-hidden="true"></div>
-    {% include bar.html %}
-    <main id="main" class="page">
-      <section class="page-section scribbles">
-        <div class="wrap">
-          <p class="scribbles__crumb reveal">
-            <a href="{{ "/notes/" | prepend: site.baseurl }}">&larr; notes</a>
-          </p>
-          <article class="card taped scribble scribble--full reveal reveal--d1" data-sketch="rect" data-seed="scribble-{{ page.slug | default: page.title }}">
-            <h1 class="scribble__title">{{ page.title }}</h1>
-            <p class="scribble__meta"><time class="stamp" datetime="{{ page.date | date: '%Y-%m-%d' }}">{{ page.date | date: "%-d %b %Y" }}</time></p>
-            {{ content }}
-          </article>
-          {% assign items = site.notes | sort: "date" | reverse %}
-          {% for item in items %}{% if item.url != page.url %}{% unless next_found %}{% assign next_found = true %}{% assign next_item = item %}{% endunless %}{% endif %}{% endfor %}
-          <p class="scribbles__next reveal reveal--d2">
-            <a class="sticker" href="{{ "/notes/" | prepend: site.baseurl }}"><span class="sticker__visual">all notes</span></a>
-            <a class="sticker" href="{{ "/feed.xml" | prepend: site.baseurl }}"><span class="sticker__visual">rss feed</span></a>
-          </p>
-        </div>
-      </section>
-    </main>
-    {% include footer.html %}
-  </body>
-</html>
+---
+layout: default
+---
+{%- assign notes = site.notes | sort: "date" | reverse -%}
+{%- assign found = false -%}{%- assign next_note = nil -%}
+{%- for n in notes -%}{%- if found and next_note == nil -%}{%- assign next_note = n -%}{%- endif -%}{%- if n.url == page.url -%}{%- assign found = true -%}{%- endif -%}{%- endfor -%}
+{%- unless next_note -%}{%- assign next_note = notes.first -%}{%- endunless -%}
+{%- if next_note.url == page.url -%}{%- assign next_note = nil -%}{%- endif -%}
+{%- assign words = content | strip_html | number_of_words -%}{%- assign minutes = words | plus: 199 | divided_by: 200 -%}
+<article class="wrap grid page note">
+  <header class="note__head">
+    <p class="note__crumb"><a href="{{ "/notes/" | relative_url }}">Notes</a></p>
+    <h1>{{ page.title }}</h1>
+    <p class="note__meta"><time datetime="{{ page.date | date: '%Y-%m-%d' }}">{{ page.date | date: "%-d %b %Y" }}</time>{% if page.last_modified_at %} &middot; Updated <time datetime="{{ page.last_modified_at | date: '%Y-%m-%d' }}">{{ page.last_modified_at | date: "%-d %b %Y" }}</time>{% endif %} &middot; {{ minutes }} min read</p>
+  </header>
+  <div class="note__body prose">
+    {{ content }}
+  </div>
+  <footer class="note__foot">
+    <p class="note__author">Rahul Kar is an enterprise solution architect in Kolkata. <a href="mailto:{{ site.email }}">{{ site.email }}</a></p>
+    {% if next_note %}<p class="note__next">Next note: <a href="{{ next_note.url | relative_url }}">{{ next_note.title }}</a></p>{% endif %}
+    <p class="note__more"><a href="{{ "/notes/" | relative_url }}">All notes</a> &middot; <a href="{{ "/feed.xml" | relative_url }}">Atom feed</a></p>
+  </footer>
+</article>

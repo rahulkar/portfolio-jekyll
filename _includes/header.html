@@ -1,75 +1,14 @@
-<header class="hero" id="top">
-  <div class="hero__doodle hero__doodle--circuit" aria-hidden="true">
-    <svg class="doodle doodle--auto" viewBox="0 0 320 280" focusable="false"><use href="#d-circuit"></use></svg>
-  </div>
-
-  <div class="hero__annos" aria-hidden="true">
-    <span class="anno">+ sketchbook &middot; vol. 11</span>
-    <span class="anno">+ build 2026.10</span>
-  </div>
-
-  <div class="wrap hero__inner">
-    <div class="hero__grid">
-      <div>
-        <h1 class="hero__heading reveal reveal--d1">
-          <span class="hero__hello">hello, I'm</span>
-          <span class="hl" data-sketch="highlight" data-seed="hero-name"><span class="sr-only">rahul</span>{% include name-paths.html %}</span>
-          <span class="hero__role">engineer &amp; tinkerer<span class="caret"></span></span>
-        </h1>
-
-        <p class="hero__sub reveal reveal--d2">
-          <span class="hero__sub-lead">Solution Architect &middot; <span class="hl--static">11+ years</span>.</span>
-          <span class="hero__sub-rest">I ship enterprise platforms &mdash; tooling, cloud, DevOps, and agentic AI.</span>
-        </p>
-
-        <div class="hero__cta reveal reveal--d3">
-          <a href="#stack" class="btn btn--primary" data-sketch="rect-fill" data-seed="cta-stack" data-scroll>
-            <span>the stack</span>
-            <svg class="doodle" aria-hidden="true" focusable="false"><use href="#d-arrow"></use></svg>
-          </a>
-          <a href="#connect" class="btn" data-sketch="rect" data-seed="cta-connect" data-scroll>
-            <span>connect</span>
-          </a>
-        </div>
-      </div>
-
-      <figure class="desk reveal reveal--d2">
-        <svg class="desk__scene" viewBox="0 0 520 300" aria-hidden="true" focusable="false">
-          <polygon class="desk__light" points="448,142 470,148 436,205 322,205"></polygon>
-          <rect class="desk__glow" x="82" y="61" width="176" height="115" rx="6"></rect>
-          <use class="desk__item desk__item--desk" href="#d-desk" x="0" y="196" width="520" height="130"></use>
-          <g class="desk__hot">
-            <use class="desk__item desk__item--monitor" href="#d-monitor" x="70" y="52" width="200" height="153"></use>
-            <rect class="desk__hit" x="70" y="52" width="200" height="153"></rect>
-            <text class="desk__tip" x="60" y="270"><tspan x="60" y="270">a PoC becomes a platform, or gets deleted.</tspan><tspan x="60" y="290">both are fine.</tspan></text>
-          </g>
-          <g class="desk__hot">
-            <use class="desk__item desk__item--bonsai" href="#d-bonsai" x="300" y="115" width="150" height="100"></use>
-            <rect class="desk__hit" x="300" y="115" width="150" height="90"></rect>
-            <text class="desk__tip" x="60" y="270">the slowest feedback loop in the house.</text>
-          </g>
-          <g class="desk__hot">
-            <use class="desk__item desk__item--mug" href="#d-mug" x="272" y="153" width="56" height="52"></use>
-            <rect class="desk__hit" x="268" y="150" width="60" height="55"></rect>
-            <text class="desk__tip" x="60" y="270">refilled more often than it should be.</text>
-          </g>
-          <g class="desk__hot">
-            <use class="desk__item desk__item--chip" href="#d-chip" x="8" y="160" width="64" height="45"></use>
-            <rect class="desk__hit" x="8" y="156" width="64" height="49"></rect>
-            <text class="desk__tip" x="60" y="270">W65C02, hand-wired, says hello on the LCD.</text>
-          </g>
-          <g class="desk__hot">
-            <use class="desk__item desk__item--lamp" href="#d-lamp" x="446" y="97" width="72" height="108"></use>
-            <rect class="desk__hit" x="446" y="97" width="72" height="108"></rect>
-            <text class="desk__tip" x="60" y="270">comes on with the chalkboard. try the moon.</text>
-          </g>
-          <text class="desk__note" x="80" y="40">a PoC in progress</text>
-          <text class="desk__note" x="312" y="104">bonsai</text>
-          <text class="desk__note" x="270" y="142">coffee</text>
-          <text class="desk__note" x="14" y="242">6502 &middot; retro computing</text>
-        </svg>
-        <figcaption class="sr-only">A doodle of my desk: a monitor with a proof-of-concept in progress, a bonsai, coffee, a 6502 chip and a desk lamp that comes on in dark mode.</figcaption>
-      </figure>
-    </div>
+<header class="site-header">
+  <div class="wrap site-header__inner">
+    <a class="site-header__name" href="{{ "/" | relative_url }}">Rahul Kar</a>
+    <nav class="site-nav" aria-label="Primary">
+      <ul role="list">
+        <li><a href="{{ "/how-i-work/" | relative_url }}"{% if page.url == "/how-i-work/" %} aria-current="page"{% endif %}>Approach</a></li>
+        <li><a href="{{ "/notes/" | relative_url }}"{% if page.url == "/notes/" %} aria-current="page"{% elsif page.collection == "notes" %} aria-current="true"{% endif %}>Notes</a></li>
+        <li><a href="{{ "/#about" | relative_url }}">About</a></li>
+        <li><a href="{{ "/#contact" | relative_url }}">Contact</a></li>
+      </ul>
+    </nav>
+    <button class="theme-toggle" id="theme-btn" type="button" aria-pressed="false" aria-label="Dark theme" hidden>{% include icon.html name="theme" %}</button>
   </div>
 </header>

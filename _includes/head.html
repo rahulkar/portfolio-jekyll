@@ -1,8 +1,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#F8F3E7" media="(prefers-color-scheme: light)">
-  <meta name="theme-color" content="#1C2522" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#F6F5F1" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#121211" media="(prefers-color-scheme: dark)">
   <meta name="color-scheme" content="light dark">
 
   {% include csp.html %}
@@ -10,34 +10,35 @@
 
   {% seo %}{% if page.noindex %}
   <meta name="robots" content="noindex">{% endif %}
-  <link type="application/atom+xml" rel="alternate" href="{{ "/feed.xml" | absolute_url }}" title="{{ site.title }} | Scribbles">
+  <link type="application/atom+xml" rel="alternate" href="{{ "/feed.xml" | absolute_url }}" title="{{ site.title }} | Notes">
 
-  <link rel="preload" as="font" type="font/woff2" href="{{ "/assets/fonts/excalifont.woff2" | prepend: site.baseurl }}" crossorigin>
-  <link rel="preload" as="font" type="font/woff2" href="{{ "/assets/fonts/nunito.woff2" | prepend: site.baseurl }}" crossorigin>
-  <link rel="stylesheet" href="{{ "/assets/css/main.css" | prepend: site.baseurl }}?v={{ site.time | date: '%s' }}">
-  <noscript><link rel="stylesheet" href="{{ "/assets/css/nojs.css" | prepend: site.baseurl }}"></noscript>
-  <script src="{{ "/assets/js/theme.js" | prepend: site.baseurl }}?v={{ site.time | date: '%s' }}"></script>
-  <link rel="icon" type="image/svg+xml" href="{{ "/assets/icons/favicon-v2.svg" | prepend: site.baseurl }}">
-  <link rel="shortcut icon" type="image/x-icon" href="{{ "/assets/favicon-v2.ico" | prepend: site.baseurl }}">
-  <link rel="apple-touch-icon" href="{{ "/assets/icons/apple-touch-icon-v2.png" | prepend: site.baseurl }}">
-
-  <!-- Structured data: a ProfilePage whose main entity is the Person -->
+  <link rel="preload" as="font" type="font/woff2" href="{{ "/assets/fonts/instrument-sans-v1.woff2" | relative_url }}" crossorigin>
+  <link rel="preload" as="font" type="font/woff2" href="{{ "/assets/fonts/fragment-mono-v1.woff2" | relative_url }}" crossorigin>
+  <link rel="stylesheet" href="{{ "/assets/css/main.css" | relative_url }}?v={{ site.time | date: '%s' }}">
+  <script src="{{ "/assets/js/theme.js" | relative_url }}?v={{ site.time | date: '%s' }}"></script>
+  <script defer src="{{ "/assets/js/main.js" | relative_url }}?v={{ site.time | date: '%s' }}"></script>
+  <link rel="icon" type="image/svg+xml" href="{{ "/assets/icons/favicon-v2.svg" | relative_url }}">
+  <link rel="shortcut icon" type="image/x-icon" href="{{ "/assets/favicon-v2.ico" | relative_url }}">
+  <link rel="apple-touch-icon" href="{{ "/assets/icons/apple-touch-icon-v2.png" | relative_url }}">
+{% if page.url == "/" %}
+  <!-- Structured data: a ProfilePage whose main entity is the Person (home page only) -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "ProfilePage",
-    "url": {{ site.url | jsonify }},
+    "url": {{ site.url | append: "/" | jsonify }},
     "mainEntity": {
       "@type": "Person",
       "name": {{ site.username | jsonify }},
-      "url": {{ site.url | jsonify }},
+      "url": {{ site.url | append: "/" | jsonify }},
       "jobTitle": {{ site.user_title | jsonify }},
       "description": {{ site.user_description | jsonify }},
-      "email": {{ site.email | jsonify }},
+      "email": {{ site.email | prepend: "mailto:" | jsonify }},
       "address": { "@type": "PostalAddress", "addressLocality": "Kolkata", "addressCountry": "IN" },
-      "knowsAbout": [{% for group in site.data.stack %}{% for item in group.items %}{{ item.label | jsonify }}{% unless forloop.last and forloop.parentloop.last %}, {% endunless %}{% endfor %}{% endfor %}]{% assign social_profiles = '' %}{% if site.github_username %}{% assign social_profiles = social_profiles | append: '"https://github.com/' | append: site.github_username | append: '"' %}{% endif %}{% if site.linkedin_url %}{% if social_profiles != '' %}{% assign social_profiles = social_profiles | append: ',' %}{% endif %}{% assign social_profiles = social_profiles | append: '"' | append: site.linkedin_url | append: '"' %}{% endif %}{% if site.credly_url %}{% if social_profiles != '' %}{% assign social_profiles = social_profiles | append: ',' %}{% endif %}{% assign social_profiles = social_profiles | append: '"' | append: site.credly_url | append: '"' %}{% endif %}{% if social_profiles != '' %},
-      "sameAs": [{{ social_profiles }}]{% endif %}
+      "knowsAbout": [{% for group in site.data.capabilities %}{% for item in group.items %}{{ item | jsonify }}{% unless forloop.last and forloop.parentloop.last %}, {% endunless %}{% endfor %}{% endfor %}],
+      "sameAs": [{{ "https://github.com/" | append: site.github_username | jsonify }}, {{ site.linkedin_url | jsonify }}, {{ site.credly_url | jsonify }}]
     }
   }
   </script>
+{% endif %}
 </head>

@@ -1,8 +1,6 @@
-<footer class="foot">
-  <span class="foot__cell"><span class="stamp">healthy</span></span>
-  <span class="foot__cell foot__hand">&copy; <span id="year"></span> {{ site.username }}</span>
-  <a class="foot__cell foot__hand foot__more" href="{{ "/notes/" | prepend: site.baseurl }}">one more page &rarr;</a>
-  <span class="foot__spacer"></span>
-  <span class="foot__cell anno">Jekyll / GitHub Pages</span>
+<footer class="colophon">
+  <div class="wrap colophon__inner">
+    <p>&copy; {{ site.time | date: "%Y" }} {{ site.username }}, Kolkata, India. Fonts are self-hosted; analytics are cookieless Cloudflare Web Analytics. <a href="{{ "/notes/how-this-site-is-built/" | relative_url }}">How this site is built</a> &middot; <a href="{{ "/feed.xml" | relative_url }}">Atom feed</a></p>
+    {% unless page.url == "/" %}<p class="colophon__clock" data-clock hidden>Kolkata <time data-ist datetime="00:00">00:00</time> IST</p>{% endunless %}
+  </div>
 </footer>
-<script defer src="{{ "/assets/js/main.js" | prepend: site.baseurl }}?v={{ site.time | date: '%s' }}"></script>
