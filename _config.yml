@@ -23,18 +23,16 @@ linkedin_handle: "in/karrahul"
 credly_url: "https://www.credly.com/users/rahul-kar"
 credly_handle: "rahul-kar"
 
-# Scribbles: short pieces, one markdown file each under _scribbles/.
+# Notes: short pieces, one markdown file each under _notes/.
 collections:
-  scribbles:
+  notes:
     output: true
-    permalink: /scribbles/:name/
+    permalink: /notes/:name/
 
-# The main feed is the scribbles feed; the (empty) posts feed moves aside.
+# /feed.xml is the hand-written notes feed in the repo root (jekyll-feed skips
+# paths that already exist); the plugin's (empty) posts feed moves aside.
 feed:
   path: /feed/posts.xml
-  collections:
-    scribbles:
-      path: /feed.xml
 
 plugins:
   - jekyll-seo-tag
@@ -45,9 +43,15 @@ plugins:
 defaults:
   - scope:
       path: ""
-      type: scribbles
+      type: notes
     values:
-      layout: scribble
+      layout: note
+      author: Rahul Kar
+  - scope:
+      path: "redirects"
+    values:
+      layout: redirect
+      sitemap: false
   - scope:
       path: ""
     values:

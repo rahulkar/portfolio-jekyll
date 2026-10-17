@@ -1,8 +1,9 @@
 ---
 title: the 6502 on two breadboards
 date: 2026-10-11
-summary: A W65C02, an EEPROM, 32K of RAM and a 16×2 LCD that boots up and says hello, all point-to-point jumper wire.
+description: A W65C02, an EEPROM, 32K of RAM and a 16×2 LCD that boots up and says hello, all point-to-point jumper wire.
 photo: true
+feed_id: /scribbles/6502-on-two-breadboards
 ---
 A W65C02 running at a crystal's pace, an EEPROM holding the program, 32K of RAM, one 74HC00 doing the glue logic, and a 16&times;2 LCD that boots up and says hello. Everything is point-to-point jumper wire, which is exactly the point: nothing sits between you and the bus.
 

@@ -2,7 +2,7 @@
   "ci": {
     "collect": {
       "staticDistDir": "./_site",
-      "url": ["http://localhost/index.html", "http://localhost/scribbles/index.html"],
+      "url": ["http://localhost/index.html", "http://localhost/notes/index.html"],
       "numberOfRuns": 2,
       "settings": { "preset": "desktop" }
     },

@@ -1,7 +1,8 @@
 ---
 title: how this notebook is drawn
 date: 2026-09-27
-summary: Plain HTML and CSS, a little JavaScript with Rough.js, a strict Content-Security-Policy, and nothing from a CDN.
+description: Plain HTML and CSS, a little JavaScript with Rough.js, a strict Content-Security-Policy, and nothing from a CDN.
+feed_id: /scribbles/how-this-notebook-is-drawn
 ---
 The page is plain HTML and CSS with a small amount of JavaScript that draws the wobbly frames at runtime using Rough.js. The doodles are drawn once at build time and shipped as static paths. Nothing loads from a CDN, and a strict Content-Security-Policy keeps it that way. The handwriting is Excalifont, the body text is Nunito, and it all builds with Jekyll on GitHub Pages.
 
