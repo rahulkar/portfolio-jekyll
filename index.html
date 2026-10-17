@@ -6,7 +6,7 @@ layout: default
   <div class="hero__intro">
     <p class="hero__role">Enterprise Solution Architect &amp; Technology Lead &middot; 11+ years in IT</p>
     <dl class="hero__facts">
-      <div><dt>Now</dt><dd>Generative AI and AI agents</dd></div>
+      <div><dt>Now</dt><dd>Generative AI, AI agents and AI loops</dd></div>
       <div><dt>Before</dt><dd>Test automation, CI/CD, DevOps and cloud</dd></div>
     </dl>
     <div class="hero__cta">
@@ -27,7 +27,7 @@ layout: default
         <li><a href="https://github.com/{{ site.github_username }}" rel="me"><span class="links__name">GitHub</span><span class="sr-only"> @{{ site.github_username }}</span>{% include icon.html name="external" %}</a></li>
         <li><a href="{{ site.linkedin_url }}" rel="me"><span class="links__name">LinkedIn</span><span class="sr-only"> {{ site.linkedin_handle }}</span>{% include icon.html name="external" %}</a></li>
         <li><a href="{{ site.credly_url }}" rel="me"><span class="links__name">Credly</span><span class="sr-only"> {{ site.credly_handle }}</span>{% include icon.html name="external" %}</a></li>
-        <li><a href="{{ "/assets/rahul-kar-v2.vcf" | relative_url }}" download="rahul-kar.vcf"><span class="links__name">vCard</span><span class="sr-only">, add to contacts</span></a></li>
+        <li><a href="{{ "/assets/rahul-kar-v3.vcf" | relative_url }}" download="rahul-kar.vcf"><span class="links__name">vCard</span><span class="sr-only">, add to contacts</span></a></li>
       </ul>
       <p class="contact__place">Based in Kolkata, India</p>
     </div>
@@ -53,8 +53,10 @@ layout: default
     <h2 id="about-title">About</h2>
   </div>
   <div class="about__text">
-    <p>I speak fluent geek, silicon, crypto, marketing, electronics, and space stuff.</p>
-    <p>Outside work: retro computing, DIY builds, bonsai and biotech. The photo is <a href="{{ "/notes/6502-on-two-breadboards/" | relative_url }}">a 6502 computer I built on two breadboards</a>.</p>
+    <p class="about__lead">I speak fluent geek, silicon, crypto, marketing, electronics, and space stuff.</p>
+    <p>Most of my free time goes into retro computing. The machine in the photo is a homebrew 8-bit computer on two breadboards, built around the W65C02S, the CMOS version of the 6502 that Western Design Center still makes. An AT28C256 EEPROM holds the program, an HM62256 is the RAM, a W65C22 drives the LCD and a 74HC00 does the glue logic. Every connection is a jumper wire.</p>
+    <p>The 6502 came out in 1975 at $25, when competing CPUs cost several times that, and a 6502 or a close variant ran the Apple II, the Commodore 64, the Atari 2600 and the NES. I like it because it is small: three main registers, 56 instructions in the original chip and a 64 KB address space. On a breadboard each of the 16 address lines and 8 data lines is a wire you can probe. The W65C02S is also a static design, so with a slower clock source it can run at a few steps a second, or stop, without losing its place.</p>
+    <p>Other things I spend time on: DIY builds, bonsai and biotech. <a href="{{ "/notes/6502-on-two-breadboards/" | relative_url }}">More about the 6502 build</a></p>
   </div>
   {% include figure-6502.html sizes="(min-width: 64em) 420px, 100vw" %}
 </section>
