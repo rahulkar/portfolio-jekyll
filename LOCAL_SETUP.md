@@ -131,9 +131,9 @@ tick and the current nav item, and a Playwright test scans every page for it.
 
 - The site is fronted by Cloudflare: purge the cache after deploying (the root
   `favicon.ico` keeps its name), then re-scrape the LinkedIn / X / Facebook card
-  validators. Upload the v4 LinkedIn banner, GitHub header and email signature by hand,
+  validators. Upload the v5 LinkedIn banner, GitHub header and email signature by hand,
   and delete the old sketch-style `assets/brand/email-signature.png` once the mail
-  signature points at `email-signature-v4.png` (it is kept only for that link).
+  signature points at `email-signature-v5.png` (it is kept only for that link).
 - Cloudflare Email Address Obfuscation rewrites the visible address after load
   and injects a same-origin script; this is allowed by the CSP, and the copy
   button falls back to the visible address.

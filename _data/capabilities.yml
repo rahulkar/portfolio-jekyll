@@ -7,4 +7,4 @@
 - group: Architecture and delivery
   items: [Solution architecture, Proofs of concept, Enterprise delivery, Platform strategy, Roadmapping]
 - group: Agentic AI
-  items: [Generative AI, LLMs, AI agents, Google ADK]
+  items: [Generative AI, LLMs, AI agents, AI loops, Google ADK]

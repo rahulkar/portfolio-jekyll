@@ -14,7 +14,7 @@ import pngToIco from "png-to-ico";
 
 // Bump on any change to the output, then update the matching names in
 // _includes/head.html and _config.yml: /assets/* is cached for a year.
-const V = "v4";
+const V = "v5";
 
 const BG = "#F6F5F1";
 const INK = "#161615";
@@ -27,7 +27,7 @@ const ROLE = "Enterprise Solution Architect & Technology Lead";
 const YEARS = "11+ years in IT";
 // The same facts as the home page hero.
 const FACTS = [
-  ["NOW", "Generative AI and AI agents"],
+  ["NOW", "Generative AI, AI agents and AI loops"],
   ["BEFORE", "Test automation, CI/CD, DevOps and cloud"],
 ];
 
