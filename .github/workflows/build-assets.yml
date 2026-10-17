@@ -95,6 +95,7 @@ jobs:
           name: site-checks
           path: |
             test-results/**/*.png
+            test-results/**/*.pdf
             playwright-report/
             .lighthouseci/
           if-no-files-found: ignore
