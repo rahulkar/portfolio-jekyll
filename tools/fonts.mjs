@@ -40,7 +40,8 @@ const TEXT = RANGES.map(([a, b]) => { let s = ""; for (let c = a; c <= b; c++) s
 const hex = (n) => n.toString(16).toUpperCase().padStart(4, "0");
 const UNICODE_RANGE = RANGES.map(([a, b]) => (a === b ? `U+${hex(a)}` : `U+${hex(a)}-${hex(b)}`)).join(", ");
 
-const LEDE = "I take ambiguous problems to a working prototype in days, then to a platform your team can run without me.";
+// Sample copy for measuring the fallback (the hero facts, set at weight 450).
+const LEDE = "Solution architecture, proofs of concept, enterprise delivery. Generative AI and AI agents. Test automation, CI/CD, DevOps and cloud.";
 const NAME = "Rahul Kar";
 
 const toArrayBuffer = (buf) => buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength);

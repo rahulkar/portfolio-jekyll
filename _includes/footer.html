@@ -1,7 +1,7 @@
 <footer class="colophon">
   <div class="wrap colophon__inner">
     <p class="colophon__contact"><a href="mailto:{{ site.email }}">{{ site.email }}</a> &middot; <a href="https://github.com/{{ site.github_username }}">GitHub</a> &middot; <a href="{{ site.linkedin_url }}">LinkedIn</a></p>
-    <p>&copy; {{ site.time | date: "%Y" }} {{ site.username }}, Kolkata, India. Fonts are self-hosted; analytics are cookieless Cloudflare Web Analytics. <a href="{{ "/notes/how-this-site-is-built/" | relative_url }}">How this site is built</a> &middot; <a href="{{ "/feed.xml" | relative_url }}">Atom feed</a></p>
+    <p>&copy; {{ site.time | date: "%Y" }} {{ site.username }} &middot; <a href="{{ "/notes/how-this-site-is-built/" | relative_url }}">How this site is built</a> &middot; <a href="{{ "/feed.xml" | relative_url }}">Atom feed</a></p>
     {% unless page.url == "/" %}<p class="colophon__clock" data-clock hidden>Kolkata <time data-ist datetime="00:00">00:00</time> IST</p>{% endunless %}
   </div>
 </footer>

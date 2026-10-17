@@ -1,51 +1,24 @@
 ---
 layout: default
-title: How I'd approach your problem
-description: The loop I run on every engagement (discover, prototype, architect, scale) and what you get at each stage.
+title: How I work
+description: The steps Rahul Kar usually follows on a project - discover, prototype, architect, scale.
 permalink: /how-i-work/
 ---
 <div class="wrap grid page">
-  <header class="page__head page__head--split">
-    <h1>How I'd approach your problem</h1>
-    <p class="page__lede">Every engagement I have been part of that went well ran the same loop. Here is what it looks like from your side of the table: four stages, each with a clear end, and a feedback loop back to the start.</p>
+  <header class="page__head">
+    <h1>How I work</h1>
+    <p class="page__lede">The steps I usually follow on a project.</p>
     <p class="print-only">Rahul Kar &middot; Enterprise Solution Architect &amp; Technology Lead &middot; {{ site.email }} &middot; www.rahulkar.com/how-i-work/</p>
   </header>
 
   <ol class="playbook" role="list">
-    <li class="playbook__stage">
-      <div class="playbook__name"><h2>Discover</h2><p>The first week</p></div>
-      <dl class="playbook__detail">
-        <div><dt>What happens</dt><dd>Whiteboards and awkward questions until the real problem shows up. I read the actual constraints: the budget, the compliance rules, the systems already in place and the team you have, not the team a slide deck assumes.</dd></div>
-        <div><dt>What you get</dt><dd>A one-page problem statement everyone can sign, the first risks named out loud, and a short list of things worth proving before anyone commits.</dd></div>
-      </dl>
-    </li>
-    <li class="playbook__stage">
-      <div class="playbook__name"><h2>Prototype</h2><p>Days, not quarters</p></div>
-      <dl class="playbook__detail">
-        <div><dt>What happens</dt><dd>A working proof-of-concept on your real stack, deliberately narrow: the riskiest integration, the awkward data, the agent that has to behave in front of a customer. It runs, it is measured, and it is thrown away without regret if it says no.</dd></div>
-        <div><dt>What you get</dt><dd>Evidence instead of opinion, an estimate of cost and effort you can defend, and a go or no-go you can stand behind.</dd></div>
-      </dl>
-    </li>
-    <li class="playbook__stage">
-      <div class="playbook__name"><h2>Architect</h2><p>The boring parts, done properly</p></div>
-      <dl class="playbook__detail">
-        <div><dt>What happens</dt><dd>Boundaries and data ownership, the platform underneath, security and observability from the first commit rather than the last sprint, and every significant decision written down so the next person knows why.</dd></div>
-        <div><dt>What you get</dt><dd>A design the team can argue with, a roadmap in releases rather than phases, and a platform that outlives the project it was built for.</dd></div>
-      </dl>
-    </li>
-    <li class="playbook__stage">
-      <div class="playbook__name"><h2>Scale</h2><p>So the team runs it without me</p></div>
-      <dl class="playbook__detail">
-        <div><dt>What happens</dt><dd>Tooling, pipelines and test automation, runbooks, and a hand-over that treats your engineers as the owners they are. Then the loop closes: what we learn in production feeds the next discovery.</dd></div>
-        <div><dt>What you get</dt><dd>A platform your people own and improve, and a quieter on-call rota than you had before.</dd></div>
-      </dl>
-    </li>
+    <li class="playbook__stage"><h2>Discover</h2><p>Understand the problem, the constraints and the existing systems.</p></li>
+    <li class="playbook__stage"><h2>Prototype</h2><p>Build a proof of concept to test the risky parts first.</p></li>
+    <li class="playbook__stage"><h2>Architect</h2><p>Solution architecture, platform strategy and the roadmap.</p></li>
+    <li class="playbook__stage"><h2>Scale</h2><p>CI/CD pipelines, test automation and delivery.</p></li>
   </ol>
-
-  <p class="playbook__origin">Where this comes from: eleven years of enterprise delivery, from quality engineering and automation to platforms, cloud and agentic AI. The stages are old; the tools in them change every year.</p>
 
   <div class="playbook__cta">
     {% include book-cta.html %}
-    <a class="link-arrow" href="{{ "/#contact" | relative_url }}"><span>Other ways to reach me</span>{% include icon.html name="arrow" %}</a>
   </div>
 </div>

@@ -14,7 +14,7 @@ import pngToIco from "png-to-ico";
 
 // Bump on any change to the output, then update the matching names in
 // _includes/head.html and _config.yml: /assets/* is cached for a year.
-const V = "v3";
+const V = "v4";
 
 const BG = "#F6F5F1";
 const INK = "#161615";
@@ -25,15 +25,11 @@ const DARK_INK = "#ECEAE4";
 
 const ROLE = "Enterprise Solution Architect & Technology Lead";
 const YEARS = "11+ years in IT";
-const LEDE = "I take ambiguous problems to a working prototype in days, then to a platform your team can run without me.";
-
-// Working hours come from _config.yml, the same values the site's datum uses.
-const config = readFileSync("_config.yml", "utf8");
-const hour = (key, fallback) => {
-  const m = config.match(new RegExp(`working_hours:[\\s\\S]*?${key}:\\s*(\\d+)`));
-  return m ? Number(m[1]) : fallback;
-};
-const HOURS = { from: hour("from", 10), to: hour("to", 19) };
+// The same facts as the home page hero.
+const FACTS = [
+  ["NOW", "Generative AI and AI agents"],
+  ["BEFORE", "Test automation, CI/CD, DevOps and cloud"],
+];
 
 const toArrayBuffer = (buf) => buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength);
 
@@ -78,20 +74,6 @@ function text(font, str, x, y, size, fill, { tracking = 0, anchor = "start", cls
   return `<path${cls ? ` class="${cls}"` : ""} d="${d}" fill="${fill}"/>`;
 }
 
-function wrap(font, str, size, maxWidth) {
-  const lines = [];
-  let line = "";
-  for (const word of str.split(" ")) {
-    const next = line ? `${line} ${word}` : word;
-    if (line && layout(font, next, size).width > maxWidth) {
-      lines.push(line);
-      line = word;
-    } else line = next;
-  }
-  if (line) lines.push(line);
-  return lines;
-}
-
 // The datum without its red tick: a still image cannot know the time.
 function datum(f, { x, w, labelY, lineY, marksY, labelSize = 15, markSize = 16, stroke = 1.5 }) {
   let out = text(f.mono, "KOLKATA · IST · UTC+05:30", x, labelY, labelSize, INK2, { tracking: 0.06 });
@@ -101,8 +83,6 @@ function datum(f, { x, w, labelY, lineY, marksY, labelSize = 15, markSize = 16, 
     const len = h % 6 === 0 ? 12 : 6;
     out += `<rect x="${tx.toFixed(2)}" y="${lineY}" width="${stroke}" height="${len}" fill="${INK3}"/>`;
   }
-  const hx = x + (w * HOURS.from) / 24;
-  out += `<rect x="${hx.toFixed(2)}" y="${lineY - 3}" width="${((w * (HOURS.to - HOURS.from)) / 24).toFixed(2)}" height="4" fill="${INK}"/>`;
   ["00", "06", "12", "18", "24"].forEach((label, i) => {
     const mx = x + (w * i * 6) / 24;
     const anchor = i === 0 ? "start" : i === 4 ? "end" : "middle";
@@ -133,8 +113,9 @@ function og(f) {
   let body = text(f.mono, "www.rahulkar.com", 80, 76, 18, INK3);
   body += text(f.s600, "Rahul Kar", 76, 222, 120, INK, { tracking: -0.04 });
   body += text(f.s500, `${ROLE} · ${YEARS}`, 80, 276, 30, INK2, { tracking: -0.01 });
-  wrap(f.s450, LEDE, 34, 960).forEach((line, i) => {
-    body += text(f.s450, line, 80, 344 + i * 44, 34, INK, { tracking: -0.015 });
+  FACTS.forEach(([label, value], i) => {
+    body += text(f.mono, label, 80, 352 + i * 52, 16, INK3, { tracking: 0.06 });
+    body += text(f.s450, value, 210, 352 + i * 52, 32, INK, { tracking: -0.01 });
   });
   body += datum(f, { x: 80, w: 1040, labelY: 516, lineY: 548, marksY: 582 });
   return svg(1200, 630, body);

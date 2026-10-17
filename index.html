@@ -5,22 +5,19 @@ layout: default
   <h1 class="hero__name display" id="hero-name">Rahul Kar</h1>
   <div class="hero__intro">
     <p class="hero__role">Enterprise Solution Architect &amp; Technology Lead &middot; 11+ years in IT</p>
-    <p class="hero__lede lede">I take ambiguous problems to a working prototype in days, then to a platform your team can run without me.</p>
+    <dl class="hero__facts">
+      <div><dt>Now</dt><dd>Generative AI and AI agents</dd></div>
+      <div><dt>Before</dt><dd>Test automation, CI/CD, DevOps and cloud</dd></div>
+    </dl>
     <div class="hero__cta">
       {% include book-cta.html %}
-      <a class="link-arrow" href="{{ "/how-i-work/" | relative_url }}"><span>Read the approach</span>{% include icon.html name="arrow" %}</a>
+      <a class="link-arrow" href="{{ "/how-i-work/" | relative_url }}"><span>How I work</span>{% include icon.html name="arrow" %}</a>
     </div>
   </div>
   {% include datum.html %}
   <div class="hero__side">
-    <dl class="hero__meta meta">
-      <div><dt>Practice</dt><dd>Solution architecture, proofs of concept and enterprise delivery</dd></div>
-      <div><dt>Now</dt><dd>Agentic AI</dd></div>
-      <div><dt>Earlier</dt><dd>Quality engineering and automation, then DevOps and cloud</dd></div>
-    </dl>
     <div class="contact" id="contact">
       <h2 class="contact__title">Contact</h2>
-      <p class="contact__note">Email works best. Tell me what you are trying to prove and the constraint that worries you most.</p>
       <div class="email">
         <a class="email__address" href="mailto:{{ site.email }}">{{ site.email }}</a>
         <button class="copy" type="button" data-copy-email="{{ site.email }}" hidden><span class="copy__label">Copy</span><span class="sr-only"> email address</span></button>
@@ -30,30 +27,16 @@ layout: default
         <li><a href="https://github.com/{{ site.github_username }}" rel="me"><span class="links__name">GitHub</span><span class="sr-only"> @{{ site.github_username }}</span>{% include icon.html name="external" %}</a></li>
         <li><a href="{{ site.linkedin_url }}" rel="me"><span class="links__name">LinkedIn</span><span class="sr-only"> {{ site.linkedin_handle }}</span>{% include icon.html name="external" %}</a></li>
         <li><a href="{{ site.credly_url }}" rel="me"><span class="links__name">Credly</span><span class="sr-only"> {{ site.credly_handle }}</span>{% include icon.html name="external" %}</a></li>
-        <li><a href="{{ "/assets/rahul-kar.vcf" | relative_url }}" download="rahul-kar.vcf"><span class="links__name">vCard</span><span class="sr-only">, add to contacts</span></a></li>
+        <li><a href="{{ "/assets/rahul-kar-v2.vcf" | relative_url }}" download="rahul-kar.vcf"><span class="links__name">vCard</span><span class="sr-only">, add to contacts</span></a></li>
       </ul>
+      <p class="contact__place">Based in Kolkata, India</p>
     </div>
   </div>
-</section>
-
-<section class="section wrap grid" id="approach" aria-labelledby="approach-title">
-  <div class="section__head">
-    <h2 id="approach-title">Approach</h2>
-    <p class="section__intro">Four stages, each with a clear end, and a feedback loop back to the start.</p>
-  </div>
-  <ol class="stages" role="list">
-    <li class="stage"><div class="stage__head"><h3>Discover</h3><p class="stage__when">The first week</p></div><p>Whiteboards and awkward questions until the real problem shows up.</p></li>
-    <li class="stage"><div class="stage__head"><h3>Prototype</h3><p class="stage__when">Days, not quarters</p></div><p>A working proof-of-concept on your real stack, so the decision is made on evidence.</p></li>
-    <li class="stage"><div class="stage__head"><h3>Architect</h3><p class="stage__when">The boring parts, done properly</p></div><p>Boundaries, decisions written down, and a platform that outlives the project.</p></li>
-    <li class="stage"><div class="stage__head"><h3>Scale</h3><p class="stage__when">So the team runs it without me</p></div><p>Tooling, pipelines and a hand-over to your engineers.</p></li>
-  </ol>
-  <p class="section__coda">What we learn in production feeds the next discovery. <a class="link-arrow" href="{{ "/how-i-work/" | relative_url }}"><span>Read the full approach</span>{% include icon.html name="arrow" %}</a></p>
 </section>
 
 <section class="section wrap grid" id="background" aria-labelledby="background-title">
   <div class="section__head">
     <h2 id="background-title">Background</h2>
-    <p class="section__intro">In career order, with the tools and methods behind each stage.</p>
   </div>
   <div class="capabilities">
     {%- for group in site.data.capabilities %}
@@ -70,9 +53,8 @@ layout: default
     <h2 id="about-title">About</h2>
   </div>
   <div class="about__text">
-    <p>I work end to end, from early problem framing to the tooling, platforms and delivery details that make software work in the real world. Eleven years in, I still believe great systems come from sweating the small details until they disappear.</p>
-    <p>Away from work I build things slowly. <a href="{{ "/notes/6502-on-two-breadboards/" | relative_url }}">The 6502 in the photo</a> is the best teacher I know for the things cloud consoles hide. <a href="{{ "/notes/the-bonsai/" | relative_url }}">The bonsai</a> is a reminder that the systems worth building are the ones you are still tending long after the launch. I also explore DIY builds, biotech and retro computing.</p>
-    <p class="about__place">Based in Kolkata, India.</p>
+    <p>I speak fluent geek, silicon, crypto, marketing, electronics, and space stuff.</p>
+    <p>Outside work: retro computing, DIY builds, bonsai and biotech. The photo is <a href="{{ "/notes/6502-on-two-breadboards/" | relative_url }}">a 6502 computer I built on two breadboards</a>.</p>
   </div>
   {% include figure-6502.html sizes="(min-width: 64em) 420px, 100vw" %}
 </section>
@@ -80,7 +62,6 @@ layout: default
 <section class="section wrap grid" id="notes" aria-labelledby="notes-title">
   <div class="section__head">
     <h2 id="notes-title">Notes</h2>
-    <p class="section__intro">Short notes on building systems, and on the slower things I build outside work.</p>
   </div>
   {% assign notes = site.notes | sort: "date" | reverse %}
   <ul class="rows" role="list">
@@ -88,5 +69,5 @@ layout: default
     {% include note-row.html note=note level="h3" %}
     {%- endfor %}
   </ul>
-  <p class="section__coda"><a class="link-arrow" href="{{ "/notes/" | relative_url }}"><span>All notes</span>{% include icon.html name="arrow" %}</a> <a href="{{ "/feed.xml" | relative_url }}">Atom feed</a></p>
+  <p class="section__coda"><a class="link-arrow" href="{{ "/notes/" | relative_url }}"><span>All notes</span>{% include icon.html name="arrow" %}</a></p>
 </section>

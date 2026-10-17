@@ -160,13 +160,6 @@
   @include narrow { width: 100%; }
 }
 
-.book__hint {
-  margin-top: var(--s-2);
-  font-size: var(--fs-small);
-  line-height: 1.45;
-  color: var(--ink-2);
-}
-
 /* Rows: notes lists ------------------------------------------------------- */
 
 .rows {
@@ -239,26 +232,6 @@
   line-height: 1.45;
   color: var(--ink-2);
   padding-top: 0.2em;
-}
-
-/* Definition groups (hero meta, playbook) --------------------------------- */
-
-.meta {
-  > div {
-    padding: var(--s-3) 0 var(--s-5);
-    border-top: 1px solid var(--rule);
-  }
-
-  dt {
-    @include label;
-    color: var(--ink-3);
-  }
-
-  dd {
-    margin-top: var(--s-1);
-    font-size: var(--fs-small);
-    line-height: 1.45;
-  }
 }
 
 /* Figure ------------------------------------------------------------------ */

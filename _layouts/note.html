@@ -6,19 +6,17 @@ layout: default
 {%- for n in notes -%}{%- if found and next_note == nil -%}{%- assign next_note = n -%}{%- endif -%}{%- if n.url == page.url -%}{%- assign found = true -%}{%- endif -%}{%- endfor -%}
 {%- unless next_note -%}{%- assign next_note = notes.first -%}{%- endunless -%}
 {%- if next_note.url == page.url -%}{%- assign next_note = nil -%}{%- endif -%}
-{%- assign words = content | strip_html | number_of_words -%}{%- assign minutes = words | plus: 199 | divided_by: 200 -%}
 <article class="wrap grid page note">
   <header class="note__head">
     <p class="note__crumb"><a href="{{ "/notes/" | relative_url }}">Notes</a></p>
     <h1>{{ page.title }}</h1>
-    <p class="note__meta"><time datetime="{{ page.date | date: '%Y-%m-%d' }}">{{ page.date | date: "%-d %b %Y" }}</time>{% if page.last_modified_at %} &middot; Updated <time datetime="{{ page.last_modified_at | date: '%Y-%m-%d' }}">{{ page.last_modified_at | date: "%-d %b %Y" }}</time>{% endif %} &middot; {{ minutes }} min read</p>
+    <p class="note__meta"><time datetime="{{ page.date | date: '%Y-%m-%d' }}">{{ page.date | date: "%-d %b %Y" }}</time>{% if page.last_modified_at %} &middot; Updated <time datetime="{{ page.last_modified_at | date: '%Y-%m-%d' }}">{{ page.last_modified_at | date: "%-d %b %Y" }}</time>{% endif %}</p>
   </header>
   <div class="note__body prose">
     {{ content }}
   </div>
   <footer class="note__foot">
-    <p class="note__author">Rahul Kar is an enterprise solution architect in Kolkata. <a href="mailto:{{ site.email }}">{{ site.email }}</a></p>
     {% if next_note %}<p class="note__next">Next note: <a href="{{ next_note.url | relative_url }}">{{ next_note.title }}</a></p>{% endif %}
-    <p class="note__more"><a href="{{ "/notes/" | relative_url }}">All notes</a> &middot; <a href="{{ "/feed.xml" | relative_url }}">Atom feed</a></p>
+    <p class="note__more"><a href="{{ "/notes/" | relative_url }}">All notes</a></p>
   </footer>
 </article>

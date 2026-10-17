@@ -1,7 +1,7 @@
 # Site settings
 title: Rahul Kar
 tagline: Enterprise Solution Architect & Technology Lead
-description: "Rahul Kar, enterprise solution architect and technology lead in Kolkata, India. 11+ years, from quality engineering and automation to platforms, cloud and agentic AI."
+description: "Rahul Kar, Enterprise Solution Architect and Technology Lead in Kolkata. 11+ years in IT: test automation, DevOps and cloud, now generative AI and AI agents."
 # baseurl: "/particle" # the subpath of your site, e.g. /blog
 url: "https://www.rahulkar.com"
 lang: en-GB
@@ -14,7 +14,7 @@ lang: en-GB
 
 # User settings
 username: Rahul Kar
-user_description: "Enterprise solution architect in Kolkata, India. 11+ years, from quality engineering and automation to platforms, cloud and agentic AI."
+user_description: "Enterprise Solution Architect and Technology Lead in Kolkata, India. 11+ years in IT: test automation, CI/CD, DevOps and cloud, now generative AI and AI agents."
 user_title: Enterprise Solution Architect & Technology Lead
 email: kar.rahul@pm.me
 github_username: rahulkar
@@ -23,10 +23,6 @@ linkedin_handle: "in/karrahul"
 credly_url: "https://www.credly.com/users/rahul-kar"
 credly_handle: "rahul-kar"
 
-# Working hours drawn on the Kolkata datum (whole hours, IST).
-working_hours:
-  from: 10
-  to: 19
 
 # Notes: short pieces, one markdown file each under _notes/.
 collections:
@@ -61,7 +57,7 @@ defaults:
       path: ""
     values:
       image:
-        path: /assets/og-v3.png
+        path: /assets/og-v4.png
         width: 1200
         height: 630
         alt: "Rahul Kar, Enterprise Solution Architect & Technology Lead, Kolkata"

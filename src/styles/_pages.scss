@@ -2,8 +2,8 @@
 
 /* Home: hero -------------------------------------------------------------- */
 
-// Wide: name across the top; intro and datum in columns 1-7; the side column
-// (facts and contact) in 9-12. The side's extra height falls into the last,
+// Wide: name across the top; intro and datum in columns 1-7; contact in the
+// side column, 9-12. The side's extra height falls into the last,
 // flexible row, so it never stretches the gaps in the intro.
 .hero {
   padding-top: var(--hero-top);
@@ -24,8 +24,33 @@
   color: var(--ink-2);
 }
 
-.hero__lede {
+// What I do, now and before: label and value on one line, set a little
+// larger than body text so the hero reads as facts, not a slogan.
+.hero__facts {
+  display: grid;
+  gap: var(--s-2);
   margin-top: var(--s-5);
+
+  > div {
+    display: grid;
+    grid-template-columns: 4.5rem minmax(0, 1fr);
+    column-gap: var(--s-3);
+    align-items: baseline;
+    padding-top: var(--s-2);
+    border-top: 1px solid var(--rule);
+  }
+
+  dt {
+    @include label;
+    color: var(--ink-3);
+  }
+
+  dd {
+    font-size: clamp(1.1875rem, 1.0417rem + 0.6481vw, 1.625rem); // 19 -> 26
+    font-weight: 450;
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+  }
 }
 
 .hero__cta {
@@ -57,29 +82,6 @@
   }
 }
 
-// Phones: label and value side by side, so the facts take three short rows.
-.hero__meta {
-  @include narrow {
-    > div {
-      display: grid;
-      grid-template-columns: 5.5rem minmax(0, 1fr);
-      column-gap: var(--s-3);
-      padding: var(--s-2) 0;
-    }
-
-    dt { padding-top: 0.2em; }
-    dd { margin-top: 0; }
-  }
-
-  @include mid {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    column-gap: var(--gutter);
-  }
-
-  @include wide { display: block; }
-}
-
 /* Home: contact (in the hero, so it is on the first screen) -------------- */
 
 .contact {
@@ -94,16 +96,13 @@
   color: var(--ink-3);
 }
 
-.contact__note {
+.contact__place {
   font-size: var(--fs-small);
-  line-height: 1.45;
   color: var(--ink-2);
-  max-width: 40ch;
 }
 
 /* Home: approach and background ------------------------------------------ */
 
-.stages,
 .capabilities {
   display: grid;
   gap: var(--s-4) var(--gutter);
@@ -114,29 +113,6 @@
     padding-top: var(--s-3);
     border-top: 1px solid var(--rule);
   }
-}
-
-.stages {
-  @include xl { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-}
-
-// Phones: name and timing share a line. In columns the timing sits under the name.
-.stage__head {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 0 var(--s-3);
-
-  @include mid { display: block; }
-}
-
-.stage__when {
-  @include label;
-  color: var(--ink-3);
-}
-
-.stage > p {
-  margin-top: var(--s-2);
 }
 
 // Each group's tools read as one line, separated by quiet dots.
@@ -198,19 +174,6 @@
   }
 }
 
-// Wide: the title and its lede side by side instead of stacked.
-.page__head--split {
-  @include wide {
-    grid-template-columns: repeat(12, minmax(0, 1fr));
-    column-gap: var(--gutter);
-    align-items: end;
-
-    h1 { grid-column: 1 / 8; max-width: none; }
-    .page__lede { grid-column: 8 / 13; max-width: none; font-size: var(--fs-h3); line-height: 1.4; }
-    .print-only { grid-column: 1 / -1; }
-  }
-}
-
 .page__lede {
   max-width: 44ch;
   font-size: var(--fs-lede);
@@ -220,71 +183,41 @@
   color: var(--ink-2);
 }
 
-/* How I work: the playbook ------------------------------------------------ */
+/* How I work ------------------------------------------------------------ */
 
 .playbook {
   margin-top: var(--s-6);
   border-top: 1px solid var(--ink);
 }
 
+// Each step is a name and one plain line; from 1024px they sit side by side.
 .playbook__stage {
   display: grid;
   grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
   column-gap: var(--gutter);
-  row-gap: var(--s-4);
-  padding: var(--s-5) 0;
+  row-gap: var(--s-2);
+  padding: var(--s-4) 0;
   border-bottom: 1px solid var(--rule);
 
   > * { grid-column: 1 / -1; min-width: 0; }
-}
 
-.playbook__name {
+  h2 {
+    @include wide { @include cols(1, 3); }
+  }
+
   p {
-    @include label;
-    margin-top: var(--s-2);
-    color: var(--ink-3);
-  }
-
-  @include wide { @include cols(1, 3); }
-}
-
-.playbook__detail {
-  display: grid;
-  gap: var(--s-4) var(--gutter);
-
-  dt {
-    @include label;
-    color: var(--ink-3);
-  }
-
-  dd {
-    margin-top: var(--s-2);
-    font-size: var(--fs-body);
-    line-height: 1.6;
     max-width: var(--measure);
+    font-size: var(--fs-h3);
+    font-weight: 450;
+    line-height: 1.35;
+    padding-top: 0.15em;
+
+    @include wide { @include cols(4, 12); }
   }
-
-  @include mid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  @include wide { @include cols(4, 12); }
-}
-
-// Wide: where it comes from and the next step share one row.
-.playbook__origin {
-  margin-top: var(--s-6);
-  max-width: var(--measure);
-  color: var(--ink-2);
-
-  @include wide { @include cols(1, 7); }
 }
 
 .playbook__cta {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-start;
-  gap: var(--s-2) var(--s-5);
   margin-top: var(--s-6);
-
-  @include wide { @include cols(8, 12); }
 }
 
 /* Notes index and note page ----------------------------------------------- */

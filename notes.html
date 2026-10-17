@@ -1,14 +1,13 @@
 ---
 layout: default
 title: Notes
-description: Short notes by Rahul Kar on building systems, a 6502 on breadboards and a bonsai.
+description: "Write-ups by Rahul Kar: a 6502 computer on breadboards and how this site is built."
 permalink: /notes/
 ---
 <div class="wrap grid page notes-index">
   <header class="page__head">
     <h1>Notes</h1>
-    <p class="page__lede">Short notes on building systems, and on the slower things I build outside work.</p>
-    <p class="notes-index__feed">New notes arrive by <a href="{{ "/feed.xml" | relative_url }}">Atom feed</a>, which works in any RSS reader.</p>
+    <p class="notes-index__feed">Write-ups of things I've built. <a href="{{ "/feed.xml" | relative_url }}">Atom feed</a></p>
   </header>
   {% assign notes = site.notes | sort: "date" | reverse %}
   <ul class="rows" role="list">

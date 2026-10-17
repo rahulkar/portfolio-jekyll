@@ -14,7 +14,7 @@
 }
 
 // Inside the 64px scale: time label 0-13, cap 17-23, tick 20-48, line 40,
-// ticks 41-45 (49 on the hour marks), hours bar 38-41, hour labels 52-64.
+// ticks 41-45 (49 on the hour marks), hour labels 52-64.
 .datum__scale {
   position: relative;
   height: 4rem;
@@ -42,20 +42,6 @@
   }
 
   > .is-major { height: 8px; }
-}
-
-@for $h from 0 through 24 {
-  .datum__hours[data-from="#{$h}"] { --from: #{$h}; }
-  .datum__hours[data-to="#{$h}"] { --to: #{$h}; }
-}
-
-.datum__hours {
-  position: absolute;
-  top: 38px;
-  left: calc(var(--from, 10) / 24 * 100%);
-  width: calc((var(--to, 19) - var(--from, 10)) / 24 * 100%);
-  height: 0;
-  border-top: 3px solid var(--ink);
 }
 
 .datum__marks {
@@ -126,14 +112,12 @@
   transition: opacity 160ms var(--ease);
 }
 
-// Two lines are reserved on phones so the visitor clause does not push the
-// hero meta down when the clock fills it in.
+// One line is reserved so the visitor's time does not push anything down
+// when the clock fills it in.
 .datum__note {
   margin-top: var(--s-3);
-  min-height: 2.9em;
+  min-height: 1.45em;
   font-size: var(--fs-small);
   line-height: 1.45;
   color: var(--ink-2);
-
-  @include mid { min-height: 0; }
 }

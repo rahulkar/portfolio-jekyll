@@ -4,15 +4,15 @@ const AxeBuilder = require("@axe-core/playwright").default;
 // Console noise that is not the site's fault (local antivirus injection).
 const IGNORED = [/kaspersky/i];
 
-const PAGES = ["/", "/how-i-work/", "/notes/", "/notes/6502-on-two-breadboards/", "/notes/the-bonsai/", "/notes/how-this-site-is-built/", "/404.html"];
+const PAGES = ["/", "/how-i-work/", "/notes/", "/notes/6502-on-two-breadboards/", "/notes/how-this-site-is-built/", "/404.html"];
 const SCHEMES = ["light", "dark"];
 const INK = { light: "rgb(22, 22, 21)", dark: "rgb(236, 234, 228)" };
 const ACCENT = { light: "rgb(196, 43, 28)", dark: "rgb(238, 90, 63)" };
-const LEDE = "I take ambiguous problems to a working prototype in days, then to a platform your team can run without me.";
 const REDIRECTS = [
   ["/scribbles/", "/notes/"],
   ["/scribbles/6502-on-two-breadboards/", "/notes/6502-on-two-breadboards/"],
-  ["/scribbles/the-bonsai/", "/notes/the-bonsai/"],
+  ["/scribbles/the-bonsai/", "/notes/"],
+  ["/notes/the-bonsai/", "/notes/"],
   ["/scribbles/how-this-notebook-is-drawn/", "/notes/how-this-site-is-built/"],
 ];
 
@@ -101,7 +101,7 @@ test.describe("datum for a visitor in London", () => {
     expect(Math.min(d, 1 - d)).toBeLessThanOrEqual(2 / 1440);
     await expect(page.locator(".datum__local")).toBeVisible();
     await expect(page.locator(".datum__label")).toHaveText("Kolkata · IST · UTC+05:30");
-    await expect(page.locator(".datum__note")).toContainText("Working hours");
+    await expect(page.locator(".datum__local")).toContainText("Your time now");
   });
 });
 
@@ -121,7 +121,7 @@ test.describe("without JavaScript", () => {
   test("the datum's scale renders and the live parts stay hidden", async ({ page }) => {
     await page.goto("/");
     await expect(page.locator(".datum__label")).toBeVisible();
-    await expect(page.locator(".datum__hours")).toBeVisible();
+    await expect(page.locator(".datum__ticks")).toBeVisible();
     for (const sel of [".datum__tick", ".datum__now", ".datum__local", "#theme-btn", ".copy"]) {
       await expect(page.locator(sel)).toBeHidden();
     }
@@ -137,19 +137,13 @@ test.describe("home page", () => {
       expect(Math.abs(size - 112)).toBeLessThan(0.5);
     }
     await expect(page.locator(".hero__role")).toContainText("11+ years");
-    await expect(page.locator(".hero__lede")).toHaveText(LEDE);
-    await expect(page.locator(".hero__meta dt")).toHaveText(["Practice", "Now", "Earlier"]);
-    await expect(page.locator(".hero .book .button")).toHaveAttribute("href", /^mailto:kar\.rahul@pm\.me\?subject=20%20minutes%3F/);
-    await expect(page.locator(".hero .book__hint")).toHaveText("Opens an email with the subject filled in.");
+    await expect(page.locator(".hero__facts dt")).toHaveText(["Now", "Before"]);
+    await expect(page.locator(".hero .book .button")).toHaveAttribute("href", /^mailto:kar\.rahul@pm\.me/);
   });
 
-  test("sections, approach and background", async ({ page }) => {
+  test("sections and background", async ({ page }) => {
     await openPage(page, "/");
-    expect(await page.locator("main section[id]").evaluateAll((els) => els.map((el) => el.id))).toEqual(["approach", "background", "about", "notes"]);
-    await expect(page.locator("#approach .stage")).toHaveCount(4);
-    for (const stage of await page.locator("#approach .stage").all()) await expect(stage).toBeVisible();
-    await expect(page.locator("#approach button")).toHaveCount(0);
-    expect(await page.locator(".stage").first().evaluate((el) => getComputedStyle(el).listStyleType)).toBe("none");
+    expect(await page.locator("main section[id]").evaluateAll((els) => els.map((el) => el.id))).toEqual(["background", "about", "notes"]);
     await expect(page.locator("#background h3")).toHaveText(["Quality engineering and automation", "DevOps and cloud", "Architecture and delivery", "Agentic AI"]);
     await expect(page.locator("#background img")).toHaveCount(0);
   });
@@ -162,14 +156,13 @@ test.describe("home page", () => {
     await link.scrollIntoViewIfNeeded();
     const [a, img] = [await link.boundingBox(), await page.locator("#about figure img").boundingBox()];
     expect(a.height).toBeGreaterThanOrEqual(img.height - 0.5);
-    await expect(page.locator("#about")).toContainText("Kolkata");
+    await expect(page.locator("#contact")).toContainText("Kolkata");
 
-    await expect(page.locator("#notes .row")).toHaveCount(3);
+    await expect(page.locator("#notes .row")).toHaveCount(2);
     expect(await page.locator("#notes .row__link").first().evaluate((el) => getComputedStyle(el).textDecorationLine)).toBe("underline");
 
     // Contact sits in the hero, beside the intro, so it is on the first screen.
     await expect(page.locator(".hero #contact .email__address")).toHaveText("kar.rahul@pm.me");
-    await expect(page.locator(".book__hint")).toHaveCount(1);
     for (const href of ["https://github.com/rahulkar", "https://www.linkedin.com/in/karrahul/", "https://www.credly.com/users/rahul-kar"]) {
       await expect(page.locator(`#contact a[href="${href}"]`)).toHaveCount(1);
     }
@@ -227,10 +220,10 @@ test.describe("home page", () => {
         await p.goto("/");
         if (javaScriptEnabled) await p.waitForSelector("html.is-ready");
         else await p.waitForTimeout(800);
-        ys.push((await p.locator(".hero__meta").boundingBox()).y);
+        ys.push((await p.locator(".hero__side").boundingBox()).y);
         await ctx.close();
       }
-      expect(Math.abs(ys[0] - ys[1]), `hero meta at ${viewport.width}px`).toBeLessThanOrEqual(1);
+      expect(Math.abs(ys[0] - ys[1]), `hero side at ${viewport.width}px`).toBeLessThanOrEqual(1);
     }
   });
 });
@@ -287,7 +280,7 @@ test.describe("theme, focus and skip link", () => {
   });
 
   // Red means "now": at rest, nothing but the tick and the current nav item is red.
-  for (const [path, scheme] of [["/", "light"], ["/how-i-work/", "light"], ["/", "dark"], ["/notes/the-bonsai/", "dark"]]) {
+  for (const [path, scheme] of [["/", "light"], ["/how-i-work/", "light"], ["/", "dark"], ["/notes/how-this-site-is-built/", "dark"]]) {
     test(`red only on the tick and current nav (${path}, ${scheme})`, async ({ page }, testInfo) => {
       onlyDesktop(testInfo);
       await openPage(page, path, scheme);
@@ -319,14 +312,13 @@ test.describe("theme, focus and skip link", () => {
 });
 
 test.describe("approach page", () => {
-  test("four stages, all text visible, one booking hint", async ({ page }) => {
+  test("four stages, all text visible", async ({ page }) => {
     await openPage(page, "/how-i-work/");
-    await expect(page.locator("h1")).toHaveText("How I'd approach your problem");
+    await expect(page.locator("h1")).toHaveText("How I work");
     await expect(page.locator(".playbook__stage")).toHaveCount(4);
     expect(await page.locator(".playbook__stage").first().evaluate((el) => getComputedStyle(el).listStyleType)).toBe("none");
-    await expect(page.locator(".playbook dt")).toHaveText(Array(4).fill(["What happens", "What you get"]).flat());
-    await expect(page.locator(".book__hint")).toBeVisible();
-    await expect(page.locator('.site-nav a[aria-current="page"]')).toHaveText("Approach");
+    await expect(page.locator(".playbook__stage h2")).toHaveText(["Discover", "Prototype", "Architect", "Scale"]);
+    await expect(page.locator('.site-nav a[aria-current="page"]')).toHaveText("How I work");
   });
 
   test("prints as a brief", async ({ page }, testInfo) => {
@@ -335,7 +327,7 @@ test.describe("approach page", () => {
     for (const sel of [".site-header", ".colophon", ".book", ".skip-link"]) await expect(page.locator(sel)).toBeHidden();
     await expect(page.locator(".print-only")).toBeVisible();
     expect(await page.locator("h1").evaluate((el) => parseFloat(getComputedStyle(el).fontSize))).toBeLessThanOrEqual(30);
-    expect(await page.locator(".playbook dd").first().evaluate((el) => parseFloat(getComputedStyle(el).fontSize))).toBeLessThanOrEqual(15);
+    expect(await page.locator(".playbook__stage p").first().evaluate((el) => parseFloat(getComputedStyle(el).fontSize))).toBeLessThanOrEqual(17);
     if (testInfo.project.name === "desktop") await page.pdf({ path: testInfo.outputPath("how-i-work.pdf"), format: "A4" });
   });
 
@@ -352,15 +344,15 @@ test.describe("notes", () => {
   test("index lists every note, newest first", async ({ page }) => {
     await openPage(page, "/notes/");
     await expect(page.locator("h1")).toHaveText("Notes");
-    await expect(page.locator(".row")).toHaveCount(3);
-    await expect(page.locator(".row__title")).toHaveText(["The 6502 on two breadboards", "The bonsai", "How this site is built"]);
+    await expect(page.locator(".row")).toHaveCount(2);
+    await expect(page.locator(".row__title")).toHaveText(["A 6502 computer on two breadboards", "How this site is built"]);
     await expect(page.locator('main a[href="/feed.xml"]')).toHaveCount(1);
   });
 
-  test("a note ends with the author line", async ({ page }) => {
-    await openPage(page, "/notes/the-bonsai/");
-    await expect(page.locator(".note__author")).toContainText("Rahul Kar is an enterprise solution architect in Kolkata.");
-    await expect(page.locator('.note__author a[href^="mailto:"]')).toHaveCount(1);
+  test("a note links to the next note and back to the list", async ({ page }) => {
+    await openPage(page, "/notes/6502-on-two-breadboards/");
+    await expect(page.locator(".note__next a")).toHaveText("How this site is built");
+    await expect(page.locator(".note__more a")).toHaveText("All notes");
     await expect(page.locator('.site-nav a[aria-current="true"]')).toHaveText("Notes");
   });
 });
@@ -390,17 +382,19 @@ test.describe("urls, feed and structured data", () => {
     expect(xml).toContain("Rahul Kar | Notes");
     expect(xml).toContain("<name>Rahul Kar</name>");
     const links = [...xml.matchAll(/<entry>[\s\S]*?<link href="([^"]+)"/g)].map((m) => m[1]);
-    expect(links.length).toBe(3);
+    expect(links.length).toBe(2);
     for (const href of links) expect(href.startsWith("https://www.rahulkar.com/notes/")).toBe(true);
-    expect(xml).toContain("<id>https://www.rahulkar.com/scribbles/the-bonsai</id>");
+    expect(xml).toContain("<id>https://www.rahulkar.com/scribbles/6502-on-two-breadboards</id>");
+    expect(xml).not.toContain("the-bonsai");
   });
 
   test("the sitemap lists the new pages and none of the stubs", async ({ request }, testInfo) => {
     onlyDesktop(testInfo);
     const xml = await (await request.get("/sitemap.xml")).text();
-    for (const url of ["/notes/", "/notes/the-bonsai/", "/how-i-work/"]) expect(xml).toContain(`https://www.rahulkar.com${url}<`);
+    for (const url of ["/notes/", "/notes/6502-on-two-breadboards/", "/how-i-work/"]) expect(xml).toContain(`https://www.rahulkar.com${url}<`);
     expect(xml).not.toContain("/scribbles/");
     expect(xml).not.toContain("404");
+    expect(xml).not.toContain("the-bonsai");
   });
 
   test("the profile schema is on the home page only", async ({ page }, testInfo) => {
@@ -413,7 +407,7 @@ test.describe("urls, feed and structured data", () => {
     expect(person.knowsAbout).toContain("Google ADK");
     expect(person.knowsAbout).not.toContain(null);
     expect(person.address.addressLocality).toBe("Kolkata");
-    for (const path of ["/how-i-work/", "/notes/the-bonsai/"]) {
+    for (const path of ["/how-i-work/", "/notes/6502-on-two-breadboards/"]) {
       await page.goto(path);
       const others = (await page.locator('script[type="application/ld+json"]').allTextContents()).map((t) => JSON.parse(t));
       expect(others.filter((b) => b["@type"] === "ProfilePage").length).toBe(0);
