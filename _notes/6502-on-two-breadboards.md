@@ -1,5 +1,5 @@
 ---
-title: the 6502 on two breadboards
+title: The 6502 on two breadboards
 date: 2026-10-11
 description: A W65C02, an EEPROM, 32K of RAM and a 16×2 LCD that boots up and says hello, all point-to-point jumper wire.
 feed_id: /scribbles/6502-on-two-breadboards

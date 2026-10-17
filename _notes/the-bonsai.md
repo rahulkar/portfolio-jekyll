@@ -1,5 +1,5 @@
 ---
-title: the bonsai
+title: The bonsai
 date: 2026-10-04
 description: The slowest feedback loop on the desk, and a useful antidote to sprint thinking.
 feed_id: /scribbles/the-bonsai

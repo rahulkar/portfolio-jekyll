@@ -1,31 +1,19 @@
 ---
 layout: default
 title: Notes
-description: Short pieces from the margins of Rahul Kar's notebook - a 6502 on breadboards, a bonsai, and how this site is drawn.
+description: Short notes by Rahul Kar on building systems, a 6502 on breadboards and a bonsai.
 permalink: /notes/
 ---
-<section class="page-section scribbles" id="scribbles">
-  <div class="wrap">
-    <div class="sec-head reveal">
-      <h1 class="sec-head__title">
-        <span class="sec-head__name" data-sketch="underline" data-seed="head-scribbles">Scribbles</span>
-      </h1>
-      <span class="sec-head__count" data-sketch="circle" data-seed="page-4">p.4/3</span>
-    </div>
-    <p class="scribbles__intro reveal">The extra page: short pieces from the margins that did not fit anywhere else. There is an <a href="{{ "/feed.xml" | prepend: site.baseurl }}">RSS feed</a> if you want the next one delivered.</p>
-
-    {% assign items = site.notes | sort: "date" | reverse %}
-    <ul class="scribbles__list">
-      {% for item in items %}
-      <li class="scribbles__item reveal{% cycle ' reveal--d1', ' reveal--d2', ' reveal--d3' %}">
-        <article class="card taped scribble scribble--summary" data-sketch="rect" data-seed="list-{{ item.slug | default: item.title }}">
-          <h2 class="scribble__title"><a href="{{ item.url | prepend: site.baseurl }}">{{ item.title }}</a></h2>
-          <p class="scribble__meta"><time class="stamp" datetime="{{ item.date | date: '%Y-%m-%d' }}">{{ item.date | date: "%-d %b %Y" }}</time></p>
-          <p>{{ item.description }}</p>
-          <p class="scribble__more"><a href="{{ item.url | prepend: site.baseurl }}">read it <svg class="doodle" aria-hidden="true" focusable="false"><use href="#d-arrow"></use></svg></a></p>
-        </article>
-      </li>
-      {% endfor %}
-    </ul>
-  </div>
-</section>
+<div class="wrap grid page notes-index">
+  <header class="page__head">
+    <h1>Notes</h1>
+    <p class="page__lede">Short notes on building systems, and on the slower things I build outside work.</p>
+    <p class="notes-index__feed">New notes arrive by <a href="{{ "/feed.xml" | relative_url }}">Atom feed</a>, which works in any RSS reader.</p>
+  </header>
+  {% assign notes = site.notes | sort: "date" | reverse %}
+  <ul class="rows" role="list">
+    {%- for note in notes %}
+    {% include note-row.html note=note level="h2" %}
+    {%- endfor %}
+  </ul>
+</div>
