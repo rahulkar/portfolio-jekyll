@@ -91,6 +91,24 @@ if (existsSync("assets/css")) {
   }
 }
 
+// Design guard: red means "now". The accent may only style the datum's tick
+// and the current-page nav item, and its hex values may only define --accent.
+const mainCss = "assets/css/main.css";
+if (existsSync(mainCss)) {
+  const css = readFileSync(mainCss, "utf8");
+  const ALLOWED = /\.datum__tick|\.site-nav a\[aria-current/;
+  for (const m of css.matchAll(/([^{}]+)\{([^{}]*)\}/g)) {
+    if (!m[2].includes("var(--accent)")) continue;
+    for (const sel of m[1].split(",")) {
+      if (!ALLOWED.test(sel)) report(mainCss, 0, `accent used outside the now-tick and current nav: ${sel.trim()}`);
+    }
+  }
+  for (const m of css.matchAll(/#(c42b1c|ee5a3f)\b/gi)) {
+    const before = css.slice(Math.max(0, m.index - 12), m.index);
+    if (!/--accent:\s*$/.test(before)) report(mainCss, 0, `accent hex ${m[0]} used outside an --accent declaration`);
+  }
+}
+
 // Runtime: the scripts must never write inline styles or raw HTML strings.
 for (const bundle of ["assets/js/main.js", "assets/js/theme.js"]) {
   if (!existsSync(bundle)) continue;

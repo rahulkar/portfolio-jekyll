@@ -1,0 +1,302 @@
+@use "mixins" as *;
+
+/* Home: hero -------------------------------------------------------------- */
+
+.hero {
+  padding-top: var(--hero-top);
+}
+
+.hero__name {
+  @include mid { @include cols(1, 6); }
+  @include wide { @include cols(1, 12); }
+}
+
+.hero__role {
+  margin-top: var(--s-4);
+  font-size: var(--fs-h3);
+  font-weight: 500;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  color: var(--ink-2);
+}
+
+.hero__lede {
+  margin-top: var(--s-5);
+}
+
+.hero__cta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: var(--s-2) var(--s-5);
+  margin-top: var(--s-6);
+}
+
+.hero__role,
+.hero__lede,
+.hero__cta {
+  @include mid { @include cols(1, 6); }
+  @include wide { @include cols(1, 8); }
+}
+
+.hero__meta {
+  margin-top: var(--s-7);
+
+  @include mid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    column-gap: var(--gutter);
+  }
+
+  @include wide {
+    @include cols(10, 12);
+    grid-row: 2 / 5;
+    display: block;
+    margin-top: var(--s-4);
+  }
+}
+
+/* Home: approach and background ------------------------------------------ */
+
+.stages,
+.capabilities {
+  display: grid;
+  grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
+  column-gap: var(--gutter);
+  row-gap: var(--s-5);
+
+  > * {
+    grid-column: span 4;
+    padding-top: var(--s-4);
+    border-top: 1px solid var(--rule);
+
+    @include mid { grid-column: span 3; }
+  }
+}
+
+.stage__when {
+  @include label;
+  margin-top: var(--s-1);
+  color: var(--ink-3);
+}
+
+.stage p:last-child {
+  margin-top: var(--s-3);
+}
+
+.capability ul {
+  margin-top: var(--s-3);
+
+  li + li { margin-top: var(--s-1); }
+}
+
+/* Home: about ------------------------------------------------------------- */
+
+.about__text {
+  > * + * { margin-top: 1em; }
+
+  @include wide { @include cols(4, 8); }
+}
+
+.about__place {
+  color: var(--ink-2);
+}
+
+.about .figure {
+  @include wide {
+    @include cols(9, 12);
+    grid-row: 1;
+  }
+}
+
+/* Home: notes and contact ------------------------------------------------- */
+
+#notes .section__intro,
+#approach .section__intro,
+#background .section__intro {
+  @include wide { grid-row: 1; }
+}
+
+.contact__body {
+  display: grid;
+  gap: var(--s-6);
+
+  @include wide { @include cols(4, 12); }
+
+  > p { max-width: 44ch; }
+}
+
+.links {
+  @include wide { width: calc(6 / 9 * 100%); }
+}
+
+/* Subpages ---------------------------------------------------------------- */
+
+.page {
+  padding-top: var(--hero-top);
+  row-gap: var(--s-5);
+}
+
+.page__head {
+  display: grid;
+  gap: var(--s-5);
+
+  h1 {
+    @include wide { max-width: calc(10 / 12 * 100%); }
+  }
+}
+
+.page__lede {
+  max-width: 44ch;
+  font-size: var(--fs-lede);
+  font-weight: 450;
+  line-height: 1.28;
+  letter-spacing: -0.015em;
+  color: var(--ink-2);
+}
+
+/* How I work: the playbook ------------------------------------------------ */
+
+.playbook {
+  margin-top: var(--s-7);
+  border-top: 1px solid var(--ink);
+}
+
+.playbook__stage {
+  display: grid;
+  grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
+  column-gap: var(--gutter);
+  row-gap: var(--s-4);
+  padding: var(--s-6) 0;
+  border-bottom: 1px solid var(--rule);
+
+  > * { grid-column: 1 / -1; min-width: 0; }
+}
+
+.playbook__name {
+  p {
+    @include label;
+    margin-top: var(--s-2);
+    color: var(--ink-3);
+  }
+
+  @include wide { @include cols(1, 3); }
+}
+
+.playbook__detail {
+  display: grid;
+  gap: var(--s-4) var(--gutter);
+
+  dt {
+    @include label;
+    color: var(--ink-3);
+  }
+
+  dd {
+    margin-top: var(--s-2);
+    font-size: var(--fs-body);
+    line-height: 1.6;
+    max-width: 62ch;
+  }
+
+  @include mid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  @include wide { @include cols(4, 11); }
+}
+
+.playbook__origin {
+  margin-top: var(--s-6);
+  max-width: 62ch;
+  color: var(--ink-2);
+}
+
+.playbook__cta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: var(--s-2) var(--s-5);
+  margin-top: var(--s-6);
+}
+
+/* Notes index and note page ----------------------------------------------- */
+
+.notes-index__feed {
+  color: var(--ink-2);
+}
+
+.notes-index .rows {
+  margin-top: var(--s-6);
+}
+
+.note__head {
+  display: grid;
+  gap: var(--s-4);
+
+  @include wide { @include cols(4, 11); }
+}
+
+.note__crumb a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+}
+
+.note__meta {
+  @include data;
+  color: var(--ink-2);
+}
+
+.note__body {
+  margin-top: var(--s-6);
+
+  @include wide { @include cols(4, 12); }
+
+  > p,
+  > ul,
+  > ol {
+    max-width: 62ch;
+  }
+}
+
+.note__foot {
+  display: grid;
+  gap: var(--s-2);
+  margin-top: var(--s-7);
+  padding-top: var(--s-5);
+  border-top: 1px solid var(--ink);
+  color: var(--ink-2);
+
+  @include wide { @include cols(4, 11); }
+
+  a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+}
+
+.note__author {
+  color: var(--ink);
+}
+
+/* 404 --------------------------------------------------------------------- */
+
+.error__code {
+  @include label;
+  color: var(--ink-3);
+}
+
+.error__meta {
+  dt {
+    @include label;
+    color: var(--ink-3);
+  }
+
+  dd {
+    margin-top: var(--s-1);
+    overflow-wrap: anywhere;
+  }
+}
+
+.error__try {
+  max-width: 62ch;
+}

@@ -1,0 +1,139 @@
+// The datum: a 24-hour scale of Kolkata time, the site's one signature.
+// Every stroke is a border in --datum (ink-3, at least 5:1). The only red is
+// the now-tick, placed by clock.js through the --now custom property. It
+// jumps once a minute, like a station clock, so `left` never transitions.
+@use "mixins" as *;
+
+.datum {
+  margin-top: var(--s-8);
+}
+
+.datum__label {
+  @include label;
+  color: var(--ink-2);
+}
+
+// Inside the 64px scale: time label 0-13, cap 17-23, tick 20-48, line 40,
+// ticks 41-45 (49 on the hour marks), hours bar 38-41, hour labels 52-64.
+.datum__scale {
+  position: relative;
+  height: 4rem;
+  margin-top: var(--s-2);
+}
+
+.datum__drawing {
+  position: absolute;
+  inset: 0;
+}
+
+.datum__ticks {
+  position: absolute;
+  top: 40px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  border-top: 1px solid var(--datum);
+
+  > span {
+    width: 0;
+    height: 4px;
+    border-left: 1px solid var(--datum);
+  }
+
+  > .is-major { height: 8px; }
+}
+
+@for $h from 0 through 24 {
+  .datum__hours[data-from="#{$h}"] { --from: #{$h}; }
+  .datum__hours[data-to="#{$h}"] { --to: #{$h}; }
+}
+
+.datum__hours {
+  position: absolute;
+  top: 38px;
+  left: calc(var(--from, 10) / 24 * 100%);
+  width: calc((var(--to, 19) - var(--from, 10)) / 24 * 100%);
+  height: 0;
+  border-top: 3px solid var(--ink);
+}
+
+.datum__marks {
+  position: absolute;
+  top: 52px;
+  left: 0;
+  right: 0;
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  line-height: 1;
+  color: var(--datum);
+
+  > span {
+    position: absolute;
+    top: 0;
+    transform: translateX(-50%);
+  }
+
+  > span:nth-child(1) { left: 0; transform: none; }
+  > span:nth-child(2) { left: 25%; }
+  > span:nth-child(3) { left: 50%; }
+  > span:nth-child(4) { left: 75%; }
+  > span:nth-child(5) { right: 0; transform: none; }
+}
+
+.datum__tick {
+  position: absolute;
+  top: 20px;
+  left: calc(var(--now, 0) * 100%);
+  width: 0;
+  height: 28px;
+  margin-left: -1px;
+  border-left: 2px solid var(--accent);
+  opacity: 0;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: -3px;
+    left: -4px;
+    width: 0;
+    height: 0;
+    border: 3px solid var(--accent);
+  }
+}
+
+.datum__now {
+  position: absolute;
+  top: 0;
+  left: calc(var(--now, 0) * 100% + 8px);
+  font-family: var(--mono);
+  font-size: 0.8125rem;
+  line-height: 1;
+  color: var(--ink);
+  white-space: nowrap;
+  opacity: 0;
+}
+
+// After 80% of the day the label sits to the left of the tick.
+.datum.is-late .datum__now {
+  left: auto;
+  right: calc((1 - var(--now, 0)) * 100% + 8px);
+}
+
+.datum.is-live .datum__tick,
+.datum.is-live .datum__now {
+  opacity: 1;
+  transition: opacity 160ms var(--ease);
+}
+
+// Two lines are reserved on phones so the visitor clause does not push the
+// hero meta down when the clock fills it in.
+.datum__note {
+  margin-top: var(--s-3);
+  min-height: 2.9em;
+  font-size: var(--fs-small);
+  line-height: 1.45;
+  color: var(--ink-2);
+
+  @include mid { min-height: 0; }
+}

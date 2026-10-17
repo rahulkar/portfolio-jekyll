@@ -1,0 +1,53 @@
+// Breakpoints, grid spans, the mono label and the two colour schemes.
+// Every partial that needs these loads them with `@use "mixins" as *`.
+
+@mixin mid { @media (min-width: 40em) { @content; } }   // 640px, 6 columns
+@mixin wide { @media (min-width: 64em) { @content; } }  // 1024px, 12 columns
+@mixin narrow { @media (max-width: 39.99em) { @content; } }
+
+@mixin cols($a, $b) { grid-column: #{$a} / #{$b + 1}; }
+
+@mixin label {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  font-weight: 400;
+  line-height: 1.4;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+@mixin data {
+  font-family: var(--mono);
+  font-size: 0.8125rem;
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: 0;
+}
+
+// Contrast on --bg (light / dark): ink 16.6 / 15.6, ink-2 8.3 / 7.8,
+// ink-3 5.0 / 5.5, accent 5.2 / 5.5. --rule is decorative (about 1.4).
+@mixin light-tokens {
+  color-scheme: light;
+  --bg: #F6F5F1;
+  --bg-inset: #ECEAE4;
+  --ink: #161615;
+  --ink-2: #4A4945;
+  --ink-3: #6A6964;
+  --rule: #D6D4CD;
+  --accent: #C42B1C;
+  --on-ink: #F6F5F1;
+  --w-display: 600;
+}
+
+@mixin dark-tokens {
+  color-scheme: dark;
+  --bg: #121211;
+  --bg-inset: #1C1C1A;
+  --ink: #ECEAE4;
+  --ink-2: #A9A79F;
+  --ink-3: #8D8B84;
+  --rule: #2E2D2A;
+  --accent: #EE5A3F;
+  --on-ink: #121211;
+  --w-display: 560;
+}

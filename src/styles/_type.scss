@@ -1,0 +1,83 @@
+@use "mixins" as *;
+
+h1, h2, h3 {
+  font-weight: 600;
+  text-wrap: balance;
+}
+
+h1 {
+  font-size: var(--fs-h1);
+  line-height: 1;
+  letter-spacing: -0.035em;
+}
+
+h2 {
+  font-size: var(--fs-h2);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+h3 {
+  font-size: var(--fs-h3);
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+.display {
+  font-size: var(--fs-display);
+  font-weight: var(--w-display);
+  line-height: 0.94;
+  letter-spacing: -0.04em;
+  margin-inline-start: -0.04em;
+}
+
+.lede {
+  font-size: var(--fs-lede);
+  font-weight: 450;
+  line-height: 1.28;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+}
+
+.label {
+  @include label;
+  color: var(--ink-3);
+}
+
+.small {
+  font-size: var(--fs-small);
+  line-height: 1.45;
+}
+
+.prose {
+  font-size: var(--fs-article);
+  line-height: 1.65;
+
+  > * + * {
+    margin-top: 1em;
+  }
+
+  > p,
+  > ul,
+  > ol {
+    max-width: 62ch;
+  }
+
+  > h2 {
+    margin-top: 1.6em;
+    font-size: var(--fs-h3);
+  }
+
+  ul,
+  ol {
+    padding-left: 1.25em;
+  }
+
+  > .figure {
+    margin-block: 2em;
+  }
+}

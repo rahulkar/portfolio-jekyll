@@ -1,0 +1,62 @@
+@use "mixins" as *;
+
+:root {
+  @include light-tokens;
+
+  // Derived: the datum strokes and the focus ring never use --rule or --accent.
+  --datum: var(--ink-3);
+  --focus: var(--ink);
+
+  --sans: "Instrument Sans", "Instrument Sans Fallback", "Instrument Sans Fallback Roboto", system-ui, sans-serif;
+  --mono: "Fragment Mono", "Fragment Mono Fallback", "Fragment Mono Fallback Menlo", ui-monospace, monospace;
+
+  --s-1: 0.25rem;
+  --s-2: 0.5rem;
+  --s-3: 0.75rem;
+  --s-4: 1rem;
+  --s-5: 1.5rem;
+  --s-6: 2rem;
+  --s-7: 3rem;
+  --s-8: 4rem;
+  --s-9: 6rem;
+
+  --container: 75rem;
+  --margin: clamp(1.25rem, 5vw, 4rem);
+  --cols: 4;
+  --gutter: 1rem;
+  --section-space: clamp(4rem, 2.6667rem + 5.9259vw, 8rem);
+  --hero-top: clamp(3rem, 2rem + 4.4444vw, 6rem);
+
+  // Type, solved from 360px to 1440px. Print overrides these tokens.
+  --fs-display: clamp(3.5rem, 2.3333rem + 5.1852vw, 7rem);    // 56 -> 112
+  --fs-h1: clamp(2.5rem, 1.8333rem + 2.963vw, 4.5rem);        // 40 -> 72
+  --fs-h2: clamp(1.5rem, 1.25rem + 1.1111vw, 2.25rem);        // 24 -> 36
+  --fs-lede: clamp(1.375rem, 1.1667rem + 0.9259vw, 2rem);     // 22 -> 32
+  --fs-h3: clamp(1.1875rem, 1.125rem + 0.2778vw, 1.375rem);   // 19 -> 22
+  --fs-body: clamp(1rem, 0.9792rem + 0.0926vw, 1.0625rem);    // 16 -> 17
+  --fs-article: var(--fs-body);
+  --fs-small: 0.9375rem;                                      // 15
+
+  --ease: cubic-bezier(0.2, 0, 0, 1);
+
+  @include mid {
+    --cols: 6;
+    --gutter: 1.25rem;
+  }
+
+  @include wide {
+    --cols: 12;
+    --gutter: 1.5rem;
+    --fs-article: 1.125rem;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    @include dark-tokens;
+  }
+}
+
+:root[data-theme="dark"] {
+  @include dark-tokens;
+}

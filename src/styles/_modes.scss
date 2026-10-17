@@ -1,0 +1,54 @@
+// Theme switching, reduced motion, forced colours and higher contrast.
+// Loaded after the tokens so these overrides win.
+
+// The toggle adds this for two frames so colour transitions do not fire on
+// every element at once when the tokens swap.
+.theme-switching *,
+.theme-switching *::before,
+.theme-switching *::after {
+  transition: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+
+  .button:hover .icon,
+  .link-arrow:hover .icon {
+    transform: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .datum__tick,
+  .datum__tick::before {
+    border-color: Highlight;
+  }
+
+  .site-nav a[aria-current] {
+    text-decoration-color: Highlight;
+  }
+
+  .row::before {
+    display: none;
+  }
+
+  .button,
+  .theme-toggle {
+    border: 1px solid ButtonText;
+  }
+}
+
+// Same specificity as the dark-token selectors, so this also wins in dark.
+@media (prefers-contrast: more) {
+  :root,
+  :root[data-theme],
+  :root:not([data-theme="light"]) {
+    --ink-3: var(--ink-2);
+    --rule: var(--ink-3);
+  }
+}
