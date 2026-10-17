@@ -1,0 +1,305 @@
+@use "mixins" as *;
+
+/* Home: hero -------------------------------------------------------------- */
+
+// Wide: name across the top; intro and datum in columns 1-7; contact in the
+// side column, 9-12. The side's extra height falls into the last,
+// flexible row, so it never stretches the gaps in the intro.
+.hero {
+  padding-top: var(--hero-top);
+
+  @include wide { grid-template-rows: auto auto auto 1fr; }
+}
+
+.hero__name {
+  @include wide { @include cols(1, 12); }
+}
+
+.hero__role {
+  margin-top: var(--s-4);
+  font-size: var(--fs-h3);
+  font-weight: 500;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  color: var(--ink-2);
+}
+
+// What I do, now and before: label and value on one line, set a little
+// larger than body text so the hero reads as facts, not a slogan.
+.hero__facts {
+  display: grid;
+  gap: var(--s-2);
+  margin-top: var(--s-5);
+
+  > div {
+    display: grid;
+    grid-template-columns: 4.5rem minmax(0, 1fr);
+    column-gap: var(--s-3);
+    align-items: baseline;
+    padding-top: var(--s-2);
+    border-top: 1px solid var(--rule);
+  }
+
+  dt {
+    @include label;
+    color: var(--ink-3);
+  }
+
+  dd {
+    font-size: clamp(1.1875rem, 1.0417rem + 0.6481vw, 1.625rem); // 19 -> 26
+    font-weight: 450;
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+  }
+}
+
+.hero__cta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: var(--s-2) var(--s-5);
+  margin-top: var(--s-6);
+}
+
+.hero__intro,
+.hero .datum {
+  @include wide { @include cols(1, 7); }
+}
+
+.hero .datum {
+  margin-top: var(--s-7);
+}
+
+.hero__side {
+  display: grid;
+  gap: var(--s-5);
+  margin-top: var(--s-7);
+
+  @include wide {
+    @include cols(9, 12);
+    grid-row: 2 / 5;
+    margin-top: var(--s-4);
+  }
+}
+
+/* Home: contact (in the hero, so it is on the first screen) -------------- */
+
+.contact {
+  display: grid;
+  gap: var(--s-3);
+  padding-top: var(--s-3);
+  border-top: 1px solid var(--ink);
+}
+
+.contact__title {
+  @include label;
+  color: var(--ink-3);
+}
+
+.contact__place {
+  font-size: var(--fs-small);
+  color: var(--ink-2);
+}
+
+/* Home: approach and background ------------------------------------------ */
+
+.capabilities {
+  display: grid;
+  gap: var(--s-4) var(--gutter);
+
+  @include mid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+  > * {
+    padding-top: var(--s-3);
+    border-top: 1px solid var(--rule);
+  }
+}
+
+// Each group's tools read as one line, separated by quiet dots.
+.capability ul {
+  margin-top: var(--s-2);
+  color: var(--ink-2);
+
+  li { display: inline; }
+
+  li:not(:last-child)::after {
+    content: "\00a0\00b7";
+    color: var(--ink-3);
+  }
+}
+
+// Inside a section the ink rule above already opens the list.
+.section .rows {
+  border-top: 0;
+
+  > .row:first-child { padding-top: 0; }
+}
+
+/* Home: about ------------------------------------------------------------- */
+
+.about__text {
+  > * + * { margin-top: 1em; }
+  > p { max-width: var(--measure); }
+
+  @include wide { @include cols(4, 8); }
+}
+
+.about__place {
+  color: var(--ink-2);
+}
+
+.about .figure {
+  @include mid { max-width: 30rem; }
+
+  @include wide {
+    @include cols(9, 12);
+    grid-row: 1;
+    max-width: none;
+  }
+}
+
+/* Subpages ---------------------------------------------------------------- */
+
+.page {
+  padding-top: var(--hero-top);
+  row-gap: var(--s-5);
+}
+
+.page__head {
+  display: grid;
+  gap: var(--s-5);
+
+  h1 {
+    @include wide { max-width: calc(10 / 12 * 100%); }
+  }
+}
+
+.page__lede {
+  max-width: 44ch;
+  font-size: var(--fs-lede);
+  font-weight: 450;
+  line-height: 1.28;
+  letter-spacing: -0.015em;
+  color: var(--ink-2);
+}
+
+/* How I work ------------------------------------------------------------ */
+
+.playbook {
+  margin-top: var(--s-6);
+  border-top: 1px solid var(--ink);
+}
+
+// Each step is a name and one plain line; from 1024px they sit side by side.
+.playbook__stage {
+  display: grid;
+  grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
+  column-gap: var(--gutter);
+  row-gap: var(--s-2);
+  padding: var(--s-4) 0;
+  border-bottom: 1px solid var(--rule);
+
+  > * { grid-column: 1 / -1; min-width: 0; }
+
+  h2 {
+    @include wide { @include cols(1, 3); }
+  }
+
+  p {
+    max-width: var(--measure);
+    font-size: var(--fs-h3);
+    font-weight: 450;
+    line-height: 1.35;
+    padding-top: 0.15em;
+
+    @include wide { @include cols(4, 12); }
+  }
+}
+
+.playbook__cta {
+  margin-top: var(--s-6);
+}
+
+/* Notes index and note page ----------------------------------------------- */
+
+.notes-index__feed {
+  color: var(--ink-2);
+}
+
+.notes-index .rows {
+  margin-top: var(--s-6);
+}
+
+.note__head {
+  display: grid;
+  gap: var(--s-4);
+
+  @include wide { @include cols(4, 11); }
+}
+
+.note__crumb a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+}
+
+.note__meta {
+  @include data;
+  color: var(--ink-2);
+}
+
+.note__body {
+  margin-top: var(--s-6);
+
+  @include wide { @include cols(4, 12); }
+
+  > p,
+  > ul,
+  > ol {
+    max-width: var(--measure);
+  }
+}
+
+.note__foot {
+  display: grid;
+  gap: var(--s-2);
+  margin-top: var(--s-7);
+  padding-top: var(--s-5);
+  border-top: 1px solid var(--ink);
+  color: var(--ink-2);
+
+  @include wide { @include cols(4, 11); }
+
+  a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+}
+
+.note__author {
+  color: var(--ink);
+}
+
+/* 404 --------------------------------------------------------------------- */
+
+.error__code {
+  @include label;
+  color: var(--ink-3);
+}
+
+.error__meta {
+  dt {
+    @include label;
+    color: var(--ink-3);
+  }
+
+  dd {
+    margin-top: var(--s-1);
+    overflow-wrap: anywhere;
+  }
+}
+
+.error__try {
+  max-width: var(--measure);
+}

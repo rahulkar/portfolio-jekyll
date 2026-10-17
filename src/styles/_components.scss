@@ -1,0 +1,349 @@
+@use "mixins" as *;
+
+/* Header ------------------------------------------------------------------ */
+
+// From 640px the header stays put, so the nav is one click away anywhere on
+// the page; on phones (two rows) it scrolls away to keep the screen free.
+.site-header {
+  border-bottom: 1px solid var(--rule);
+  background: var(--bg);
+
+  @include mid {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+  }
+}
+
+// Anchored targets land below the sticky header.
+[id] {
+  scroll-margin-top: var(--s-5);
+
+  @include mid { scroll-margin-top: calc(64px + var(--s-5)); }
+}
+
+// The toggle's 44px track is always reserved, so unhiding it moves nothing.
+.site-header__inner {
+  display: grid;
+  grid-template-columns: 1fr 44px;
+  grid-template-areas: "name toggle" "nav nav";
+  align-items: center;
+
+  @include mid {
+    grid-template-columns: auto 1fr 44px;
+    grid-template-areas: "name nav toggle";
+    min-height: 64px;
+  }
+}
+
+.site-header__name {
+  grid-area: name;
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  font-weight: 600;
+  font-size: 1rem;
+  letter-spacing: -0.01em;
+  text-decoration: none;
+}
+
+.site-nav {
+  grid-area: nav;
+
+  @include mid {
+    justify-self: end;
+    margin-right: var(--s-4);
+  }
+
+  ul {
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: 1.25rem;
+
+    @include wide { column-gap: 2rem; }
+  }
+
+  a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    min-width: 44px;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    line-height: 1;
+    text-decoration: none;
+    text-underline-offset: 6px;
+  }
+
+  a:hover {
+    text-decoration-line: underline;
+    text-decoration-thickness: 1px;
+    text-decoration-color: var(--ink);
+  }
+
+  // One of only two places the accent appears.
+  a[aria-current] {
+    text-decoration-line: underline;
+    text-decoration-thickness: 2px;
+    text-decoration-color: var(--accent);
+  }
+}
+
+.theme-toggle {
+  grid-area: toggle;
+  display: inline-grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+  transition: background-color 120ms var(--ease);
+
+  &:hover { background: var(--bg-inset); }
+
+  .icon { width: 18px; height: 18px; }
+}
+
+/* Actions ----------------------------------------------------------------- */
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.625rem;
+  min-height: 48px;
+  padding: 0 1.25rem;
+  border: 0;
+  border-radius: 0;
+  background: var(--ink);
+  color: var(--on-ink);
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.2;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 120ms var(--ease);
+
+  &:hover { background: var(--ink-2); }
+
+  .icon { transition: transform 150ms var(--ease); }
+  &:hover .icon { transform: translateX(3px); }
+
+  @include narrow { width: 100%; }
+}
+
+.link-arrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  min-height: 48px;
+  font-weight: 500;
+  text-decoration: none;
+
+  > span {
+    text-decoration: underline 1px var(--ink-3);
+    text-underline-offset: 0.18em;
+  }
+
+  &:hover > span { text-decoration: underline 2px var(--ink); }
+
+  .icon { transition: transform 150ms var(--ease); }
+  &:hover .icon { transform: translateX(3px); }
+}
+
+.book {
+  @include narrow { width: 100%; }
+}
+
+/* Rows: notes lists ------------------------------------------------------- */
+
+.rows {
+  border-top: 1px solid var(--ink);
+}
+
+.row {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
+  column-gap: var(--gutter);
+  row-gap: var(--s-1);
+  padding: var(--s-4) 0;
+  border-bottom: 1px solid var(--rule);
+
+  > * { grid-column: 1 / -1; min-width: 0; }
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0 -0.75rem;
+    z-index: -1;
+    background: var(--bg-inset);
+    opacity: 0;
+    transition: opacity 120ms var(--ease);
+  }
+
+  &:hover::before { opacity: 1; }
+
+  @include mid {
+    .row__date { @include cols(1, 2); grid-row: 1 / span 2; }
+    .row__title, .row__summary { @include cols(3, 6); }
+  }
+
+  @include wide {
+    .row__date { grid-row: auto; }
+    .row__title { @include cols(3, 7); }
+    .row__summary { @include cols(8, 12); }
+  }
+}
+
+.row__date {
+  @include data;
+  color: var(--ink-2);
+  padding-top: 0.2em;
+}
+
+.row__title {
+  font-size: var(--fs-h3);
+  line-height: 1.3;
+}
+
+// The underline is the affordance; the whole row is the target.
+.row__link {
+  text-decoration: underline 1px var(--ink-3);
+  text-underline-offset: 0.18em;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+  }
+}
+
+.row:hover .row__link { text-decoration: underline 2px var(--ink); }
+
+.row__summary {
+  font-size: var(--fs-small);
+  line-height: 1.45;
+  color: var(--ink-2);
+  padding-top: 0.2em;
+}
+
+/* Figure ------------------------------------------------------------------ */
+
+.figure__link,
+.figure__link picture {
+  display: block;
+}
+
+.figure img {
+  width: 100%;
+}
+
+.figure figcaption {
+  margin-top: var(--s-3);
+  font-size: var(--fs-small);
+  line-height: 1.45;
+  color: var(--ink-2);
+}
+
+/* Contact ----------------------------------------------------------------- */
+
+.email {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-3) var(--s-4);
+}
+
+.email__address {
+  font-size: var(--fs-h3);
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  overflow-wrap: anywhere;
+}
+
+.copy {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0 0.75rem;
+  border: 1px solid var(--ink-3);
+  border-radius: 0;
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+  transition: background-color 120ms var(--ease);
+
+  &:hover { background: var(--bg-inset); }
+}
+
+.copy__label {
+  @include label;
+}
+
+// Profiles in one row: every link a 44px target, nothing stacked.
+.links {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: var(--s-5);
+
+  a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    min-height: 44px;
+    min-width: 44px;
+    text-decoration: none;
+  }
+
+  .icon { color: var(--ink-3); }
+}
+
+.links__name {
+  font-weight: 500;
+  text-decoration: underline 1px var(--ink-3);
+  text-underline-offset: 0.18em;
+
+  a:hover & { text-decoration: underline 2px var(--ink); }
+}
+
+/* Colophon ---------------------------------------------------------------- */
+
+.colophon {
+  margin-top: var(--section-space);
+  border-top: 1px solid var(--rule);
+  padding: var(--s-6) 0 var(--s-7);
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--ink-2);
+}
+
+.colophon__inner {
+  display: grid;
+  gap: var(--s-2);
+
+  > p { max-width: 40em; }
+}
+
+.colophon__clock {
+  @include data;
+}
+
+.colophon__contact {
+  color: var(--ink);
+
+  a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+}

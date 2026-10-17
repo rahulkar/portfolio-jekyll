@@ -1,0 +1,10 @@
+<figure class="figure">
+  <a class="figure__link" href="{{ "/assets/img/6502-1280.jpg" | relative_url }}">
+    <picture>
+      <source type="image/webp" srcset="{{ "/assets/img/6502-640.webp" | relative_url }} 640w, {{ "/assets/img/6502-1280.webp" | relative_url }} 1280w" sizes="{{ include.sizes | default: "100vw" }}">
+      <img src="{{ "/assets/img/6502-640.jpg" | relative_url }}" srcset="{{ "/assets/img/6502-640.jpg" | relative_url }} 640w, {{ "/assets/img/6502-1280.jpg" | relative_url }} 1280w" sizes="{{ include.sizes | default: "100vw" }}" width="640" height="419" alt="A 6502 computer built on two breadboards: a W65C02 CPU, EEPROM and RAM chips wired with blue and yellow jumpers, and a green LCD reading 6502 SBC www.rahulkar.com" loading="lazy" decoding="async">
+    </picture>
+    <span class="sr-only"> (full-size photo)</span>
+  </a>
+  <figcaption>{{ include.caption | default: "The LCD shows 6502 SBC and www.rahulkar.com." }}</figcaption>
+</figure>

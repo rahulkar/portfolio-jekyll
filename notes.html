@@ -1,0 +1,18 @@
+---
+layout: default
+title: Notes
+description: "Write-ups by Rahul Kar: a 6502 computer on breadboards and how this site is built."
+permalink: /notes/
+---
+<div class="wrap grid page notes-index">
+  <header class="page__head">
+    <h1>Notes</h1>
+    <p class="notes-index__feed">Write-ups of things I've built. <a href="{{ "/feed.xml" | relative_url }}">Atom feed</a></p>
+  </header>
+  {% assign notes = site.notes | sort: "date" | reverse %}
+  <ul class="rows" role="list">
+    {%- for note in notes %}
+    {% include note-row.html note=note level="h2" %}
+    {%- endfor %}
+  </ul>
+</div>

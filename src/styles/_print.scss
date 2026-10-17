@@ -1,0 +1,79 @@
+// /how-i-work/ prints as a brief a client can forward; every page prints
+// light, without navigation or buttons, with link targets spelled out.
+@use "mixins" as *;
+
+@media print {
+  :root,
+  :root[data-theme="dark"],
+  :root:not([data-theme="light"]) {
+    @include light-tokens;
+    --bg: #fff;
+    --margin: 0mm;
+    --section-space: 10mm;
+    --hero-top: 0mm;
+    --fs-display: 28pt;
+    --fs-h1: 22pt;
+    --fs-h2: 15pt;
+    --fs-lede: 13pt;
+    --fs-h3: 12pt;
+    --fs-body: 10.5pt;
+    --fs-article: 10.5pt;
+    --fs-small: 9.5pt;
+  }
+
+  @page {
+    margin: 18mm 16mm;
+  }
+
+  .skip-link,
+  .site-header,
+  .theme-toggle,
+  .button,
+  .book,
+  .link-arrow,
+  .colophon,
+  .copy,
+  .datum__tick,
+  .datum__now,
+  .datum__local {
+    display: none !important;
+  }
+
+  .print-only {
+    display: block !important;
+  }
+
+  a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font: 9pt var(--mono);
+    color: var(--ink-2);
+    overflow-wrap: anywhere;
+  }
+
+  a[href^="/"]::after {
+    content: " (https://www.rahulkar.com" attr(href) ")";
+    font: 9pt var(--mono);
+    color: var(--ink-2);
+  }
+
+  .row__link::after {
+    position: static;
+    inset: auto;
+  }
+
+  .row::before {
+    display: none;
+  }
+
+  .playbook__stage,
+  .row,
+  figure {
+    break-inside: avoid;
+  }
+
+  h1,
+  h2,
+  h3 {
+    break-after: avoid;
+  }
+}

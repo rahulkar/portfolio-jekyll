@@ -1,10 +1,10 @@
 # Site settings
 title: Rahul Kar
 tagline: Enterprise Solution Architect & Technology Lead
-description: Solution Architect specializing in enterprise software delivery, tooling, proof-of-concepts, agentic AI, cloud, DevOps, and quality engineering. 11+ years of IT industry experience.
+description: "Rahul Kar, Enterprise Solution Architect and Technology Lead in Kolkata. 11+ years in IT: test automation, DevOps and cloud, now generative AI and AI agents."
 # baseurl: "/particle" # the subpath of your site, e.g. /blog
 url: "https://www.rahulkar.com"
-lang: en
+lang: en-GB
 
 # Social sharing (jekyll-seo-tag). The OG/Twitter image is applied to every page
 # via `defaults` below, because seo-tag reads page.image (not site.image). The
@@ -14,7 +14,7 @@ lang: en
 
 # User settings
 username: Rahul Kar
-user_description: I'm an engineer who likes building things end-to-end, from early problem framing to the tooling, platforms, and delivery details that make software work in the real world. Eleven years in, I still believe great systems come from sweating the small details until they disappear.
+user_description: "Enterprise Solution Architect and Technology Lead in Kolkata, India. 11+ years in IT: test automation, CI/CD, DevOps and cloud, now generative AI and AI agents."
 user_title: Enterprise Solution Architect & Technology Lead
 email: kar.rahul@pm.me
 github_username: rahulkar
@@ -23,18 +23,17 @@ linkedin_handle: "in/karrahul"
 credly_url: "https://www.credly.com/users/rahul-kar"
 credly_handle: "rahul-kar"
 
-# Scribbles: short pieces, one markdown file each under _scribbles/.
-collections:
-  scribbles:
-    output: true
-    permalink: /scribbles/:name/
 
-# The main feed is the scribbles feed; the (empty) posts feed moves aside.
+# Notes: short pieces, one markdown file each under _notes/.
+collections:
+  notes:
+    output: true
+    permalink: /notes/:name/
+
+# /feed.xml is the hand-written notes feed in the repo root (jekyll-feed skips
+# paths that already exist); the plugin's (empty) posts feed moves aside.
 feed:
   path: /feed/posts.xml
-  collections:
-    scribbles:
-      path: /feed.xml
 
 plugins:
   - jekyll-seo-tag
@@ -45,17 +44,23 @@ plugins:
 defaults:
   - scope:
       path: ""
-      type: scribbles
+      type: notes
     values:
-      layout: scribble
+      layout: note
+      author: Rahul Kar
+  - scope:
+      path: "redirects"
+    values:
+      layout: redirect
+      sitemap: false
   - scope:
       path: ""
     values:
       image:
-        path: /assets/og-sketch.png
+        path: /assets/og-v4.png
         width: 1200
         height: 630
-        alt: "Rahul Kar - Enterprise Solution Architect & Technology Lead"
+        alt: "Rahul Kar, Enterprise Solution Architect & Technology Lead, Kolkata"
 
 include: ['.well-known']
 exclude: ['package.json', 'package-lock.json', 'src', 'node_modules', 'rahul', 'tools', 'tests', 'playwright.config.js', 'lighthouserc.json', 'test-results', 'playwright-report', 'LOCAL_SETUP.md', 'LICENSE.txt', '*.heic']

@@ -1,49 +1,16 @@
 ---
-layout: error
-title: 404 — page not found
-description: That page fell out of the notebook. It may have moved or never existed.
+layout: default
+title: Page not found
+description: This page does not exist. It may have moved when the site was redesigned.
 sitemap: false
 noindex: true
 ---
-<section class="error">
-  <div class="error__coffee" aria-hidden="true">
-    <svg class="doodle doodle--auto" viewBox="0 0 220 220" focusable="false"><use href="#d-coffee"></use></svg>
-  </div>
-  <div class="error__bonsai" aria-hidden="true">
-    <svg class="doodle doodle--auto" viewBox="0 0 180 120" focusable="false"><use href="#d-bonsai"></use></svg>
-  </div>
-
-  <div class="wrap error__inner">
-    <p class="error__code" aria-hidden="true">
-      <span class="error__code-inner" data-sketch="highlight" data-seed="code-404">404</span>
-      <svg class="doodle doodle--auto error__x" focusable="false"><use href="#d-x"></use></svg>
-    </p>
-
-    <aside class="note error__note" aria-label="Lost and found">
-      <div class="note__visual">
-        <span class="stamp stamp--red">lost &amp; found</span>
-        <dl class="card__body">
-          <div class="ln"><dt>looking for</dt><dd id="err-path">requested-path</dd></div>
-          <div class="ln"><dt>found</dt><dd>not in this notebook</dd></div>
-          <div class="ln"><dt>try</dt><dd>the first page<span class="caret"></span></dd></div>
-        </dl>
-      </div>
-    </aside>
-
-    <h1 class="error__title">page not found</h1>
-    <p class="error__sub">
-      The page you were looking for moved, was renamed, or never existed.
-      Let's get you back to something that resolves.
-    </p>
-
-    <div class="error__cta">
-      <a href="{{ "/" | prepend: site.baseurl }}" class="btn btn--primary" data-sketch="rect-fill" data-seed="cta-home">
-        <span>home</span>
-        <svg class="doodle doodle--auto" aria-hidden="true" focusable="false"><use href="#d-arrow"></use></svg>
-      </a>
-      <a href="{{ "/#connect" | prepend: site.baseurl }}" class="btn" data-sketch="rect" data-seed="cta-err-connect">
-        <span>connect</span>
-      </a>
-    </div>
-  </div>
-</section>
+<div class="wrap grid page error">
+  <header class="page__head">
+    <p class="error__code">Error 404</p>
+    <h1>Page not found</h1>
+    <p class="page__lede">It may have moved when the site was redesigned.</p>
+  </header>
+  <dl class="error__meta" id="err-meta" hidden><div><dt>Requested</dt><dd><code id="err-path">unknown</code></dd></div></dl>
+  <p class="error__try">Try the <a href="{{ "/" | relative_url }}">home page</a>, <a href="{{ "/how-i-work/" | relative_url }}">How I work</a>, <a href="{{ "/notes/" | relative_url }}">Notes</a> or <a href="{{ "/#contact" | relative_url }}">Contact</a>.</p>
+</div>

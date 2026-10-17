@@ -1,0 +1,22 @@
+---
+layout: default
+---
+{%- assign notes = site.notes | sort: "date" | reverse -%}
+{%- assign found = false -%}{%- assign next_note = nil -%}
+{%- for n in notes -%}{%- if found and next_note == nil -%}{%- assign next_note = n -%}{%- endif -%}{%- if n.url == page.url -%}{%- assign found = true -%}{%- endif -%}{%- endfor -%}
+{%- unless next_note -%}{%- assign next_note = notes.first -%}{%- endunless -%}
+{%- if next_note.url == page.url -%}{%- assign next_note = nil -%}{%- endif -%}
+<article class="wrap grid page note">
+  <header class="note__head">
+    <p class="note__crumb"><a href="{{ "/notes/" | relative_url }}">Notes</a></p>
+    <h1>{{ page.title }}</h1>
+    <p class="note__meta"><time datetime="{{ page.date | date: '%Y-%m-%d' }}">{{ page.date | date: "%-d %b %Y" }}</time>{% if page.last_modified_at %} &middot; Updated <time datetime="{{ page.last_modified_at | date: '%Y-%m-%d' }}">{{ page.last_modified_at | date: "%-d %b %Y" }}</time>{% endif %}</p>
+  </header>
+  <div class="note__body prose">
+    {{ content }}
+  </div>
+  <footer class="note__foot">
+    {% if next_note %}<p class="note__next">Next note: <a href="{{ next_note.url | relative_url }}">{{ next_note.title }}</a></p>{% endif %}
+    <p class="note__more"><a href="{{ "/notes/" | relative_url }}">All notes</a></p>
+  </footer>
+</article>

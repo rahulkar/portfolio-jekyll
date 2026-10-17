@@ -1,3 +1,73 @@
 ---
 layout: default
 ---
+<section class="hero wrap grid" aria-labelledby="hero-name">
+  <h1 class="hero__name display" id="hero-name">Rahul Kar</h1>
+  <div class="hero__intro">
+    <p class="hero__role">Enterprise Solution Architect &amp; Technology Lead &middot; 11+ years in IT</p>
+    <dl class="hero__facts">
+      <div><dt>Now</dt><dd>Generative AI and AI agents</dd></div>
+      <div><dt>Before</dt><dd>Test automation, CI/CD, DevOps and cloud</dd></div>
+    </dl>
+    <div class="hero__cta">
+      {% include book-cta.html %}
+      <a class="link-arrow" href="{{ "/how-i-work/" | relative_url }}"><span>How I work</span>{% include icon.html name="arrow" %}</a>
+    </div>
+  </div>
+  {% include datum.html %}
+  <div class="hero__side">
+    <div class="contact" id="contact">
+      <h2 class="contact__title">Contact</h2>
+      <div class="email">
+        <a class="email__address" href="mailto:{{ site.email }}">{{ site.email }}</a>
+        <button class="copy" type="button" data-copy-email="{{ site.email }}" hidden><span class="copy__label">Copy</span><span class="sr-only"> email address</span></button>
+        <span class="sr-only" role="status" data-copy-status></span>
+      </div>
+      <ul class="links" role="list">
+        <li><a href="https://github.com/{{ site.github_username }}" rel="me"><span class="links__name">GitHub</span><span class="sr-only"> @{{ site.github_username }}</span>{% include icon.html name="external" %}</a></li>
+        <li><a href="{{ site.linkedin_url }}" rel="me"><span class="links__name">LinkedIn</span><span class="sr-only"> {{ site.linkedin_handle }}</span>{% include icon.html name="external" %}</a></li>
+        <li><a href="{{ site.credly_url }}" rel="me"><span class="links__name">Credly</span><span class="sr-only"> {{ site.credly_handle }}</span>{% include icon.html name="external" %}</a></li>
+        <li><a href="{{ "/assets/rahul-kar-v2.vcf" | relative_url }}" download="rahul-kar.vcf"><span class="links__name">vCard</span><span class="sr-only">, add to contacts</span></a></li>
+      </ul>
+      <p class="contact__place">Based in Kolkata, India</p>
+    </div>
+  </div>
+</section>
+
+<section class="section wrap grid" id="background" aria-labelledby="background-title">
+  <div class="section__head">
+    <h2 id="background-title">Background</h2>
+  </div>
+  <div class="capabilities">
+    {%- for group in site.data.capabilities %}
+    <div class="capability">
+      <h3>{{ group.group }}</h3>
+      <ul role="list">{% for item in group.items %}<li>{{ item }}</li> {% endfor %}</ul>
+    </div>
+    {%- endfor %}
+  </div>
+</section>
+
+<section class="section wrap grid about" id="about" aria-labelledby="about-title">
+  <div class="section__head">
+    <h2 id="about-title">About</h2>
+  </div>
+  <div class="about__text">
+    <p>I speak fluent geek, silicon, crypto, marketing, electronics, and space stuff.</p>
+    <p>Outside work: retro computing, DIY builds, bonsai and biotech. The photo is <a href="{{ "/notes/6502-on-two-breadboards/" | relative_url }}">a 6502 computer I built on two breadboards</a>.</p>
+  </div>
+  {% include figure-6502.html sizes="(min-width: 64em) 420px, 100vw" %}
+</section>
+
+<section class="section wrap grid" id="notes" aria-labelledby="notes-title">
+  <div class="section__head">
+    <h2 id="notes-title">Notes</h2>
+  </div>
+  {% assign notes = site.notes | sort: "date" | reverse %}
+  <ul class="rows" role="list">
+    {%- for note in notes limit: 3 %}
+    {% include note-row.html note=note level="h3" %}
+    {%- endfor %}
+  </ul>
+  <p class="section__coda"><a class="link-arrow" href="{{ "/notes/" | relative_url }}"><span>All notes</span>{% include icon.html name="arrow" %}</a></p>
+</section>

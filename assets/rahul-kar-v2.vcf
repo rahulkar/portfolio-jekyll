@@ -1,0 +1,12 @@
+BEGIN:VCARD
+VERSION:3.0
+N:Kar;Rahul;;;
+FN:Rahul Kar
+TITLE:Enterprise Solution Architect & Technology Lead
+EMAIL;TYPE=INTERNET:kar.rahul@pm.me
+URL:https://www.rahulkar.com
+URL;TYPE=linkedin:https://www.linkedin.com/in/karrahul/
+URL;TYPE=github:https://github.com/rahulkar
+ADR;TYPE=WORK:;;;Kolkata;;;India
+NOTE:Generative AI and AI agents. Before: test automation, CI/CD, DevOps and cloud.
+END:VCARD

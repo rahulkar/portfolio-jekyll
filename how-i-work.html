@@ -1,80 +1,24 @@
 ---
-layout: page
-title: How I'd approach your problem
-description: The loop I run on every engagement - discover, prototype, architect, scale - and what you get at each stage.
+layout: default
+title: How I work
+description: The steps Rahul Kar usually follows on a project - discover, prototype, architect, scale.
 permalink: /how-i-work/
 ---
-<section class="page-section play" id="how-i-work">
-  <div class="wrap">
-    <div class="sec-head reveal">
-      <h1 class="sec-head__title">
-        <span class="sec-head__name" data-sketch="underline" data-seed="head-play">How I'd approach your problem</span>
-      </h1>
-      <span class="sec-head__count" data-sketch="circle" data-seed="page-5">the playbook</span>
-    </div>
-    <p class="play__intro reveal">Every engagement I have been part of that went well ran the same loop. Here is what it looks like from your side of the table: four stages, each with a clear end, and a feedback loop back to the start.</p>
+<div class="wrap grid page">
+  <header class="page__head">
+    <h1>How I work</h1>
+    <p class="page__lede">The steps I usually follow on a project.</p>
+    <p class="print-only">Rahul Kar &middot; Enterprise Solution Architect &amp; Technology Lead &middot; {{ site.email }} &middot; www.rahulkar.com/how-i-work/</p>
+  </header>
 
-    <ol class="play__stages">
-      <li class="play__stage reveal reveal--d1">
-        <article class="card taped play__card" data-sketch="rect" data-seed="play-discover">
-          <span class="play__num anno" aria-hidden="true">01</span>
-          <h2 class="play__title">discover <span class="play__when">the first week</span></h2>
-          <p><strong>What happens.</strong> Whiteboards and awkward questions until the real problem shows up. I read the actual constraints: the budget, the compliance rules, the systems already in place and the team you have, not the team a slide deck assumes.</p>
-          <p><strong>What you get.</strong> A one-page problem statement everyone can sign, the first risks named out loud, and a short list of things worth proving before anyone commits.</p>
-          <svg class="doodle play__doodle" aria-hidden="true" focusable="false"><use href="#d-notebook"></use></svg>
-        </article>
-      </li>
-      <li class="play__stage reveal reveal--d2">
-        <article class="card taped play__card" data-sketch="rect" data-seed="play-prototype">
-          <span class="play__num anno" aria-hidden="true">02</span>
-          <h2 class="play__title">prototype <span class="play__when">days, not quarters</span></h2>
-          <p><strong>What happens.</strong> A working proof-of-concept on your real stack, deliberately narrow: the riskiest integration, the awkward data, the agent that has to behave in front of a customer. It runs, it is measured, and it is thrown away without regret if it says no.</p>
-          <p><strong>What you get.</strong> Evidence instead of opinion, an estimate of cost and effort you can defend, and a go or no-go you can stand behind.</p>
-          <svg class="doodle play__doodle" aria-hidden="true" focusable="false"><use href="#d-monitor"></use></svg>
-        </article>
-      </li>
-      <li class="play__stage reveal reveal--d3">
-        <article class="card taped play__card" data-sketch="rect" data-seed="play-architect">
-          <span class="play__num anno" aria-hidden="true">03</span>
-          <h2 class="play__title">architect <span class="play__when">the boring parts, done properly</span></h2>
-          <p><strong>What happens.</strong> Boundaries and data ownership, the platform underneath, security and observability from the first commit rather than the last sprint, and every significant decision written down so the next person knows why.</p>
-          <p><strong>What you get.</strong> A design the team can argue with, a roadmap in releases rather than phases, and a platform that outlives the project it was built for.</p>
-          <svg class="doodle play__doodle" aria-hidden="true" focusable="false"><use href="#d-chip"></use></svg>
-        </article>
-      </li>
-      <li class="play__stage reveal reveal--d3">
-        <article class="card taped play__card" data-sketch="rect" data-seed="play-scale">
-          <span class="play__num anno" aria-hidden="true">04</span>
-          <h2 class="play__title">scale <span class="play__when">so the team runs it without me</span></h2>
-          <p><strong>What happens.</strong> Tooling, pipelines and test automation, runbooks, and a hand-over that treats your engineers as the owners they are. Then the loop closes: what we learn in production feeds the next discovery.</p>
-          <p><strong>What you get.</strong> A platform your people own and improve, and a quieter on-call rota than you had before.</p>
-          <svg class="doodle play__doodle" aria-hidden="true" focusable="false"><use href="#d-tools"></use></svg>
-        </article>
-      </li>
-    </ol>
+  <ol class="playbook" role="list">
+    <li class="playbook__stage"><h2>Discover</h2><p>Understand the problem, the constraints and the existing systems.</p></li>
+    <li class="playbook__stage"><h2>Prototype</h2><p>Build a proof of concept to test the risky parts first.</p></li>
+    <li class="playbook__stage"><h2>Architect</h2><p>Solution architecture, platform strategy and the roadmap.</p></li>
+    <li class="playbook__stage"><h2>Scale</h2><p>CI/CD pipelines, test automation and delivery.</p></li>
+  </ol>
 
-    <div class="play__foot reveal">
-      <p class="play__origin">Where this comes from: eleven years of enterprise delivery, from quality engineering and automation to platforms, cloud and agentic AI. The stages are old; the tools in them change every year.</p>
-      <div class="social-grid social-grid--extras">
-        <a class="social-btn sticker social-btn--book" href="mailto:{{ site.email }}?subject=20%20minutes%3F&amp;body=Hi%20Rahul%2C%0A%0ACould%20we%20find%2020%20minutes%20to%20talk%20about%20...%0A%0AA%20few%20slots%20that%20work%20for%20me%3A%0A-%20%0A-%20%0A%0AThanks!">
-          <span class="sticker__visual">
-            <span class="social-btn__icon" aria-hidden="true"><svg class="doodle" focusable="false"><use href="#d-calendar"></use></svg></span>
-            <span class="social-btn__text">
-              <span class="social-btn__label">book 20 minutes</span>
-              <span class="social-btn__handle">an email, subject filled in</span>
-            </span>
-          </span>
-        </a>
-        <a class="social-btn sticker social-btn--connect" href="{{ "/" | prepend: site.baseurl }}#connect">
-          <span class="sticker__visual">
-            <span class="social-btn__icon" aria-hidden="true"><svg class="doodle" focusable="false"><use href="#d-envelope"></use></svg></span>
-            <span class="social-btn__text">
-              <span class="social-btn__label">all the ways to connect</span>
-              <span class="social-btn__handle">email, github, linkedin</span>
-            </span>
-          </span>
-        </a>
-      </div>
-    </div>
+  <div class="playbook__cta">
+    {% include book-cta.html %}
   </div>
-</section>
+</div>

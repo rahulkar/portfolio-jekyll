@@ -1,0 +1,141 @@
+@use "mixins" as *;
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: var(--fs-body);
+  font-weight: 400;
+  line-height: 1.6;
+  font-synthesis: none;
+  font-kerning: normal;
+}
+
+h1, h2, h3, h4, p, ul, ol, dl, dd, figure, blockquote, pre {
+  margin: 0;
+}
+
+ul, ol {
+  padding: 0;
+}
+
+.playbook, .rows, .links, .capability ul, .site-nav ul {
+  list-style: none;
+}
+
+img, picture, svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+svg.icon {
+  display: inline-block;
+  flex: none;
+  width: 0.875em;
+  height: 0.875em;
+}
+
+em, i, strong, b {
+  font-style: normal;
+  font-weight: 600;
+}
+
+code, pre, kbd {
+  font-family: var(--mono);
+  font-size: 0.875rem;
+}
+
+pre {
+  padding: var(--s-4);
+  background: var(--bg-inset);
+  overflow-x: auto;
+  line-height: 1.6;
+}
+
+a {
+  color: inherit;
+  text-decoration-line: underline;
+  text-decoration-thickness: 1px;
+  text-decoration-color: var(--ink-3);
+  text-underline-offset: 0.18em;
+  transition: text-decoration-color 120ms var(--ease);
+}
+
+a:hover {
+  text-decoration-thickness: 2px;
+  text-decoration-color: var(--ink);
+}
+
+button {
+  font: inherit;
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 3px;
+}
+
+// <main> is a skip target, not a control.
+main:focus {
+  outline: none;
+}
+
+::selection {
+  background: var(--ink);
+  color: var(--on-ink);
+}
+
+[hidden] {
+  display: none !important;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.skip-link {
+  position: absolute;
+  top: var(--s-2);
+  left: var(--margin);
+  z-index: 10;
+  padding: var(--s-3) var(--s-4);
+  background: var(--ink);
+  color: var(--on-ink);
+  font-weight: 500;
+  text-decoration: none;
+  transform: translateY(calc(-100% - 1rem));
+}
+
+.skip-link:focus {
+  transform: none;
+}
+
+.num {
+  @include data;
+}
+
+.print-only {
+  display: none;
+}

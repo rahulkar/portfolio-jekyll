@@ -1,0 +1,10 @@
+# Background on the home page, in career order (earliest first). Plain lists:
+# no ratings, no logos. Also feeds knowsAbout in the home page's JSON-LD.
+- group: Quality engineering and automation
+  items: [Automation frameworks, Playwright, API tooling, Java, Python, JavaScript]
+- group: DevOps and cloud
+  items: [Jenkins, GitLab CI/CD, Azure DevOps, Docker, AWS, Azure]
+- group: Architecture and delivery
+  items: [Solution architecture, Proofs of concept, Enterprise delivery, Platform strategy, Roadmapping]
+- group: Agentic AI
+  items: [Generative AI, LLMs, AI agents, Google ADK]
