@@ -6,7 +6,7 @@
 //   - remote url() or @import in the compiled CSS
 //   - a bundled library writing inline styles or HTML strings at runtime
 // Exits 1 with file:line for every hit. Run via `npm run check:csp`.
-import { readFileSync, existsSync, readdirSync } from "node:fs";
+import { readFileSync, existsSync, readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
 
 const EXPECTED_CSP =
@@ -14,13 +14,24 @@ const EXPECTED_CSP =
   "script-src 'self' static.cloudflareinsights.com; connect-src 'self' cloudflareinsights.com; " +
   "base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests";
 
+// Every markup source plus the built site. Missing folders are skipped.
+function walk(dir, exts) {
+  if (!existsSync(dir)) return [];
+  return readdirSync(dir).flatMap((name) => {
+    const p = join(dir, name);
+    if (statSync(p).isDirectory()) return walk(p, exts);
+    return exts.some((e) => name.endsWith(e)) ? [p] : [];
+  });
+}
 const markupFiles = [
-  ...readdirSync("_includes").map((f) => join("_includes", f)),
-  ...readdirSync("_layouts").map((f) => join("_layouts", f)),
-  "index.html",
-  "404.html",
-  ...["_site/index.html", "_site/404.html"].filter(existsSync),
-].filter((f) => f.endsWith(".html"));
+  ...walk("_includes", [".html"]),
+  ...walk("_layouts", [".html"]),
+  ...walk("_notes", [".html", ".md"]),
+  ...walk("_scribbles", [".html", ".md"]),
+  ...walk("redirects", [".html"]),
+  ...readdirSync(".").filter((f) => f.endsWith(".html")),
+  ...walk("_site", [".html"]),
+];
 
 const problems = [];
 const report = (file, line, msg) => problems.push(`${file}:${line}: ${msg}`);
@@ -63,11 +74,12 @@ for (const file of markupFiles) {
   });
 }
 
-// The policy itself must not drift.
-const head = readFileSync("_includes/head.html", "utf8");
-const cspMatch = head.match(/http-equiv="Content-Security-Policy"\s+content="([^"]+)"/);
-if (!cspMatch) report("_includes/head.html", 0, "CSP meta tag missing");
-else if (cspMatch[1] !== EXPECTED_CSP) report("_includes/head.html", 0, "CSP meta content changed; update EXPECTED_CSP deliberately if intended");
+// The policy itself must not drift. Every page includes it from csp.html.
+const cspFile = "_includes/csp.html";
+const cspMatch = existsSync(cspFile) && readFileSync(cspFile, "utf8").match(/http-equiv="Content-Security-Policy"\s+content="([^"]+)"/);
+if (!cspMatch) report(cspFile, 0, "CSP meta tag missing");
+else if (cspMatch[1] !== EXPECTED_CSP) report(cspFile, 0, "CSP meta content changed; update EXPECTED_CSP deliberately if intended");
+if (!readFileSync("_includes/head.html", "utf8").includes("{% include csp.html %}")) report("_includes/head.html", 0, "head does not include csp.html");
 
 // Compiled CSS: fonts, images and imports must be same-origin or data:.
 if (existsSync("assets/css")) {
@@ -79,9 +91,9 @@ if (existsSync("assets/css")) {
   }
 }
 
-// Runtime: the bundle must never write inline styles or raw HTML strings.
-const bundle = "assets/js/main.js";
-if (existsSync(bundle)) {
+// Runtime: the scripts must never write inline styles or raw HTML strings.
+for (const bundle of ["assets/js/main.js", "assets/js/theme.js"]) {
+  if (!existsSync(bundle)) continue;
   const js = readFileSync(bundle, "utf8");
   const patterns = [
     [/setAttribute\(\s*["'`]style["'`]/, 'setAttribute("style")'],
@@ -99,4 +111,4 @@ if (problems.length) {
   console.error("CSP lint failed:\n" + problems.map((p) => "  " + p).join("\n"));
   process.exit(1);
 }
-console.log(`CSP lint passed (${markupFiles.length} markup files, compiled CSS and bundle checked).`);
+console.log(`CSP lint passed (${markupFiles.length} markup files, compiled CSS and scripts checked).`);

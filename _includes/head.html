@@ -5,7 +5,7 @@
   <meta name="theme-color" content="#1C2522" media="(prefers-color-scheme: dark)">
   <meta name="color-scheme" content="light dark">
 
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; font-src 'self'; style-src 'self'; script-src 'self' static.cloudflareinsights.com; connect-src 'self' cloudflareinsights.com; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests">
+  {% include csp.html %}
   <meta name="referrer" content="strict-origin-when-cross-origin">
 
   {% seo %}{% if page.noindex %}
