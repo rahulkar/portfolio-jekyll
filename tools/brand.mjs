@@ -12,6 +12,10 @@ import subsetFont from "subset-font";
 import { Resvg } from "@resvg/resvg-js";
 import pngToIco from "png-to-ico";
 
+// Bump on any change to the output, then update the matching names in
+// _includes/head.html and _config.yml: /assets/* is cached for a year.
+const V = "v3";
+
 const BG = "#F6F5F1";
 const INK = "#161615";
 const INK2 = "#4A4945";
@@ -152,33 +156,33 @@ async function main() {
   mkdirSync("assets/brand", { recursive: true });
 
   // Favicon family: an ink tile with the initials.
-  writeFileSync("assets/icons/favicon-v3.svg", favicon(f, { dark: true }));
+  writeFileSync(`assets/icons/favicon-${V}.svg`, favicon(f, { dark: true }));
   const tile = favicon(f);
   const ico = await pngToIco([16, 32, 48].map((w) => render(tile, w)));
-  writeFileSync("assets/favicon-v3.ico", ico);
+  writeFileSync(`assets/favicon-${V}.ico`, ico);
   writeFileSync("favicon.ico", ico);
-  writeFileSync("assets/icons/apple-touch-icon-v3.png", render(tile, 180));
+  writeFileSync(`assets/icons/apple-touch-icon-${V}.png`, render(tile, 180));
 
   // Share card.
   const card = og(f);
   writeFileSync(join(cache, "og.svg"), card);
-  writeFileSync("assets/og-v3.png", render(card, 1200));
+  writeFileSync(`assets/og-${V}.png`, render(card, 1200));
 
   // LinkedIn keeps the left 440 px clear for the profile photo overlay.
-  writeFileSync("assets/brand/linkedin-banner-v3.png", render(banner(f, {
+  writeFileSync(`assets/brand/linkedin-banner-${V}.png`, render(banner(f, {
     w: 1584, h: 396, x: 470, name: 84, nameY: 140, role: 26, roleY: 186,
     datum: { w: 1034, labelY: 252, lineY: 284, marksY: 314, labelSize: 14, markSize: 15 },
   }), 1584));
-  writeFileSync("assets/brand/github-header-v3.png", render(banner(f, {
+  writeFileSync(`assets/brand/github-header-${V}.png`, render(banner(f, {
     w: 1280, h: 320, x: 72, name: 76, nameY: 120, role: 24, roleY: 162,
     datum: { w: 1136, labelY: 222, lineY: 252, marksY: 280, labelSize: 13, markSize: 14 },
   }), 1280));
-  writeFileSync("assets/brand/email-signature-v3.png", render(banner(f, {
+  writeFileSync(`assets/brand/email-signature-${V}.png`, render(banner(f, {
     w: 600, h: 200, x: 30, name: 40, nameY: 74, role: 16, roleY: 102,
     line: { text: "kar.rahul@pm.me · www.rahulkar.com", y: 146, size: 14 },
   }), 1200));
 
-  console.log("brand assets written: favicon-v3 (svg, ico, apple-touch), favicon.ico, og-v3.png, linkedin-banner-v3.png, github-header-v3.png, email-signature-v3.png");
+  console.log(`brand assets written (${V}): favicon (svg, ico, apple-touch), favicon.ico, og card, LinkedIn banner, GitHub header, email signature`);
 }
 
 main().catch((err) => {

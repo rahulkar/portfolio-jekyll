@@ -74,7 +74,7 @@ a console error. For a local run against the preview, block it:
 | Script | What it does | When to run |
 |---|---|---|
 | `npm run fonts` | Subsets Instrument Sans and Fragment Mono (from their Fontsource packages) to Latin, writes `assets/fonts/*-v1.woff2` and their OFL notices, and generates `src/styles/_font-faces.scss` with metric-matched fallbacks. Reads Arial and Consolas from `C:\Windows\Fonts` (or `FALLBACK_FONT_DIR`); Roboto comes from `@capsizecss/metrics` | when a font package changes |
-| `npm run brand` | Renders the favicon family (`favicon-v3.svg`, `.ico`, `apple-touch-icon-v3.png`, root `favicon.ico`), the share card `assets/og-v3.png`, and `assets/brand/linkedin-banner-v3.png` (1584×396, left side kept clear for the profile photo), `github-header-v3.png` (1280×320) and `email-signature-v3.png` (600×200 at 2×). Text is set as outlines; the datum is drawn without its red tick | after changing the name, title, lede or working hours |
+| `npm run brand` | Renders the favicon family (`favicon-v3.svg`, `.ico`, `apple-touch-icon-v3.png`, root `favicon.ico`), the share card `assets/og-v3.png`, and `assets/brand/linkedin-banner-v3.png` (1584×396, left side kept clear for the profile photo), `github-header-v3.png` (1280×320) and `email-signature-v3.png` (600×200 at 2×). Text is set as outlines; the datum is drawn without its red tick. Bump `V` at the top of `tools/brand.mjs` first, then the matching names in `_includes/head.html` and `_config.yml` | after changing the name, title, lede or working hours |
 | `node tools/photo.mjs <photo.heic> <name> [maxWidth]` | Decodes a phone photo (HEIC too), strips metadata, writes `assets/img/<name>-{640,1280}.{webp,jpg}` | when adding a photo (keep the `.heic` source out of git; it is ignored) |
 
 Files under `/assets` are immutable: the live site caches them for a year, so
@@ -133,7 +133,9 @@ tick and the current nav item, and a Playwright test scans every page for it.
 
 - The site is fronted by Cloudflare: purge the cache after deploying (the root
   `favicon.ico` keeps its name), then re-scrape the LinkedIn / X / Facebook card
-  validators. Upload the v3 LinkedIn banner, GitHub header and email signature by hand.
+  validators. Upload the v3 LinkedIn banner, GitHub header and email signature by hand,
+  and delete the old sketch-style `assets/brand/email-signature.png` once the mail
+  signature points at `email-signature-v3.png` (it is kept only for that link).
 - Cloudflare Email Address Obfuscation rewrites the visible address after load
   and injects a same-origin script; this is allowed by the CSP, and the copy
   button falls back to the visible address.

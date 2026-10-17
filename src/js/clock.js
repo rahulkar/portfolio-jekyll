@@ -48,7 +48,10 @@ export function initClock(doc) {
 
   paint();
   doc.querySelectorAll("[data-clock]").forEach(function (el) { el.hidden = false; });
-  if (datum) requestAnimationFrame(function () { datum.classList.add("is-live"); });
+  // One frame after unhiding, so the opacity transition has a starting style.
+  if (datum) requestAnimationFrame(function () {
+    requestAnimationFrame(function () { datum.classList.add("is-live"); });
+  });
   schedule();
   doc.addEventListener("visibilitychange", function () {
     if (doc.hidden) clearTimeout(timer);

@@ -97,7 +97,8 @@ test.describe("datum for a visitor in London", () => {
     await expect(page.locator(".datum__tick")).toBeVisible();
     expect(now.ok).toContain(await page.locator(".datum__now time").textContent());
     const f = await page.locator("[data-datum]").evaluate((el) => parseFloat(getComputedStyle(el).getPropertyValue("--now")));
-    expect(Math.abs(f - now.m / 1440)).toBeLessThanOrEqual(2 / 1440);
+    const d = Math.abs(f - now.m / 1440);
+    expect(Math.min(d, 1 - d)).toBeLessThanOrEqual(2 / 1440);
     await expect(page.locator(".datum__local")).toBeVisible();
     await expect(page.locator(".datum__label")).toHaveText("Kolkata · IST · UTC+05:30");
     await expect(page.locator(".datum__note")).toContainText("Working hours");
@@ -189,6 +190,16 @@ test.describe("home page", () => {
     await expect(page.locator(".copy__label")).toHaveText("Copied");
     await expect(page.locator("[data-copy-status]")).toHaveText("Email address copied.");
     expect(await page.evaluate(() => navigator.clipboard.readText())).toBe("kar.rahul@pm.me");
+  });
+
+  test("without clipboard access, copy selects the address and says so", async ({ page }, testInfo) => {
+    onlyDesktop(testInfo);
+    await page.addInitScript(() => Object.defineProperty(navigator, "clipboard", { value: undefined }));
+    await openPage(page, "/");
+    await page.locator(".copy").click();
+    await expect(page.locator(".copy__label")).toHaveText("Selected");
+    await expect(page.locator("[data-copy-status]")).toContainText("The address is selected");
+    expect(await page.evaluate(() => String(window.getSelection()))).toBe("kar.rahul@pm.me");
   });
 
   test("touch targets are at least 44px", async ({ page }, testInfo) => {

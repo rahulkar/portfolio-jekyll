@@ -27,7 +27,6 @@ const markupFiles = [
   ...walk("_includes", [".html"]),
   ...walk("_layouts", [".html"]),
   ...walk("_notes", [".html", ".md"]),
-  ...walk("_scribbles", [".html", ".md"]),
   ...walk("redirects", [".html"]),
   ...readdirSync(".").filter((f) => f.endsWith(".html")),
   ...walk("_site", [".html"]),

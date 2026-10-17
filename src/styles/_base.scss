@@ -117,7 +117,7 @@ main:focus {
 
 .skip-link {
   position: absolute;
-  top: 0;
+  top: var(--s-2);
   left: var(--margin);
   z-index: 10;
   padding: var(--s-3) var(--s-4);
@@ -125,7 +125,7 @@ main:focus {
   color: var(--on-ink);
   font-weight: 500;
   text-decoration: none;
-  transform: translateY(-120%);
+  transform: translateY(calc(-100% - 1rem));
 }
 
 .skip-link:focus {

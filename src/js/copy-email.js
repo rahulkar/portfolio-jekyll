@@ -9,24 +9,33 @@ export function initCopyEmail(buttons) {
     var link = box ? box.querySelector(".email__address") : null;
     var reset = 0;
     var announce = function (text) { if (status) status.textContent = text; };
+    var show = function (text) {
+      if (label) label.textContent = text;
+      clearTimeout(reset);
+      reset = setTimeout(function () {
+        if (label) label.textContent = "Copy";
+        announce("");
+      }, text === "Copied" ? 2000 : 4000);
+    };
+    // Without clipboard access, select the address so Ctrl+C (or a long press) copies it.
+    var fail = function (message) {
+      if (link && window.getSelection) window.getSelection().selectAllChildren(link);
+      show("Selected");
+      announce(message);
+    };
 
     btn.addEventListener("click", function () {
       var email = btn.getAttribute("data-copy-email") || "";
       if (email.indexOf("@") < 0 && link) email = link.textContent.trim();
       if (!navigator.clipboard || !navigator.clipboard.writeText) {
-        announce("Copying is not available here. Select the address to copy it.");
+        fail("Copying is not available here. The address is selected; copy it from there.");
         return;
       }
       navigator.clipboard.writeText(email).then(function () {
-        if (label) label.textContent = "Copied";
+        show("Copied");
         announce("Email address copied.");
-        clearTimeout(reset);
-        reset = setTimeout(function () {
-          if (label) label.textContent = "Copy";
-          announce("");
-        }, 2000);
       }).catch(function () {
-        announce("Copying was blocked. Select the address to copy it.");
+        fail("Copying was blocked. The address is selected; copy it from there.");
       });
     });
     btn.hidden = false;

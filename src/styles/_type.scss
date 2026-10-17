@@ -64,7 +64,7 @@ p {
   > p,
   > ul,
   > ol {
-    max-width: 62ch;
+    max-width: var(--measure);
   }
 
   > h2 {

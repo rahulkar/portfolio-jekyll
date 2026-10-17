@@ -32,9 +32,7 @@
   margin-top: var(--s-6);
 }
 
-.hero__role,
-.hero__lede,
-.hero__cta {
+.hero__intro {
   @include mid { @include cols(1, 6); }
   @include wide { @include cols(1, 8); }
 }
@@ -50,7 +48,7 @@
 
   @include wide {
     @include cols(10, 12);
-    grid-row: 2 / 5;
+    grid-row: 2;
     display: block;
     margin-top: var(--s-4);
   }
@@ -94,6 +92,7 @@
 
 .about__text {
   > * + * { margin-top: 1em; }
+  > p { max-width: var(--measure); }
 
   @include wide { @include cols(4, 8); }
 }
@@ -196,7 +195,7 @@
     margin-top: var(--s-2);
     font-size: var(--fs-body);
     line-height: 1.6;
-    max-width: 62ch;
+    max-width: var(--measure);
   }
 
   @include mid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -205,7 +204,7 @@
 
 .playbook__origin {
   margin-top: var(--s-6);
-  max-width: 62ch;
+  max-width: var(--measure);
   color: var(--ink-2);
 }
 
@@ -253,7 +252,7 @@
   > p,
   > ul,
   > ol {
-    max-width: 62ch;
+    max-width: var(--measure);
   }
 }
 
@@ -298,5 +297,5 @@
 }
 
 .error__try {
-  max-width: 62ch;
+  max-width: var(--measure);
 }
