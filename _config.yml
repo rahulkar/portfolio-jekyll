@@ -1,10 +1,10 @@
 # Site settings
 title: Rahul Kar
 tagline: Enterprise Solution Architect & Technology Lead
-description: Solution Architect specializing in enterprise software delivery, tooling, proof-of-concepts, agentic AI, cloud, DevOps, and quality engineering. 11+ years of IT industry experience.
+description: "Rahul Kar, Enterprise Solution Architect & Technology Lead in Kolkata, India. 11+ years, from quality engineering and automation to platforms, cloud and agentic AI."
 # baseurl: "/particle" # the subpath of your site, e.g. /blog
 url: "https://www.rahulkar.com"
-lang: en
+lang: en-GB
 
 # Social sharing (jekyll-seo-tag). The OG/Twitter image is applied to every page
 # via `defaults` below, because seo-tag reads page.image (not site.image). The
@@ -14,7 +14,7 @@ lang: en
 
 # User settings
 username: Rahul Kar
-user_description: I'm an engineer who likes building things end-to-end, from early problem framing to the tooling, platforms, and delivery details that make software work in the real world. Eleven years in, I still believe great systems come from sweating the small details until they disappear.
+user_description: "Enterprise solution architect in Kolkata, India. 11+ years, from quality engineering and automation to platforms, cloud and agentic AI."
 user_title: Enterprise Solution Architect & Technology Lead
 email: kar.rahul@pm.me
 github_username: rahulkar
@@ -22,6 +22,11 @@ linkedin_url: "https://www.linkedin.com/in/karrahul/"
 linkedin_handle: "in/karrahul"
 credly_url: "https://www.credly.com/users/rahul-kar"
 credly_handle: "rahul-kar"
+
+# Working hours drawn on the Kolkata datum (whole hours, IST).
+working_hours:
+  from: 10
+  to: 19
 
 # Notes: short pieces, one markdown file each under _notes/.
 collections:

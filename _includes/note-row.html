@@ -1,0 +1,6 @@
+{%- assign level = include.level | default: "h3" -%}
+<li class="row">
+  <time class="row__date" datetime="{{ include.note.date | date: '%Y-%m-%d' }}">{{ include.note.date | date: "%-d %b %Y" }}</time>
+  <{{ level }} class="row__title"><a class="row__link" href="{{ include.note.url | relative_url }}">{{ include.note.title }}</a></{{ level }}>
+  <p class="row__summary">{{ include.note.description }}</p>
+</li>

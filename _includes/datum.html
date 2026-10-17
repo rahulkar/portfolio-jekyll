@@ -1,0 +1,16 @@
+{%- comment -%} The datum: a 24-hour scale of Kolkata time with the working hours in ink and one red tick for now (placed by clock.js). Home hero only. {%- endcomment -%}
+{%- assign wh_from = site.working_hours.from | prepend: "0" | slice: -2, 2 -%}
+{%- assign wh_to = site.working_hours.to | prepend: "0" | slice: -2, 2 -%}
+<div class="datum" data-datum>
+  <p class="datum__label">Kolkata &middot; IST &middot; UTC+05:30</p>
+  <div class="datum__scale">
+    <div class="datum__drawing" aria-hidden="true">
+      <span class="datum__ticks">{% for h in (0..24) %}{% assign m = h | modulo: 6 %}<span{% if m == 0 %} class="is-major"{% endif %}></span>{% endfor %}</span>
+      <span class="datum__hours" data-from="{{ site.working_hours.from }}" data-to="{{ site.working_hours.to }}"></span>
+      <span class="datum__marks"><span>00</span><span>06</span><span>12</span><span>18</span><span>24</span></span>
+      <span class="datum__tick" data-clock hidden></span>
+    </div>
+    <p class="datum__now" data-clock hidden><span class="sr-only">Time in Kolkata now: </span><time data-ist datetime="00:00">00:00</time></p>
+  </div>
+  <p class="datum__note">Working hours <span class="num">{{ wh_from }}:00&ndash;{{ wh_to }}:00</span> IST.<span class="datum__local" hidden> <span class="num" data-local>00:00</span> where you are.</span></p>
+</div>
