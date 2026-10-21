@@ -1,0 +1,16 @@
+{%- comment -%} A photo made by tools/photo.mjs: assets/img/<name>-640 and -<max> in WebP and JPEG. Pass name, h (its height at 640 px wide), alt, and optionally max (default 1280), sizes, caption and class (figure--portrait keeps a tall photo narrow). {%- endcomment -%}
+{%- assign max = include.max | default: 1280 -%}
+{%- capture base %}/assets/img/{{ include.name }}{% endcapture -%}
+{%- assign sizes = include.sizes | default: "100vw" -%}
+<figure class="figure{% if include.class %} {{ include.class }}{% endif %}">
+  <a class="figure__link" href="{{ base | append: "-" | append: max | append: ".jpg" | relative_url }}">
+    <picture>
+      <source type="image/webp" srcset="{{ base | append: "-640.webp" | relative_url }} 640w, {{ base | append: "-" | append: max | append: ".webp" | relative_url }} {{ max }}w" sizes="{{ sizes }}">
+      <img src="{{ base | append: "-640.jpg" | relative_url }}" srcset="{{ base | append: "-640.jpg" | relative_url }} 640w, {{ base | append: "-" | append: max | append: ".jpg" | relative_url }} {{ max }}w" sizes="{{ sizes }}" width="640" height="{{ include.h }}" alt="{{ include.alt }}" loading="lazy" decoding="async">
+    </picture>
+    <span class="sr-only"> (full-size photo)</span>
+  </a>
+  {%- if include.caption %}
+  <figcaption>{{ include.caption }}</figcaption>
+  {%- endif %}
+</figure>

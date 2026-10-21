@@ -4,7 +4,7 @@ const AxeBuilder = require("@axe-core/playwright").default;
 // Console noise that is not the site's fault (local antivirus injection).
 const IGNORED = [/kaspersky/i];
 
-const PAGES = ["/", "/how-i-work/", "/notes/", "/notes/6502-on-two-breadboards/", "/notes/how-this-site-is-built/", "/404.html"];
+const PAGES = ["/", "/how-i-work/", "/notes/", "/notes/vintage-silicon/", "/notes/6502-on-two-breadboards/", "/notes/how-this-site-is-built/", "/404.html"];
 const SCHEMES = ["light", "dark"];
 const INK = { light: "rgb(22, 22, 21)", dark: "rgb(236, 234, 228)" };
 const ACCENT = { light: "rgb(196, 43, 28)", dark: "rgb(238, 90, 63)" };
@@ -214,7 +214,7 @@ test.describe("home page", () => {
     expect(a.height).toBeGreaterThanOrEqual(img.height - 0.5);
     await expect(page.locator("#contact")).toContainText("Kolkata");
 
-    await expect(page.locator("#notes .row")).toHaveCount(2);
+    await expect(page.locator("#notes .row")).toHaveCount(3);
     expect(await page.locator("#notes .row__link").first().evaluate((el) => getComputedStyle(el).textDecorationLine)).toBe("underline");
 
     // Contact sits in the hero, beside the intro, so it is on the first screen.
@@ -513,9 +513,27 @@ test.describe("notes", () => {
   test("index lists every note, newest first", async ({ page }) => {
     await openPage(page, "/notes/");
     await expect(page.locator("h1")).toHaveText("Notes");
-    await expect(page.locator(".row")).toHaveCount(2);
-    await expect(page.locator(".row__title")).toHaveText(["A 6502 computer on two breadboards", "How this site is built"]);
+    await expect(page.locator(".row")).toHaveCount(3);
+    await expect(page.locator(".row__title")).toHaveText(["Vintage silicon", "A 6502 computer on two breadboards", "How this site is built"]);
     await expect(page.locator('main a[href="/feed.xml"]')).toHaveCount(1);
+  });
+
+  test("vintage silicon: four photos, the source and the table; About links to it", async ({ page }) => {
+    await openPage(page, "/notes/vintage-silicon/");
+    await expect(page.locator("h1")).toHaveText("Vintage silicon");
+    await expect(page.locator(".note__body h2")).toHaveText(["Apollo Guidance Computer logic chip", "Intel C4004", "Intel Pentium A80501-60", "Side by side"]);
+    const imgs = page.locator(".note__body figure img");
+    await expect(imgs).toHaveCount(4);
+    for (const img of await imgs.all()) {
+      expect(await img.getAttribute("alt")).toBeTruthy();
+      expect(await img.getAttribute("width")).toBe("640");
+      expect(await img.getAttribute("loading")).toBe("lazy");
+    }
+    await expect(page.locator('.note__body a[href^="https://airandspace.si.edu/"]')).toHaveCount(1);
+    await expect(page.locator(".note__body tbody tr")).toHaveCount(3);
+    await expect(page.locator(".note__next a")).toHaveText("A 6502 computer on two breadboards");
+    await openPage(page, "/");
+    await expect(page.locator('#about a[href="/notes/vintage-silicon/"]')).toHaveCount(1);
   });
 
   test("a note links to the next note and back to the list", async ({ page }) => {
@@ -551,16 +569,17 @@ test.describe("urls, feed and structured data", () => {
     expect(xml).toContain("Rahul Kar | Notes");
     expect(xml).toContain("<name>Rahul Kar</name>");
     const links = [...xml.matchAll(/<entry>[\s\S]*?<link href="([^"]+)"/g)].map((m) => m[1]);
-    expect(links.length).toBe(2);
+    expect(links.length).toBe(3);
     for (const href of links) expect(href.startsWith("https://www.rahulkar.com/notes/")).toBe(true);
     expect(xml).toContain("<id>https://www.rahulkar.com/scribbles/6502-on-two-breadboards</id>");
+    expect(xml).toContain("<id>https://www.rahulkar.com/notes/vintage-silicon</id>");
     expect(xml).not.toContain("the-bonsai");
   });
 
   test("the sitemap lists the new pages and none of the stubs", async ({ request }, testInfo) => {
     onlyDesktop(testInfo);
     const xml = await (await request.get("/sitemap.xml")).text();
-    for (const url of ["/notes/", "/notes/6502-on-two-breadboards/", "/how-i-work/"]) expect(xml).toContain(`https://www.rahulkar.com${url}<`);
+    for (const url of ["/notes/", "/notes/vintage-silicon/", "/notes/6502-on-two-breadboards/", "/how-i-work/"]) expect(xml).toContain(`https://www.rahulkar.com${url}<`);
     expect(xml).not.toContain("/scribbles/");
     expect(xml).not.toContain("404");
     expect(xml).not.toContain("the-bonsai");

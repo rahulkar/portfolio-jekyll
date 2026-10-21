@@ -77,7 +77,36 @@ p {
     padding-left: 1.25em;
   }
 
-  > .figure {
+  > .figure,
+  > .figure-row {
     margin-block: 2em;
+  }
+
+  // Data tables: label-style heads, figures in mono.
+  table {
+    width: 100%;
+    max-width: var(--measure);
+    border-collapse: collapse;
+    font-size: var(--fs-small);
+    line-height: 1.45;
+  }
+
+  th,
+  td {
+    padding: var(--s-2) var(--s-4) var(--s-2) 0;
+    border-bottom: 1px solid var(--rule);
+    text-align: left;
+    vertical-align: baseline;
+  }
+
+  th {
+    @include label;
+    color: var(--ink-3);
+    border-bottom-color: var(--ink);
+  }
+
+  td:not(:first-child) {
+    @include data;
+    white-space: nowrap;
   }
 }
