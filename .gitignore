@@ -49,6 +49,7 @@ node_modules/.cache/
 
 # Scratch photos never belong in the published tree
 *.heic
+assets/img/vintage_silicon/
 
 # Test and audit output
 test-results/

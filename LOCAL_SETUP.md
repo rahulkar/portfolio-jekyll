@@ -100,8 +100,13 @@ any change to a font, icon or image gets a new `-vN` name.
 Notes are a Jekyll collection: one markdown file per piece under `_notes/`, with
 `title`, `date`, a one-line `description` and, optionally, `last_modified_at`.
 The index at `/notes/` lists them newest first and each gets its own page at
-`/notes/<name>/`. Liquid includes work inside the markdown, so a photo is
-`{% include figure-6502.html caption="..." %}`.
+`/notes/<name>/`. Liquid includes work inside the markdown, so a photo made
+with `tools/photo.mjs` is
+`{% include photo.html name="<name>" h="<height at 640 wide>" alt="..." caption="..." %}`
+(add `max="960"` if it was made at that width, `class="figure--portrait"` for a
+tall photo, and wrap two in `<div class="figure-row">` to set them side by
+side). Keep the original photos out of git: `assets/img/vintage_silicon/` holds
+the sources for `/notes/vintage-silicon/` and is ignored and excluded from the build.
 
 `/feed.xml` is the hand-written Atom template in the repo root (jekyll-feed
 skips paths that already exist and only writes `/feed/posts.xml`). It keeps the
