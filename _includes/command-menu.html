@@ -1,0 +1,49 @@
+{%- comment -%} The command menu (Ctrl+K, Cmd+K on a Mac, or the header button): a modal combobox over a listbox of commands rendered here, so every page and note is listed without a data file. command-menu.js filters and runs them; without JavaScript it never opens. {%- endcomment -%}
+{%- assign notes = site.notes | sort: "date" | reverse -%}
+<dialog class="cmdk" id="cmdk" aria-labelledby="cmdk-title">
+  <div class="cmdk__panel">
+    <h2 class="sr-only" id="cmdk-title">Command menu</h2>
+    <div class="cmdk__field">
+      {% include icon.html name="search" %}
+      <input class="cmdk__input" id="cmdk-input" type="text" role="combobox" aria-expanded="true" aria-controls="cmdk-list" aria-autocomplete="list" aria-label="Search pages and actions" placeholder="Search pages and actions" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="go">
+      <button class="cmdk__close" type="button" aria-label="Close"><span class="cmdk__close-key">Esc</span><span class="cmdk__close-word">Close</span></button>
+    </div>
+    <div class="cmdk__list" id="cmdk-list" role="listbox" aria-label="Pages and actions">
+      <p class="cmdk__heading" id="cmdk-h-go" aria-hidden="true">Go to</p>
+      <div class="cmdk__group" role="group" aria-labelledby="cmdk-h-go">
+        <div class="cmdk__item" role="option" id="cmdk-home" aria-selected="false" data-href="{{ "/" | relative_url }}" data-keys="home start index">{% include icon.html name="page" %}<span class="cmdk__label">Home</span><span class="cmdk__hint" aria-hidden="true">/</span></div>
+        <div class="cmdk__item" role="option" id="cmdk-how" aria-selected="false" data-href="{{ "/how-i-work/" | relative_url }}" data-keys="approach process discover prototype architect scale">{% include icon.html name="page" %}<span class="cmdk__label">How I work</span><span class="cmdk__hint" aria-hidden="true">/how-i-work/</span></div>
+        <div class="cmdk__item" role="option" id="cmdk-notes" aria-selected="false" data-href="{{ "/notes/" | relative_url }}" data-keys="writing posts blog">{% include icon.html name="page" %}<span class="cmdk__label">Notes</span><span class="cmdk__hint" aria-hidden="true">/notes/</span></div>
+        {%- for note in notes %}
+        <div class="cmdk__item" role="option" id="cmdk-note-{{ forloop.index }}" aria-selected="false" data-href="{{ note.url | relative_url }}" data-keys="note {{ note.description | escape }}">{% include icon.html name="note" %}<span class="cmdk__label">{{ note.title }}</span><span class="cmdk__hint" aria-hidden="true">{{ note.date | date: "%-d %b %Y" }}</span></div>
+        {%- endfor %}
+        <div class="cmdk__item" role="option" id="cmdk-background" aria-selected="false" data-href="{{ "/#background" | relative_url }}" data-keys="skills experience career stack tools">{% include icon.html name="hash" %}<span class="cmdk__label">Background</span><span class="cmdk__hint" aria-hidden="true">#background</span></div>
+        <div class="cmdk__item" role="option" id="cmdk-about" aria-selected="false" data-href="{{ "/#about" | relative_url }}" data-keys="6502 retro computing">{% include icon.html name="hash" %}<span class="cmdk__label">About</span><span class="cmdk__hint" aria-hidden="true">#about</span></div>
+        <div class="cmdk__item" role="option" id="cmdk-contact" aria-selected="false" data-href="{{ "/#contact" | relative_url }}" data-keys="email reach">{% include icon.html name="hash" %}<span class="cmdk__label">Contact</span><span class="cmdk__hint" aria-hidden="true">#contact</span></div>
+      </div>
+      <p class="cmdk__heading" id="cmdk-h-do" aria-hidden="true">Actions</p>
+      <div class="cmdk__group" role="group" aria-labelledby="cmdk-h-do">
+        <div class="cmdk__item" role="option" id="cmdk-copy" aria-selected="false" data-action="copy" data-copy="{{ site.email }}" data-keys="clipboard address mail">{% include icon.html name="copy" %}<span class="cmdk__label">Copy email address</span><span class="cmdk__hint" aria-hidden="true">{{ site.email }}</span></div>
+        <div class="cmdk__item" role="option" id="cmdk-mail" aria-selected="false" data-href="mailto:{{ site.email }}?subject=Hello" data-keys="email write contact">{% include icon.html name="mail" %}<span class="cmdk__label">Write an email</span><span class="cmdk__hint" aria-hidden="true">mailto</span></div>
+        <div class="cmdk__item" role="option" id="cmdk-theme" aria-selected="false" data-action="theme" data-keys="theme dark light mode colour color scheme">{% include icon.html name="theme" %}<span class="cmdk__label">Switch theme</span></div>
+        <div class="cmdk__item" role="option" id="cmdk-grid" aria-selected="false" data-action="grid" data-keys="layout grid columns design overlay">{% include icon.html name="grid" %}<span class="cmdk__label">Show layout grid</span></div>
+        <div class="cmdk__item" role="option" id="cmdk-vcard" aria-selected="false" data-href="{{ "/assets/rahul-kar-v3.vcf" | relative_url }}" data-download="rahul-kar.vcf" data-keys="vcard contact card address book">{% include icon.html name="download" %}<span class="cmdk__label">Download vCard</span><span class="cmdk__hint" aria-hidden="true">.vcf</span></div>
+      </div>
+      <p class="cmdk__heading" id="cmdk-h-out" aria-hidden="true">Elsewhere</p>
+      <div class="cmdk__group" role="group" aria-labelledby="cmdk-h-out">
+        <div class="cmdk__item" role="option" id="cmdk-github" aria-selected="false" data-href="https://github.com/{{ site.github_username }}" data-keys="code profile">{% include icon.html name="external" %}<span class="cmdk__label">GitHub</span><span class="cmdk__hint" aria-hidden="true">github.com/{{ site.github_username }}</span></div>
+        <div class="cmdk__item" role="option" id="cmdk-linkedin" aria-selected="false" data-href="{{ site.linkedin_url }}" data-keys="profile cv resume">{% include icon.html name="external" %}<span class="cmdk__label">LinkedIn</span><span class="cmdk__hint" aria-hidden="true">linkedin.com/{{ site.linkedin_handle }}</span></div>
+        <div class="cmdk__item" role="option" id="cmdk-credly" aria-selected="false" data-href="{{ site.credly_url }}" data-keys="badges certifications">{% include icon.html name="external" %}<span class="cmdk__label">Credly</span><span class="cmdk__hint" aria-hidden="true">credly.com/users/{{ site.credly_handle }}</span></div>
+        <div class="cmdk__item" role="option" id="cmdk-source" aria-selected="false" data-href="https://github.com/{{ site.github_username }}/portfolio-jekyll" data-keys="source code repository jekyll site">{% include icon.html name="code" %}<span class="cmdk__label">Source of this site</span><span class="cmdk__hint" aria-hidden="true">github.com/{{ site.github_username }}/portfolio-jekyll</span></div>
+        <div class="cmdk__item" role="option" id="cmdk-feed" aria-selected="false" data-href="{{ "/feed.xml" | relative_url }}" data-keys="atom rss subscribe">{% include icon.html name="feed" %}<span class="cmdk__label">Atom feed</span><span class="cmdk__hint" aria-hidden="true">/feed.xml</span></div>
+      </div>
+    </div>
+    <p class="cmdk__empty" hidden>No matches</p>
+    <p class="sr-only" role="status" data-cmdk-status></p>
+    <div class="cmdk__foot" aria-hidden="true">
+      <span><kbd>{% include icon.html name="arrow" %}</kbd><kbd>{% include icon.html name="arrow" %}</kbd> Move</span>
+      <span><kbd>Enter</kbd> Open</span>
+      <span><kbd>Esc</kbd> Close</span>
+    </div>
+  </div>
+</dialog>

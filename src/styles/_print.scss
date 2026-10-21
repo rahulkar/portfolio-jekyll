@@ -35,7 +35,11 @@
   .copy,
   .datum__tick,
   .datum__now,
-  .datum__local {
+  .datum__local,
+  .datum__track,
+  .datum__note,
+  .cmdk,
+  .layout-grid {
     display: none !important;
   }
 

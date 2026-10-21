@@ -1,10 +1,24 @@
-<figure class="figure">
+{%- comment -%} The 6502 photo with numbered callouts on the chips and a matching parts list. Pointing at a part in the list (or on the photo) outlines it on the board; that pairing is pure CSS (:has()), see .parts in _components.scss. {%- endcomment -%}
+<figure class="figure figure--parts">
   <a class="figure__link" href="{{ "/assets/img/6502-1280.jpg" | relative_url }}">
     <picture>
       <source type="image/webp" srcset="{{ "/assets/img/6502-640.webp" | relative_url }} 640w, {{ "/assets/img/6502-1280.webp" | relative_url }} 1280w" sizes="{{ include.sizes | default: "100vw" }}">
       <img src="{{ "/assets/img/6502-640.jpg" | relative_url }}" srcset="{{ "/assets/img/6502-640.jpg" | relative_url }} 640w, {{ "/assets/img/6502-1280.jpg" | relative_url }} 1280w" sizes="{{ include.sizes | default: "100vw" }}" width="640" height="419" alt="A 6502 computer built on two breadboards: a W65C02 CPU, EEPROM and RAM chips wired with blue and yellow jumpers, and a green LCD reading 6502 SBC www.rahulkar.com" loading="lazy" decoding="async">
     </picture>
+    {% unless include.caption %}<span class="callouts" aria-hidden="true"><span class="callout callout--cpu"><span>1</span></span><span class="callout callout--rom"><span>2</span></span><span class="callout callout--ram"><span>3</span></span><span class="callout callout--via"><span>4</span></span><span class="callout callout--nand"><span>5</span></span><span class="callout callout--osc"><span>6</span></span><span class="callout callout--lcd"><span>7</span></span></span>{% endunless %}
     <span class="sr-only"> (full-size photo)</span>
   </a>
-  <figcaption>{{ include.caption | default: "W65C02S CPU at top left, with the AT28C256 EEPROM and HM62256 RAM beside it. Below them, the W65C22 drives the 16×2 LCD." }}</figcaption>
+  <figcaption>
+    {%- if include.caption %}{{ include.caption }}{% else %}
+    <ol class="parts" role="list">
+      <li><span class="parts__n" aria-hidden="true">1</span>W65C02S CPU</li>
+      <li><span class="parts__n" aria-hidden="true">2</span>AT28C256 EEPROM</li>
+      <li><span class="parts__n" aria-hidden="true">3</span>HM62256 RAM</li>
+      <li><span class="parts__n" aria-hidden="true">4</span>W65C22 interface chip</li>
+      <li><span class="parts__n" aria-hidden="true">5</span>74HC00 NAND gates</li>
+      <li><span class="parts__n" aria-hidden="true">6</span>Crystal oscillator</li>
+      <li><span class="parts__n" aria-hidden="true">7</span>16×2 LCD</li>
+    </ol>
+    {%- endif %}
+  </figcaption>
 </figure>

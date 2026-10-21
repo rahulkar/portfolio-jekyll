@@ -112,12 +112,91 @@
   transition: opacity 160ms var(--ease);
 }
 
-// One line is reserved so the visitor's time does not push anything down
-// when the clock fills it in.
+// The note line is reserved (two lines where a reading can wrap), so neither
+// the visitor's time nor a reading pushes anything down.
 .datum__note {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-4);
   margin-top: var(--s-3);
-  min-height: 1.45em;
+  min-height: 2.9em;
   font-size: var(--fs-small);
   line-height: 1.45;
   color: var(--ink-2);
+
+  @include xl { min-height: 1.45em; }
+}
+
+/* The probe: a converter laid over the scale (datum-probe.js) ------------ */
+
+.datum__track {
+  position: absolute;
+  top: 12px;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  cursor: crosshair;
+  touch-action: pan-y;
+  -webkit-tap-highlight-color: transparent;
+
+  &:focus-visible { outline-offset: 4px; }
+}
+
+// An ink hairline from the cap row to the hour ticks, its time on a chip.
+.datum__probe {
+  position: absolute;
+  top: 4px;
+  left: calc(var(--probe, 0) * 100%);
+  width: 0;
+  height: 33px;
+  border-left: 1px solid var(--ink);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.datum__probe-time {
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  padding: 1px 5px;
+  background: var(--ink);
+  color: var(--on-ink);
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  line-height: 1.2;
+  white-space: nowrap;
+  transform: translate(-50%, -2px);
+}
+
+.datum.is-probe-start .datum__probe-time { transform: translate(-1px, -2px); }
+.datum.is-probe-end .datum__probe-time { transform: translate(-100%, -2px); }
+
+.datum.is-probing .datum__probe { opacity: 1; }
+.datum.is-probing.is-probe-near .datum__now { opacity: 0; }
+
+.datum__reading,
+.datum.is-probing .datum__local,
+.datum.is-probing .datum__hint {
+  display: none;
+}
+
+.datum.is-probing .datum__reading {
+  display: inline;
+  color: var(--ink);
+}
+
+.datum__rel { color: var(--ink-2); }
+
+.datum__hint {
+  @include label;
+  margin-left: auto;
+  color: var(--ink-3);
+  white-space: nowrap;
+}
+
+.datum__hint-touch { display: none; }
+
+@media (hover: none), (pointer: coarse) {
+  .datum__hint-hover { display: none; }
+  .datum__hint-touch { display: inline; }
 }

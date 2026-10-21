@@ -1,6 +1,14 @@
 // Copy-to-clipboard for the email address, announced through a polite
 // status region. Falls back to the visible address if Cloudflare's email
 // obfuscation has rewritten the data attribute.
+
+// Resolves when the text is on the clipboard; rejects when there is no
+// clipboard access or the browser refuses it.
+export function copyText(text) {
+  if (!navigator.clipboard || !navigator.clipboard.writeText) return Promise.reject(new Error("unavailable"));
+  return navigator.clipboard.writeText(text);
+}
+
 export function initCopyEmail(buttons) {
   buttons.forEach(function (btn) {
     var box = btn.closest(".email");
@@ -31,7 +39,7 @@ export function initCopyEmail(buttons) {
         fail("Copying is not available here. The address is selected; copy it from there.");
         return;
       }
-      navigator.clipboard.writeText(email).then(function () {
+      copyText(email).then(function () {
         show("Copied");
         announce("Email address copied.");
       }).catch(function () {

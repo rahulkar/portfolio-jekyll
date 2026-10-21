@@ -1,12 +1,18 @@
 // The Kolkata clock: fills every <time data-ist>, places the datum's now-tick
 // through the --now custom property (a CSSOM write, which style-src 'self'
 // allows) and, for visitors elsewhere, shows their own time next to it.
-var IST = 330; // minutes east of UTC; India has no daylight saving
+export var IST = 330; // minutes east of UTC; India has no daylight saving
 
 function pad(n) { return (n < 10 ? "0" : "") + n; }
-function hhmm(m) { return pad(Math.floor(m / 60)) + ":" + pad(m % 60); }
-function zone() {
+export function hhmm(m) { return pad(Math.floor(m / 60)) + ":" + pad(m % 60); }
+// Minutes since midnight in Kolkata.
+export function istNow() { return (Math.floor(Date.now() / 60000) + IST) % 1440; }
+export function zone() {
   try { return Intl.DateTimeFormat().resolvedOptions().timeZone || ""; } catch (e) { return ""; }
+}
+export function inKolkata() {
+  var z = zone();
+  return z === "Asia/Kolkata" || z === "Asia/Calcutta";
 }
 
 export function initClock(doc) {
@@ -15,13 +21,12 @@ export function initClock(doc) {
   if (!readouts.length && !datum) return;
   var localWrap = doc.querySelector(".datum__local");
   var localTime = doc.querySelector("[data-local]");
-  var z = zone();
-  var inKolkata = z === "Asia/Kolkata" || z === "Asia/Calcutta";
+  var here = inKolkata();
   var timer = 0;
 
   function paint() {
     var now = Date.now();
-    var m = (Math.floor(now / 60000) + IST) % 1440;
+    var m = istNow();
     var t = hhmm(m);
     readouts.forEach(function (el) {
       el.textContent = t;
@@ -36,7 +41,7 @@ export function initClock(doc) {
       var d = new Date(now);
       var lt = hhmm(d.getHours() * 60 + d.getMinutes());
       localTime.textContent = lt;
-      localWrap.hidden = inKolkata || lt === t;
+      localWrap.hidden = here || lt === t;
     }
   }
 

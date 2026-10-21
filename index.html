@@ -38,14 +38,15 @@ layout: default
   <div class="section__head">
     <h2 id="background-title">Background</h2>
   </div>
-  <div class="capabilities">
+  <ol class="career" role="list">
     {%- for group in site.data.capabilities %}
-    <div class="capability">
+    <li class="career__stage{% if forloop.last %} is-now{% endif %}">
+      <p class="career__index"><span aria-hidden="true">{{ forloop.index | prepend: "0" }}</span>{% if forloop.last %}<span class="career__now">Now</span>{% endif %}</p>
       <h3>{{ group.group }}</h3>
-      <ul role="list">{% for item in group.items %}<li>{{ item }}</li> {% endfor %}</ul>
-    </div>
+      <ul class="career__items" role="list">{% for item in group.items %}<li>{{ item }}</li> {% endfor %}</ul>
+    </li>
     {%- endfor %}
-  </div>
+  </ol>
 </section>
 
 <section class="section wrap grid about" id="about" aria-labelledby="about-title">

@@ -47,12 +47,15 @@ committed `assets/css/main.css` or `assets/js/main.js` differ from `src/`.
 The site tests itself with Playwright (`tests/site.spec.js`) at three sizes:
 desktop (1440×900), phone (Pixel 7) and small (360×640). Every page is loaded in
 light and dark and must have a clean console, no CSP violations, no horizontal
-overflow and no style attribute other than the clock's `--now`; axe runs with
-colour contrast switched on, in both schemes. The rest covers the datum (for a
-visitor in London, in Kolkata and with JavaScript off), the hero and section
-order, 44px targets, no layout shift when the scripts run, the theme toggle,
-the ink focus ring, the skip link, `prefers-contrast`, a scan proving red only
-appears on the tick and the current nav item, the print brief of `/how-i-work/`
+overflow and no style attribute other than the datum's `--now` (and `--probe`);
+axe runs with colour contrast switched on, in both schemes. The rest covers the
+datum and its converter (for a visitor in London, in Kolkata and with JavaScript
+off), the hero and section order, the career scale, the parts key and its
+callouts, the command menu (Ctrl+K, filtering, keyboard, the section, theme,
+grid and copy commands, axe while open), the page-weight line, 44px targets, no
+layout shift when the scripts run, the theme toggle, the ink focus ring, the
+skip link, `prefers-contrast`, a scan proving red only appears on the tick and
+the current nav item, the print brief of `/how-i-work/`
 (saved as `how-i-work.pdf`), the redirects, the feed IDs, the sitemap and the
 home page's JSON-LD. Tests wait for `html.is-ready`, which `main.js` sets once
 the fonts are in (or after a second); keep that contract if the script changes.
@@ -83,7 +86,12 @@ any change to a font, icon or image gets a new `-vN` name.
 ## Content
 
 - `_data/capabilities.yml` holds the Background groups on the home page, in
-  career order. It also feeds `knowsAbout` in the home page's JSON-LD.
+  career order; they are drawn as a career scale, and the last one is marked
+  "Now". It also feeds `knowsAbout` in the home page's JSON-LD.
+- The 6502 photo (`_includes/figure-6502.html`) carries numbered callouts whose
+  boxes are percentages of the 1280×838 photo (`.callout--*` in
+  `_components.scss`). A new photo needs new boxes; passing `caption=` to the
+  include gives a plain caption and no callouts.
 - A Selected work section can be added later as a `_work` collection, the same
   way as `_notes`.
 
@@ -112,8 +120,34 @@ JavaScript the scale still renders, and the tick, the time and the visitor's
 own time stay hidden. Every other page shows
 the Kolkata time as one line in the footer.
 
+`src/js/datum-probe.js` lays a converter over the scale: hover, drag, or focus
+it and use the arrow keys (15 minutes; Page Up/Down an hour; Home/End) to read
+any Kolkata time in the visitor's own time, with the day it falls on. It is a
+`role="slider"` whose value text carries the whole reading, and it writes
+`--probe` the same way the clock writes `--now`. The probe is ink, never red.
+
 Red means "now": `check:csp` fails if `var(--accent)` styles anything but the
 tick and the current nav item, and a Playwright test scans every page for it.
+
+## Command menu and layout grid
+
+Ctrl+K (Cmd+K on a Mac), or the search button in the header, opens
+`_includes/command-menu.html`: a `<dialog>` holding a combobox over a listbox
+of every page, note and home-page section, a few actions (copy the email
+address, switch theme, show the layout grid, download the vCard) and the
+profiles. The commands are rendered by Liquid, so a new note shows up without
+touching the script; `src/js/command-menu.js` filters them (every typed word
+must appear in the label or its `data-keys`), marks the matches with `<mark>`
+elements built through the DOM, and runs them. Without JavaScript the button
+stays hidden and the dialog never opens.
+
+The layout grid (`src/js/grid-overlay.js`) draws `.wrap` with the live `--cols`
+and `--gutter` over the page, so it shows the grid the content is set on, and
+measures it for the readout in the corner. Esc hides it.
+
+Pages change with a cross-document view transition (`@view-transition` in
+`_modes.scss`): the header holds still, the page cross-fades and settles 8px.
+It is off under `prefers-reduced-motion`.
 
 ## Guard rails
 

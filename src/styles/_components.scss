@@ -22,16 +22,17 @@
   @include mid { scroll-margin-top: calc(64px + var(--s-5)); }
 }
 
-// The toggle's 44px track is always reserved, so unhiding it moves nothing.
+// The tracks of the command-menu button and the theme toggle are always
+// reserved, so unhiding them moves nothing.
 .site-header__inner {
   display: grid;
-  grid-template-columns: 1fr 44px;
-  grid-template-areas: "name toggle" "nav nav";
+  grid-template-columns: 1fr 44px 44px;
+  grid-template-areas: "name cmdk toggle" "nav nav nav";
   align-items: center;
 
   @include mid {
-    grid-template-columns: auto 1fr 44px;
-    grid-template-areas: "name nav toggle";
+    grid-template-columns: auto 1fr 6.5rem 44px;
+    grid-template-areas: "name nav cmdk toggle";
     min-height: 64px;
   }
 }
@@ -252,6 +253,99 @@
   color: var(--ink-2);
 }
 
+/* Parts photo: numbered callouts and their key ---------------------------- */
+
+// Callouts sit in percentages of the 1280 x 838 photo, so they track it at
+// every size. Pointing at a part in the key, or at a chip on the photo,
+// outlines that chip and dims the rest of the board; the pairing is :has(),
+// so it needs no script. The overlay colours are for the photo, not the page.
+.figure--parts .figure__link {
+  position: relative;
+  overflow: hidden;
+}
+
+.callouts {
+  position: absolute;
+  inset: 0;
+}
+
+.callout {
+  position: absolute;
+  border: 1px solid transparent;
+  transition: border-color 120ms var(--ease), box-shadow 160ms var(--ease);
+
+  > span {
+    position: absolute;
+    top: -1px;
+    left: -1px;
+    min-width: 1.125rem;
+    padding: 0 0.25rem;
+    background: var(--ink);
+    color: var(--on-ink);
+    font-family: var(--mono);
+    font-size: 0.6875rem;
+    line-height: 1.125rem;
+    text-align: center;
+  }
+}
+
+@mixin callout-on {
+  border-color: #F6F5F1;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.5), 0 0 0 100vmax rgba(18, 18, 17, 0.55);
+  z-index: 1;
+}
+
+.callout--cpu  { left: 10.9%; top: 20.5%; width: 26.6%; height: 11.1%; }
+.callout--rom  { left: 43.2%; top: 20.5%; width: 18.5%; height: 11.1%; }
+.callout--ram  { left: 65.2%; top: 20%;   width: 18.2%; height: 11%; }
+.callout--via  { left: 30.5%; top: 64.2%; width: 26.4%; height: 11%; }
+.callout--nand { left: 7%;    top: 65.6%; width: 10.2%; height: 5.5%; }
+.callout--osc  { left: 19.9%; top: 64.8%; width: 9.8%;  height: 9.4%; }
+.callout--lcd  { left: 59.8%; top: 63.8%; width: 40.2%; height: 28.6%; }
+
+.callout:hover { @include callout-on; }
+
+.parts {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
+  gap: var(--s-1) var(--s-4);
+
+  > li {
+    display: flex;
+    align-items: baseline;
+    gap: var(--s-2);
+    transition: color 120ms var(--ease);
+  }
+
+  > li:hover { color: var(--ink); }
+}
+
+.parts__n {
+  flex: none;
+  min-width: 1.125rem;
+  padding: 0 0.25rem;
+  background: var(--ink);
+  color: var(--on-ink);
+  font-family: var(--mono);
+  font-size: 0.6875rem;
+  line-height: 1.125rem;
+  text-align: center;
+}
+
+$parts: cpu, rom, ram, via, nand, osc, lcd;
+
+@each $part in $parts {
+  $i: index($parts, $part);
+
+  .figure--parts:has(.parts > li:nth-child(#{$i}):hover) .callout--#{$part} {
+    @include callout-on;
+  }
+
+  .figure--parts:has(.callout--#{$part}:hover) .parts > li:nth-child(#{$i}) {
+    color: var(--ink);
+  }
+}
+
 /* Contact ----------------------------------------------------------------- */
 
 .email {
@@ -334,7 +428,8 @@
   > p { max-width: 40em; }
 }
 
-.colophon__clock {
+.colophon__clock,
+.colophon__weight {
   @include data;
 }
 
