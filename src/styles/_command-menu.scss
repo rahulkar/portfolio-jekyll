@@ -1,0 +1,279 @@
+// The command menu (Ctrl+K), its header trigger, and the layout grid it can
+// switch on. Square corners, ink rules and no accent, like everything else.
+@use "mixins" as *;
+
+kbd {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  min-width: 1.5rem;
+  padding: 0.125rem 0.375rem;
+  border: 1px solid var(--ink-3);
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  line-height: 1.2;
+  color: var(--ink-2);
+
+  .icon { width: 0.75rem; height: 0.75rem; }
+}
+
+/* Header trigger --------------------------------------------------------- */
+
+// The track is reserved in the header grid, so revealing it moves nothing.
+.cmdk-trigger {
+  grid-area: cmdk;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+  transition: background-color 120ms var(--ease);
+
+  &:hover { background: var(--bg-inset); }
+
+  > .icon { width: 16px; height: 16px; }
+
+  @include mid { width: 6.5rem; }
+}
+
+.cmdk-trigger__keys {
+  display: none;
+
+  @include mid { display: inline-flex; }
+}
+
+/* Dialog ------------------------------------------------------------------ */
+
+.cmdk {
+  width: min(40rem, 100% - 2rem);
+  max-width: none;
+  max-height: none;
+  margin: 12vh auto auto;
+  padding: 0;
+  border: 1px solid var(--ink);
+  background: var(--bg);
+  color: var(--ink);
+  box-shadow: 0 1.5rem 3rem -1rem rgba(0, 0, 0, 0.35);
+
+  &[open] { animation: cmdk-in 160ms var(--ease); }
+  &[open]::backdrop { animation: cmdk-fade 160ms var(--ease); }
+
+  &::backdrop { background: rgba(22, 22, 21, 0.3); }
+
+  @include narrow { margin-top: 0.75rem; }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .cmdk::backdrop { background: rgba(0, 0, 0, 0.6); }
+}
+
+:root[data-theme="dark"] .cmdk::backdrop { background: rgba(0, 0, 0, 0.6); }
+
+@keyframes cmdk-in {
+  from { opacity: 0; transform: translateY(-8px) scale(0.985); }
+}
+
+@keyframes cmdk-fade {
+  from { opacity: 0; }
+}
+
+.cmdk__panel {
+  display: flex;
+  flex-direction: column;
+  max-height: min(34rem, 76vh);
+}
+
+// The field's bottom rule turns ink while the input has focus.
+.cmdk__field {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding-left: 1rem;
+  border-bottom: 1px solid var(--rule);
+  box-shadow: inset 0 -1px 0 transparent;
+  transition: box-shadow 120ms var(--ease);
+
+  &:focus-within { box-shadow: inset 0 -2px 0 var(--ink); }
+
+  > .icon { width: 16px; height: 16px; color: var(--ink-3); }
+}
+
+.cmdk__input {
+  flex: 1;
+  min-width: 0;
+  height: 3.5rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  font: 400 1.0625rem/1.2 var(--sans);
+  outline: none;
+
+  &::placeholder { color: var(--ink-3); opacity: 1; }
+}
+
+.cmdk__close {
+  display: inline-grid;
+  place-items: center;
+  min-width: 44px;
+  min-height: 44px;
+  margin-right: 0.375rem;
+  padding: 0 0.5rem;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+
+  > span {
+    padding: 0.125rem 0.375rem;
+    border: 1px solid var(--ink-3);
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    line-height: 1.2;
+    color: var(--ink-2);
+  }
+
+  &:hover > span { color: var(--ink); border-color: var(--ink); }
+}
+
+.cmdk__close-word { display: none; }
+
+@media (hover: none) {
+  .cmdk__close-key { display: none; }
+  .cmdk__close-word { display: inline; }
+}
+
+.cmdk__list {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--ink-3) transparent;
+  padding: 0.25rem 0.5rem 0.5rem;
+  scroll-padding-block: 2rem 0.5rem;
+}
+
+.cmdk__heading {
+  @include label;
+  padding: 0.75rem 0.75rem 0.375rem;
+  color: var(--ink-3);
+}
+
+.cmdk__item {
+  display: grid;
+  grid-template-columns: 1rem minmax(0, 1fr) auto;
+  align-items: center;
+  column-gap: 0.75rem;
+  min-height: 44px;
+  padding: 0 0.75rem;
+  cursor: pointer;
+  user-select: none;
+
+  > .icon { width: 14px; height: 14px; color: var(--ink-3); }
+
+  &[aria-selected="true"] {
+    background: var(--bg-inset);
+    box-shadow: inset 2px 0 0 var(--ink);
+
+    > .icon { color: var(--ink); }
+  }
+
+  mark {
+    background: transparent;
+    color: inherit;
+    text-decoration: underline 2px var(--ink);
+    text-underline-offset: 0.2em;
+  }
+}
+
+.cmdk__label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cmdk__hint {
+  @include data;
+  max-width: 15rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.75rem;
+  color: var(--ink-3);
+
+  @include narrow { display: none; }
+}
+
+.cmdk__empty {
+  padding: 1rem 1.25rem 1.5rem;
+  color: var(--ink-2);
+}
+
+.cmdk__foot {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.25rem;
+  padding: 0.625rem 1rem;
+  border-top: 1px solid var(--rule);
+  font-size: 0.8125rem;
+  color: var(--ink-2);
+
+  > span { display: inline-flex; align-items: center; gap: 0.375rem; }
+
+  kbd:first-child .icon { transform: rotate(-90deg); }
+  kbd:nth-child(2) .icon { transform: rotate(90deg); }
+
+  @media (hover: none) { display: none; }
+}
+
+/* Layout grid ------------------------------------------------------------- */
+
+// Columns are tinted ink, never the accent; 4, 6 or 12 of them, like --cols.
+.layout-grid {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  pointer-events: none;
+}
+
+.layout-grid__cols {
+  display: grid;
+  grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
+  column-gap: var(--gutter);
+  height: 100%;
+
+  > span {
+    background: color-mix(in srgb, var(--ink) 6%, transparent);
+    box-shadow:
+      inset 1px 0 0 color-mix(in srgb, var(--ink) 22%, transparent),
+      inset -1px 0 0 color-mix(in srgb, var(--ink) 22%, transparent);
+  }
+
+  > span:nth-child(n + 5) { display: none; }
+
+  @include mid {
+    > span:nth-child(n + 5) { display: block; }
+    > span:nth-child(n + 7) { display: none; }
+  }
+
+  @include wide {
+    > span:nth-child(n + 7) { display: block; }
+  }
+}
+
+.layout-grid__spec {
+  @include data;
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  padding: 0.375rem 0.625rem;
+  background: var(--ink);
+  color: var(--on-ink);
+  font-size: 0.75rem;
+}

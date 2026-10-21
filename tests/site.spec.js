@@ -52,12 +52,14 @@ for (const path of PAGES) {
         expect(errors).toEqual([]);
         expect(await page.evaluate(() => window.__csp)).toEqual([]);
         expect(await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth)).toBeLessThanOrEqual(0);
-        await expect(page.locator("dialog")).toHaveCount(0);
-        // The only style attribute is the clock's --now on the datum.
+        // The command menu is the only dialog, and it starts closed.
+        await expect(page.locator("dialog")).toHaveCount(1);
+        await expect(page.locator("dialog[open]")).toHaveCount(0);
+        // The only style attribute is the datum's: the clock's --now (and the probe's --probe once used).
         const styled = await page.evaluate(() => [...document.querySelectorAll("[style]")].map((el) => [el.matches("[data-datum]"), el.getAttribute("style")]));
         for (const [isDatum, style] of styled) {
           expect(isDatum).toBe(true);
-          expect(style).toMatch(/^--now:\s*[\d.]+;?$/);
+          expect(style).toMatch(/^--now:\s*[\d.]+;(\s*--probe:\s*[\d.]+;)?$/);
         }
       });
 
@@ -103,6 +105,39 @@ test.describe("datum for a visitor in London", () => {
     await expect(page.locator(".datum__label")).toHaveText("Kolkata · IST · UTC+05:30");
     await expect(page.locator(".datum__local")).toContainText("Your time now");
   });
+
+  test("the scale converts a Kolkata time to the visitor's, by keyboard and pointer", async ({ page }, testInfo) => {
+    onlyDesktop(testInfo);
+    await openPage(page, "/");
+    const slider = page.getByRole("slider", { name: "Convert a time in Kolkata to your time" });
+    await expect(slider).toHaveAttribute("aria-valuemax", "1435");
+    await slider.focus();
+    await expect(page.locator("[data-datum]")).toHaveClass(/is-probing/);
+    await page.keyboard.press("Home");
+    await expect(slider).toHaveAttribute("aria-valuenow", "0");
+    // Midnight in Kolkata is the evening before in London.
+    await expect(slider).toHaveAttribute("aria-valuetext", /^00:00 in Kolkata is (18|19):30 your time the previous day, (now|.+ ago)$/);
+    await expect(page.locator(".datum__probe-time")).toHaveText("00:00");
+    await expect(page.locator(".datum__reading")).toContainText("your time the previous day");
+    await page.keyboard.press("ArrowRight");
+    await expect(slider).toHaveAttribute("aria-valuetext", /^00:15 in Kolkata is (18|19):45 your time/);
+    await page.keyboard.press("PageUp");
+    await expect(slider).toHaveAttribute("aria-valuenow", "75");
+    await page.keyboard.press("End");
+    await expect(slider).toHaveAttribute("aria-valuenow", "1435");
+    // The red tick stays put while the ink probe moves.
+    await expect(page.locator(".datum__tick")).toBeVisible();
+    expect(await page.locator(".datum__probe").evaluate((el) => getComputedStyle(el).borderLeftColor)).toBe(INK.light);
+    await page.keyboard.press("Escape");
+    await expect(page.locator("[data-datum]")).not.toHaveClass(/is-probing/);
+
+    await slider.blur();
+    const box = await slider.boundingBox();
+    await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+    await expect(page.locator(".datum__probe-time")).toHaveText("12:00");
+    await page.mouse.move(box.x + box.width / 2, box.y - 80);
+    await expect(page.locator("[data-datum]")).not.toHaveClass(/is-probing/);
+  });
 });
 
 test.describe("datum for a visitor in Kolkata", () => {
@@ -112,6 +147,7 @@ test.describe("datum for a visitor in Kolkata", () => {
     await openPage(page, "/");
     await expect(page.locator(".datum__tick")).toBeVisible();
     await expect(page.locator(".datum__local")).toBeHidden();
+    await expect(page.getByRole("slider")).toHaveAttribute("aria-valuetext", /^\d\d:\d\d in Kolkata, (now|in .+|.+ ago)$/);
   });
 });
 
@@ -122,9 +158,13 @@ test.describe("without JavaScript", () => {
     await page.goto("/");
     await expect(page.locator(".datum__label")).toBeVisible();
     await expect(page.locator(".datum__ticks")).toBeVisible();
-    for (const sel of [".datum__tick", ".datum__now", ".datum__local", "#theme-btn", ".copy"]) {
+    for (const sel of [".datum__tick", ".datum__now", ".datum__local", "#theme-btn", "#cmdk-btn", ".copy", ".colophon__weight"]) {
       await expect(page.locator(sel)).toBeHidden();
     }
+    // Controls that only work with the script are not there at all.
+    await expect(page.locator(".datum__track")).toHaveCount(0);
+    // The parts key and its callouts are plain markup and CSS.
+    await expect(page.locator("#about .parts li")).toHaveCount(7);
   });
 });
 
@@ -146,6 +186,22 @@ test.describe("home page", () => {
     expect(await page.locator("main section[id]").evaluateAll((els) => els.map((el) => el.id))).toEqual(["background", "about", "notes"]);
     await expect(page.locator("#background h3")).toHaveText(["Quality engineering and automation", "DevOps and cloud", "Architecture and delivery", "Agentic AI"]);
     await expect(page.locator("#background img")).toHaveCount(0);
+    // A career scale: four stages in order, the last one marked now.
+    await expect(page.locator(".career > .career__stage")).toHaveCount(4);
+    await expect(page.locator(".career__stage.is-now h3")).toHaveText("Agentic AI");
+    await expect(page.locator(".career__stage.is-now .career__now")).toHaveText("Now");
+  });
+
+  test("the parts key pairs with the callouts on the photo", async ({ page }, testInfo) => {
+    onlyDesktop(testInfo);
+    await openPage(page, "/");
+    await expect(page.locator("#about .parts li")).toHaveText(["1W65C02S CPU", "2AT28C256 EEPROM", "3HM62256 RAM", "4W65C22 interface chip", "574HC00 NAND gates", "6Crystal oscillator", "716×2 LCD"]);
+    await expect(page.locator("#about .callout")).toHaveCount(7);
+    await expect(page.locator("#about .callouts")).toHaveAttribute("aria-hidden", "true");
+    const shadow = () => page.locator("#about .callout--via").evaluate((el) => getComputedStyle(el).boxShadow);
+    expect(await shadow()).toBe("none");
+    await page.locator("#about .parts li").nth(3).hover();
+    await expect.poll(shadow).toContain("rgba(18, 18, 17, 0.55)");
   });
 
   test("about, notes and contact", async ({ page }) => {
@@ -199,7 +255,7 @@ test.describe("home page", () => {
   test("touch targets are at least 44px", async ({ page }, testInfo) => {
     test.skip(testInfo.project.name === "desktop", "phone sizes only");
     await openPage(page, "/");
-    const sels = [".site-header__name", ".site-nav a", "#theme-btn", ".button", ".link-arrow", ".copy", ".links a", ".section__coda > a"];
+    const sels = [".site-header__name", ".site-nav a", "#cmdk-btn", "#theme-btn", ".button", ".link-arrow", ".copy", ".links a", ".section__coda > a"];
     for (const sel of sels) {
       for (const el of await page.locator(sel).all()) {
         const box = await el.boundingBox();
@@ -309,6 +365,119 @@ test.describe("theme, focus and skip link", () => {
       expect(hits).toEqual([]);
     });
   }
+});
+
+test.describe("command menu", () => {
+  const menu = (page) => page.getByRole("dialog", { name: "Command menu" });
+  const input = (page) => page.getByRole("combobox", { name: "Search pages and actions" });
+  const active = (page) => input(page).evaluate((el) => document.getElementById(el.getAttribute("aria-activedescendant"))?.textContent.trim());
+
+  test("Ctrl+K opens it on every page; typing filters; Enter goes", async ({ page }, testInfo) => {
+    onlyDesktop(testInfo);
+    await openPage(page, "/how-i-work/");
+    await page.keyboard.press("Control+K");
+    await expect(menu(page)).toBeVisible();
+    await expect(input(page)).toBeFocused();
+    expect(await page.getByRole("option").count()).toBeGreaterThanOrEqual(17);
+    expect(await active(page)).toMatch(/^Home/);
+    await input(page).fill("6502");
+    await expect(page.getByRole("option", { includeHidden: false })).toHaveText([/A 6502 computer on two breadboards/, /About/]);
+    await expect(page.locator(".cmdk__item mark").first()).toHaveText("6502");
+    await page.keyboard.press("ArrowDown");
+    expect(await active(page)).toMatch(/^About/);
+    await page.keyboard.press("ArrowDown");
+    expect(await active(page)).toMatch(/^A 6502 computer/);
+    await page.keyboard.press("Enter");
+    await expect(page).toHaveURL(/\/notes\/6502-on-two-breadboards\/$/);
+  });
+
+  test("the header button opens it; Esc closes it and gives focus back", async ({ page }) => {
+    await openPage(page, "/");
+    const btn = page.locator("#cmdk-btn");
+    await expect(btn).toBeVisible();
+    await expect(btn).toHaveAttribute("aria-keyshortcuts", /^(Control|Meta)\+K$/);
+    await btn.click();
+    await expect(menu(page)).toBeVisible();
+    await input(page).fill("zzzz");
+    await expect(page.locator(".cmdk__empty")).toBeVisible();
+    await expect(input(page)).toHaveAttribute("aria-expanded", "false");
+    await page.keyboard.press("Escape");
+    await expect(menu(page)).toBeHidden();
+    await expect(btn).toBeFocused();
+  });
+
+  test("a section command scrolls the home page to it", async ({ page }, testInfo) => {
+    onlyDesktop(testInfo);
+    await openPage(page, "/");
+    await page.keyboard.press("Control+K");
+    await input(page).fill("about");
+    await page.keyboard.press("Enter");
+    await expect(menu(page)).toBeHidden();
+    await expect(page).toHaveURL(/\/#about$/);
+    await expect(page.locator("#about")).toBeInViewport();
+  });
+
+  test("the theme command switches the theme and stays open", async ({ page }, testInfo) => {
+    onlyDesktop(testInfo);
+    await openPage(page, "/");
+    await page.keyboard.press("Control+K");
+    await input(page).fill("theme");
+    await expect(page.locator("#cmdk-theme .cmdk__label")).toHaveText("Switch to dark theme");
+    await page.keyboard.press("Enter");
+    await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+    await expect(menu(page)).toBeVisible();
+    await expect(page.locator("#cmdk-theme .cmdk__label")).toHaveText("Switch to light theme");
+    await expect(page.locator("[data-cmdk-status]")).toHaveText("Dark theme on.");
+  });
+
+  test("the grid command lays the page's own columns over it", async ({ page }, testInfo) => {
+    onlyDesktop(testInfo);
+    await openPage(page, "/");
+    await page.keyboard.press("Control+K");
+    await input(page).fill("grid");
+    await page.keyboard.press("Enter");
+    await expect(menu(page)).toBeHidden();
+    const grid = page.locator(".layout-grid");
+    await expect(grid).toBeVisible();
+    await expect(grid).toHaveAttribute("aria-hidden", "true");
+    await expect(page.locator(".layout-grid__cols > span:visible")).toHaveCount(12);
+    await expect(page.locator(".layout-grid__spec")).toHaveText(/^12 columns · 24px gutters · \d+px wide$/);
+    // The overlay's columns are the content's columns.
+    const [a, b] = await Promise.all([page.locator(".layout-grid__cols").boundingBox(), page.locator(".hero").boundingBox()]);
+    expect(Math.abs(a.x - b.x)).toBeLessThanOrEqual(1);
+    expect(Math.abs(a.width - b.width)).toBeLessThanOrEqual(1);
+    await page.keyboard.press("Escape");
+    await expect(grid).toBeHidden();
+  });
+
+  test("the copy command copies the address", async ({ page, context }, testInfo) => {
+    onlyDesktop(testInfo);
+    await context.grantPermissions(["clipboard-read", "clipboard-write"]);
+    await openPage(page, "/notes/");
+    await page.keyboard.press("Control+K");
+    await input(page).fill("copy");
+    await page.keyboard.press("Enter");
+    await expect(page.locator("[data-cmdk-status]")).toHaveText("Email address copied.");
+    expect(await page.evaluate(() => navigator.clipboard.readText())).toBe("kar.rahul@pm.me");
+    await expect(menu(page)).toBeHidden();
+  });
+
+  for (const scheme of SCHEMES) {
+    test(`is accessible while open (axe, ${scheme})`, async ({ page }, testInfo) => {
+      onlyDesktop(testInfo);
+      await openPage(page, "/", scheme);
+      await page.keyboard.press("Control+K");
+      await input(page).fill("no");
+      const results = await new AxeBuilder({ page }).include("#cmdk").analyze();
+      const serious = results.violations.filter((v) => v.impact === "serious" || v.impact === "critical");
+      expect(serious.map((v) => `${v.id}: ${v.nodes.map((n) => n.target.join(" ")).join(", ")}`)).toEqual([]);
+    });
+  }
+});
+
+test("the colophon reports the page weight", async ({ page }) => {
+  await openPage(page, "/notes/");
+  await expect(page.locator(".colophon__weight")).toHaveText(/^This page: \d+ (KB|B), \d+ requests?, loaded in \d+ ms$/);
 });
 
 test.describe("approach page", () => {

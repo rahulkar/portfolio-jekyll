@@ -1,12 +1,18 @@
 import { initClock } from "./clock.js";
+import { initDatumProbe } from "./datum-probe.js";
 import { initThemeToggle } from "./theme-toggle.js";
 import { initCopyEmail } from "./copy-email.js";
+import { initCommandMenu } from "./command-menu.js";
+import { initPageWeight } from "./page-weight.js";
 
 function start() {
   var root = document.documentElement;
   initThemeToggle(document.getElementById("theme-btn"));
   initClock(document);
+  initDatumProbe(document);
   initCopyEmail(document.querySelectorAll("[data-copy-email]"));
+  initCommandMenu(document);
+  initPageWeight(document);
 
   // 404: show the path that failed to resolve (as text, never as HTML).
   var path = document.getElementById("err-path");
