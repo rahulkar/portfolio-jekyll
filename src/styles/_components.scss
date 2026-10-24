@@ -443,14 +443,17 @@ $parts: cpu, rom, ram, via, nand, osc, lcd;
   color: var(--ink-2);
 }
 
-// Contact on the left and the site's own details on the right, from 1024px.
+// From 1024px each block is a single line: the contact, then the site's own
+// details. Below that the blocks wrap onto as many lines as they need.
 .colophon__inner {
   display: grid;
   row-gap: var(--s-5);
 
   @include wide {
-    > .contact { @include cols(1, 6); }
-    > .colophon__meta { @include cols(8, 12); }
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    row-gap: var(--s-2);
   }
 }
 
@@ -460,6 +463,15 @@ $parts: cpu, rom, ram, via, nand, osc, lcd;
   align-content: start;
 
   > p { max-width: 40em; }
+
+  @include wide {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--s-1) var(--s-4);
+
+    > p { max-width: none; }
+  }
 }
 
 .colophon__clock,
@@ -471,4 +483,21 @@ $parts: cpu, rom, ram, via, nand, osc, lcd;
 .colophon .contact {
   padding-top: 0;
   border-top: 0;
+
+  @include wide {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--s-2) var(--s-4);
+
+    // The label stays in the page for screen readers, but takes no row.
+    > .contact__title {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+    }
+  }
 }
