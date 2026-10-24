@@ -2,14 +2,10 @@
 
 /* Home: hero -------------------------------------------------------------- */
 
-// Wide: name across the top; intro and datum in columns 1-7; contact in the
-// side column, 9-12. The side's extra height falls into the last,
-// flexible row, so it never stretches the gaps in the intro.
+// Wide: name across the top; intro and datum in columns 1-7. The right side is
+// left open for the orbit, and contact lives in the footer.
 .hero {
-  padding-top: var(--hero-top);
-
-  @include wide { grid-template-rows: auto auto auto 1fr; }
-}
+  padding-top: var(--hero-top);}
 
 .hero__name {
   @include wide { @include cols(1, 12); }
@@ -29,7 +25,7 @@
 .hero__facts {
   display: grid;
   gap: var(--s-2);
-  margin-top: var(--s-5);
+  margin-top: var(--s-4);
 
   > div {
     display: grid;
@@ -58,7 +54,7 @@
   flex-wrap: wrap;
   align-items: flex-start;
   gap: var(--s-2) var(--s-5);
-  margin-top: var(--s-6);
+  margin-top: var(--s-5);
 }
 
 .hero__intro,
@@ -67,22 +63,10 @@
 }
 
 .hero .datum {
-  margin-top: var(--s-7);
+  margin-top: var(--s-5);
 }
 
-.hero__side {
-  display: grid;
-  gap: var(--s-5);
-  margin-top: var(--s-7);
-
-  @include wide {
-    @include cols(9, 12);
-    grid-row: 2 / 5;
-    margin-top: var(--s-4);
-  }
-}
-
-/* Home: contact (in the hero, so it is on the first screen) -------------- */
+/* Contact: in the footer, on every page ---------------------------------- */
 
 .contact {
   display: grid;

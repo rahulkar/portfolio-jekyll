@@ -1,8 +1,24 @@
 <footer class="colophon">
-  <div class="wrap colophon__inner">
-    <p class="colophon__contact"><a href="mailto:{{ site.email }}">{{ site.email }}</a> &middot; <a href="https://github.com/{{ site.github_username }}">GitHub</a> &middot; <a href="{{ site.linkedin_url }}">LinkedIn</a></p>
-    <p>&copy; {{ site.time | date: "%Y" }} {{ site.username }} &middot; <a href="{{ "/notes/how-this-site-is-built/" | relative_url }}">How this site is built</a> &middot; <a href="{{ "/feed.xml" | relative_url }}">Atom feed</a></p>
-    {% unless page.url == "/" %}<p class="colophon__clock" data-clock hidden>Kolkata <time data-ist datetime="00:00">00:00</time> IST</p>{% endunless %}
-    <p class="colophon__weight" data-page-weight hidden></p>
+  <div class="wrap colophon__inner grid">
+    <div class="contact" id="contact">
+      <h2 class="contact__title">Contact</h2>
+      <div class="email">
+        <a class="email__address" href="mailto:{{ site.email }}">{{ site.email }}</a>
+        <button class="copy" type="button" data-copy-email="{{ site.email }}" hidden><span class="copy__label">Copy</span><span class="sr-only"> email address</span></button>
+        <span class="sr-only" role="status" data-copy-status></span>
+      </div>
+      <ul class="links" role="list">
+        <li><a href="https://github.com/{{ site.github_username }}" rel="me"><span class="links__name">GitHub</span><span class="sr-only"> @{{ site.github_username }}</span>{% include icon.html name="external" %}</a></li>
+        <li><a href="{{ site.linkedin_url }}" rel="me"><span class="links__name">LinkedIn</span><span class="sr-only"> {{ site.linkedin_handle }}</span>{% include icon.html name="external" %}</a></li>
+        <li><a href="{{ site.credly_url }}" rel="me"><span class="links__name">Credly</span><span class="sr-only"> {{ site.credly_handle }}</span>{% include icon.html name="external" %}</a></li>
+        <li><a href="{{ "/assets/rahul-kar-v3.vcf" | relative_url }}" download="rahul-kar.vcf"><span class="links__name">vCard</span><span class="sr-only">, add to contacts</span></a></li>
+      </ul>
+      <p class="contact__place">Based in Kolkata, India</p>
+    </div>
+    <div class="colophon__meta">
+      <p>&copy; {{ site.time | date: "%Y" }} {{ site.username }} &middot; <a href="{{ "/notes/how-this-site-is-built/" | relative_url }}">How this site is built</a> &middot; <a href="{{ "/feed.xml" | relative_url }}">Atom feed</a></p>
+      {% unless page.url == "/" %}<p class="colophon__clock" data-clock hidden>Kolkata <time data-ist datetime="00:00">00:00</time> IST</p>{% endunless %}
+      <p class="colophon__weight" data-page-weight hidden></p>
+    </div>
   </div>
 </footer>

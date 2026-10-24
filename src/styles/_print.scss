@@ -57,6 +57,10 @@
     display: none !important;
   }
 
+  .orbit-band {
+    display: none !important;
+  }
+
   a[href^="http"]::after {
     content: " (" attr(href) ")";
     font: 9pt var(--mono);

@@ -1,7 +1,7 @@
 ---
 layout: default
 ---
-<div class="orbit-stage" data-orbital-hero>
+<div class="orbit-stage" data-orbital-hero="wide">
 <section class="hero wrap grid" aria-labelledby="hero-name">
   <h1 class="hero__name display" id="hero-name">Rahul Kar</h1>
   <div class="hero__intro">
@@ -16,25 +16,10 @@ layout: default
     </div>
   </div>
   {% include datum.html %}
-  <div class="hero__side">
-    <div class="contact" id="contact">
-      <h2 class="contact__title">Contact</h2>
-      <div class="email">
-        <a class="email__address" href="mailto:{{ site.email }}">{{ site.email }}</a>
-        <button class="copy" type="button" data-copy-email="{{ site.email }}" hidden><span class="copy__label">Copy</span><span class="sr-only"> email address</span></button>
-        <span class="sr-only" role="status" data-copy-status></span>
-      </div>
-      <ul class="links" role="list">
-        <li><a href="https://github.com/{{ site.github_username }}" rel="me"><span class="links__name">GitHub</span><span class="sr-only"> @{{ site.github_username }}</span>{% include icon.html name="external" %}</a></li>
-        <li><a href="{{ site.linkedin_url }}" rel="me"><span class="links__name">LinkedIn</span><span class="sr-only"> {{ site.linkedin_handle }}</span>{% include icon.html name="external" %}</a></li>
-        <li><a href="{{ site.credly_url }}" rel="me"><span class="links__name">Credly</span><span class="sr-only"> {{ site.credly_handle }}</span>{% include icon.html name="external" %}</a></li>
-        <li><a href="{{ "/assets/rahul-kar-v3.vcf" | relative_url }}" download="rahul-kar.vcf"><span class="links__name">vCard</span><span class="sr-only">, add to contacts</span></a></li>
-      </ul>
-      <p class="contact__place">Based in Kolkata, India</p>
-    </div>
-  </div>
+  <p class="print-only">{{ site.email }} &middot; github.com/{{ site.github_username }} &middot; {{ site.linkedin_url }} &middot; Based in Kolkata, India</p>
 </section>
 </div>
+<div class="orbit-band" data-orbital-hero="narrow"></div>
 <script defer src="{{ "/assets/js/orbit.js" | relative_url }}?v={{ site.time | date: '%s' }}"></script>
 
 <section class="section wrap grid" id="background" aria-labelledby="background-title">
