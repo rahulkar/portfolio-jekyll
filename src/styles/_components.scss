@@ -174,7 +174,7 @@
   grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
   column-gap: var(--gutter);
   row-gap: var(--s-1);
-  padding: var(--s-4) 0;
+  padding: var(--s-3) 0;
   border-bottom: 1px solid var(--rule);
 
   > * { grid-column: 1 / -1; min-width: 0; }
@@ -375,6 +375,9 @@ $parts: cpu, rom, ram, via, nand, osc, lcd;
 }
 
 .email__address {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
   font-size: var(--fs-h3);
   font-weight: 600;
   line-height: 1.15;
@@ -434,15 +437,27 @@ $parts: cpu, rom, ram, via, nand, osc, lcd;
 .colophon {
   margin-top: var(--section-space);
   border-top: 1px solid var(--rule);
-  padding: var(--s-6) 0 var(--s-7);
+  padding: var(--s-5) 0 var(--s-6);
   font-size: 0.875rem;
   line-height: 1.5;
   color: var(--ink-2);
 }
 
+// Contact on the left and the site's own details on the right, from 1024px.
 .colophon__inner {
   display: grid;
+  row-gap: var(--s-5);
+
+  @include wide {
+    > .contact { @include cols(1, 6); }
+    > .colophon__meta { @include cols(8, 12); }
+  }
+}
+
+.colophon__meta {
+  display: grid;
   gap: var(--s-2);
+  align-content: start;
 
   > p { max-width: 40em; }
 }
@@ -452,12 +467,8 @@ $parts: cpu, rom, ram, via, nand, osc, lcd;
   @include data;
 }
 
-.colophon__contact {
-  color: var(--ink);
-
-  a {
-    display: inline-flex;
-    align-items: center;
-    min-height: 44px;
-  }
+// The footer already has a rule above it, so its contact block drops its own.
+.colophon .contact {
+  padding-top: 0;
+  border-top: 0;
 }

@@ -22,9 +22,9 @@
 // not have to; on narrower screens the heading sits above.
 .section {
   margin-top: var(--section-space);
-  padding-top: var(--s-5);
+  padding-top: var(--s-4);
   border-top: 1px solid var(--ink);
-  row-gap: var(--s-5);
+  row-gap: var(--s-4);
 
   @include wide {
     > * { @include cols(4, 12); }

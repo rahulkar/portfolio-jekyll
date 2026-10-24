@@ -175,7 +175,7 @@ test.describe("home page", () => {
     await expect(page.locator("h1")).toHaveText("Rahul Kar");
     if (testInfo.project.name === "desktop") {
       const size = await page.locator("h1").evaluate((el) => parseFloat(getComputedStyle(el).fontSize));
-      expect(Math.abs(size - 112)).toBeLessThan(0.5);
+      expect(Math.abs(size - 96)).toBeLessThan(0.5);
     }
     await expect(page.locator(".hero__role")).toContainText("11+ years");
     await expect(page.locator(".hero__facts dt")).toHaveText(["Now", "Before"]);
@@ -218,8 +218,8 @@ test.describe("home page", () => {
     await expect(page.locator("#notes .row")).toHaveCount(3);
     expect(await page.locator("#notes .row__link").first().evaluate((el) => getComputedStyle(el).textDecorationLine)).toBe("underline");
 
-    // Contact sits in the hero, beside the intro, so it is on the first screen.
-    await expect(page.locator(".hero #contact .email__address")).toHaveText("kar.rahul@pm.me");
+    // Contact sits in the footer, which every page carries.
+    await expect(page.locator("footer #contact .email__address")).toHaveText("kar.rahul@pm.me");
     for (const href of ["https://github.com/rahulkar", "https://www.linkedin.com/in/karrahul/", "https://www.credly.com/users/rahul-kar"]) {
       await expect(page.locator(`#contact a[href="${href}"]`)).toHaveCount(1);
     }
@@ -277,10 +277,10 @@ test.describe("home page", () => {
         await p.goto("/");
         if (javaScriptEnabled) await p.waitForSelector("html.is-ready");
         else await p.waitForTimeout(800);
-        ys.push((await p.locator(".hero__side").boundingBox()).y);
+        ys.push((await p.locator(".orbit-band").boundingBox()).y);
         await ctx.close();
       }
-      expect(Math.abs(ys[0] - ys[1]), `hero side at ${viewport.width}px`).toBeLessThanOrEqual(1);
+      expect(Math.abs(ys[0] - ys[1]), `orbit band at ${viewport.width}px`).toBeLessThanOrEqual(1);
     }
   });
 });
@@ -620,7 +620,7 @@ test.describe("home hero orbit", () => {
     await page.emulateMedia({ colorScheme: "dark", reducedMotion: "no-preference" });
     await page.goto("/");
     await page.waitForSelector("html.is-ready");
-    const box = await page.locator("[data-orbital-hero]").boundingBox();
+    const box = await page.locator('[data-orbital-hero="wide"]').boundingBox();
     const still = await frame(page);
     await page.waitForTimeout(400);
     expect(await frame(page)).toBe(still);
@@ -639,26 +639,36 @@ test.describe("home hero orbit", () => {
     await page.emulateMedia({ colorScheme: "dark", reducedMotion: "reduce" });
     await page.goto("/");
     await page.waitForSelector("html.is-ready");
-    const box = await page.locator("[data-orbital-hero]").boundingBox();
+    const box = await page.locator('[data-orbital-hero="wide"]').boundingBox();
     const still = await frame(page);
     await page.mouse.move(box.x + box.width * 0.7, box.y + box.height * 0.5);
     await page.waitForTimeout(800);
     expect(await frame(page)).toBe(still);
   });
 
-  test("the canvas is hidden from assistive tech, and drawn only where the hero has two columns", async ({ page }, testInfo) => {
+  test("the canvas is hidden from assistive tech, and there is one orbit at every width", async ({ page }) => {
     await openPage(page, "/");
     const canvas = page.locator(".orbital-hero__canvas");
-    await expect(canvas).toHaveCount(testInfo.project.name === "desktop" ? 1 : 0);
-    if (testInfo.project.name === "desktop") await expect(canvas).toHaveAttribute("aria-hidden", "true");
+    await expect(canvas).toHaveCount(1);
+    await expect(canvas).toHaveAttribute("aria-hidden", "true");
     await expect(page.locator("#hero-name")).toHaveText("Rahul Kar");
   });
 
-  test("the copy, datum and contact stay above the orbit", async ({ page }, testInfo) => {
+  test("below 1024px the orbit band sits between the hero and Background", async ({ page }, testInfo) => {
+    test.skip(testInfo.project.name === "desktop", "phone and tablet widths only");
+    await openPage(page, "/");
+    const band = await page.locator('[data-orbital-hero="narrow"]').boundingBox();
+    const datum = await page.locator(".hero .datum").boundingBox();
+    const background = await page.locator("#background").boundingBox();
+    expect(band.y).toBeGreaterThanOrEqual(datum.y + datum.height);
+    expect(band.y + band.height).toBeLessThanOrEqual(background.y);
+  });
+
+  test("the copy and datum stay above the orbit", async ({ page }, testInfo) => {
     onlyDesktop(testInfo);
     await openPage(page, "/");
     const covered = await page.evaluate(() =>
-      [".hero__name", ".hero__role", ".datum", ".contact__title", ".email__address", ".links"].filter((sel) => {
+      [".hero__name", ".hero__role", ".datum", ".hero__facts"].filter((sel) => {
         const r = document.querySelector(sel).getBoundingClientRect();
         const hit = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
         return !(hit && hit.closest(sel));

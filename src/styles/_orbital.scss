@@ -1,7 +1,7 @@
 // The orbital hero on the home page. From 1024px, where the hero has two
 // columns, the stage is dark in both page themes, so the copy on it takes the
-// dark tokens, and the canvas sits behind the copy. Narrower screens show no
-// orbit and keep the page's own colours.
+// dark tokens, and the canvas sits behind the copy. Narrower screens keep the
+// page's own colours for the hero, and show the orbit in a band after it.
 @use "mixins" as *;
 
 .orbit-stage {
@@ -40,9 +40,8 @@
   height: 100%;
 }
 
-// This veil is drawn over the canvas and under the copy. Its radial part keeps
-// the contact column clear of the wakes, and its bottom part fades the orbit
-// into the section below rather than cutting it off. Both use the stage colour.
+// This veil is drawn over the canvas and under the copy. It fades the orbit into
+// the section below rather than cutting it off, and uses the stage colour.
 @include wide {
   .orbit-stage::after {
     content: "";
@@ -50,8 +49,23 @@
     inset: 0;
     z-index: 0;
     pointer-events: none;
-    background:
-      linear-gradient(to bottom, rgba(18, 18, 17, 0) 84%, rgba(18, 18, 17, 1) 100%),
-      radial-gradient(ellipse 24% 36% at 80% 42%, rgba(18, 18, 17, 0.9) 0%, rgba(18, 18, 17, 0.7) 45%, rgba(18, 18, 17, 0) 100%);
+    background: linear-gradient(to bottom, rgba(18, 18, 17, 0) 84%, rgba(18, 18, 17, 1) 100%);
+  }
+}
+
+// Below 1024px there is no room beside the copy, so the orbit sits in a band
+// after the hero, clear of its text. The band is dark in both page themes, the
+// same as the wide stage.
+.orbit-band {
+  @include dark-tokens;
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  height: 14rem;
+  margin-top: var(--s-5);
+  background: var(--bg);
+
+  @include wide {
+    display: none;
   }
 }
