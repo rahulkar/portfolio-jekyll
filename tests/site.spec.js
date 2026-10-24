@@ -947,7 +947,7 @@ test.describe("urls, feed and structured data", () => {
     const meta = (sel) => page.locator(sel).getAttribute("content");
     expect(await meta('meta[property="og:type"]')).toBe("article");
     expect(await meta('meta[property="og:image"]')).toBe("https://www.rahulkar.com/assets/og/notes/6502-on-two-breadboards-v1.png");
-    expect(await meta('meta[property="twitter:image"]')).toBe("https://www.rahulkar.com/assets/og/notes/6502-on-two-breadboards-v1.png");
+    expect(await meta('meta[name="twitter:image"]')).toBe("https://www.rahulkar.com/assets/og/notes/6502-on-two-breadboards-v1.png");
     expect(await meta('meta[property="article:modified_time"]')).toMatch(/^2026-10-17T/);
     expect(await page.locator('meta[property="article:tag"]').evaluateAll((ms) => ms.map((m) => m.content))).toEqual(["Retro computing", "Electronics"]);
     const card = await page.request.get("/assets/og/notes/6502-on-two-breadboards-v1.png");

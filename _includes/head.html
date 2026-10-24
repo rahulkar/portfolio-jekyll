@@ -12,10 +12,7 @@
   <meta name="robots" content="noindex">{% endif %}
   <link type="application/atom+xml" rel="alternate" href="{{ "/feed.xml" | absolute_url }}" title="{{ site.title }} | Notes">
 {%- if page.collection == "notes" %}
-  {%- comment -%} jekyll-seo-tag writes the publish date and the BlogPosting; a note adds when it changed, its topics and where it sits on the site. {%- endcomment -%}
-  {%- if page.last_modified_at %}
-  <meta property="article:modified_time" content="{{ page.last_modified_at | date_to_xmlschema }}">
-  {%- endif %}
+  {%- comment -%} jekyll-seo-tag writes the publish and update dates and the BlogPosting; a note adds its topics and where it sits on the site. {%- endcomment -%}
   {%- for t in page.topics %}
   <meta property="article:tag" content="{{ t }}">
   {%- endfor %}
