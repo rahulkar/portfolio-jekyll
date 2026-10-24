@@ -1,0 +1,15 @@
+# The six words in "I speak fluent geek, silicon, crypto, marketing,
+# electronics, and space stuff." (About, home page), each with an icon from
+# _includes/icon.html. Rahul's own sentence: keep the words and their order.
+- label: Geek
+  icon: terminal
+- label: Silicon
+  icon: cpu
+- label: Crypto
+  icon: bitcoin
+- label: Marketing
+  icon: megaphone
+- label: Electronics
+  icon: circuit-board
+- label: Space
+  icon: orbit

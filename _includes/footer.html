@@ -8,10 +8,10 @@
         <span class="sr-only" role="status" data-copy-status></span>
       </div>
       <ul class="links" role="list">
-        <li><a href="https://github.com/{{ site.github_username }}" rel="me"><span class="links__name">GitHub</span><span class="sr-only"> @{{ site.github_username }}</span>{% include icon.html name="external" %}</a></li>
-        <li><a href="{{ site.linkedin_url }}" rel="me"><span class="links__name">LinkedIn</span><span class="sr-only"> {{ site.linkedin_handle }}</span>{% include icon.html name="external" %}</a></li>
-        <li><a href="{{ site.credly_url }}" rel="me"><span class="links__name">Credly</span><span class="sr-only"> {{ site.credly_handle }}</span>{% include icon.html name="external" %}</a></li>
-        <li><a href="{{ "/assets/rahul-kar-v3.vcf" | relative_url }}" download="rahul-kar.vcf"><span class="links__name">vCard</span><span class="sr-only">, add to contacts</span></a></li>
+        <li><a href="https://github.com/{{ site.github_username }}" rel="me">{% include icon.html name="github" class="icon--md" %}<span class="links__name">GitHub</span><span class="sr-only"> @{{ site.github_username }}</span>{% include icon.html name="external" %}</a></li>
+        <li><a href="{{ site.linkedin_url }}" rel="me">{% include icon.html name="linkedin" class="icon--md" %}<span class="links__name">LinkedIn</span><span class="sr-only"> {{ site.linkedin_handle }}</span>{% include icon.html name="external" %}</a></li>
+        <li><a href="{{ site.credly_url }}" rel="me">{% include icon.html name="award" class="icon--md" %}<span class="links__name">Credly</span><span class="sr-only"> {{ site.credly_handle }}</span>{% include icon.html name="external" %}</a></li>
+        <li><a href="{{ "/assets/rahul-kar-v3.vcf" | relative_url }}" download="rahul-kar.vcf">{% include icon.html name="contact" class="icon--md" %}<span class="links__name">vCard</span><span class="sr-only">, add to contacts</span></a></li>
       </ul>
       <p class="contact__place">Based in Kolkata, India</p>
     </div>

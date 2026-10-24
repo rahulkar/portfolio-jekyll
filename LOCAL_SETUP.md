@@ -56,8 +56,10 @@ callouts, the command menu (Ctrl+K, filtering, keyboard, the section, theme,
 grid and copy commands, axe while open), the page-weight line, 44px targets, no
 layout shift when the scripts run, the theme toggle, the ink focus ring, the
 skip link, `prefers-contrast`, a scan proving red only appears on the tick and
-the current nav item, the print brief of `/how-i-work/`
-(saved as `how-i-work.pdf`), the redirects, the feed IDs, the sitemap and the
+the current nav item, the steps on `/how-i-work/` (what each produces, the
+hand-off links and the chips they ring, one rail from 1280px) and its print
+brief, which must fit one A4 page (saved as `how-i-work.pdf`), the redirects,
+the feed IDs, the sitemap and the
 home page's JSON-LD. Tests wait for `html.is-ready`, which `main.js` sets once
 the fonts are in (or after a second); keep that contract if the script changes.
 Lighthouse CI asserts accessibility and SEO scores (`lighthouserc.json`).
@@ -79,6 +81,7 @@ a console error. For a local run against the preview, block it:
 |---|---|---|
 | `npm run fonts` | Subsets Instrument Sans and Fragment Mono (from their Fontsource packages) to Latin, writes `assets/fonts/*-v1.woff2` and their OFL notices, and generates `src/styles/_font-faces.scss` with metric-matched fallbacks. Reads Arial and Consolas from `C:\Windows\Fonts` (or `FALLBACK_FONT_DIR`); Roboto comes from `@capsizecss/metrics` | when a font package changes |
 | `npm run brand` | Renders the favicon family (`favicon-vN.svg`, `.ico`, `apple-touch-icon-vN.png`, root `favicon.ico`), the share card `assets/og-vN.png`, and `assets/brand/linkedin-banner-vN.png` (1584×396, left side kept clear for the profile photo), `github-header-vN.png` (1280×320) and `email-signature-vN.png` (600×200 at 2×). Text is set as outlines; the datum is drawn without its red tick. Bump `V` at the top of `tools/brand.mjs` first, then the matching names in `_includes/head.html` and `_config.yml` | after changing the name, title or hero facts |
+| `npm run icons` | Writes `_includes/icon.html` from the list in `tools/icons.mjs`: the site's own 14px icons plus the ones it uses from Lucide (ISC) and Tabler Icons (MIT), both installed as dev dependencies, and copies their licences to `assets/icons/`. Every icon line is 1.5px at any size (`vector-effect: non-scaling-stroke`); sizes are the default 0.875em, `icon--md` (18px) and `icon--lg` (24px) | when adding an icon (name it in `tools/icons.mjs`, then use `{% include icon.html name="..." %}`) |
 | `node tools/photo.mjs <photo.heic> <name> [maxWidth]` | Decodes a phone photo (HEIC too), strips metadata, writes `assets/img/<name>-{640,1280}.{webp,jpg}` | when adding a photo (keep the `.heic` source out of git; it is ignored) |
 
 Files under `/assets` are immutable: the live site caches them for a year, so
@@ -89,6 +92,22 @@ any change to a font, icon or image gets a new `-vN` name.
 - `_data/capabilities.yml` holds the Background groups on the home page, in
   career order; they are drawn as a career scale, and the last one is marked
   "Now". It also feeds `knowsAbout` in the home page's JSON-LD.
+- `_data/playbook.yml` holds the steps on `/how-i-work/`: each step's summary
+  and what it usually produces, each output with an `icon`. An output's `next`
+  names the step it feeds and is drawn as a link to that step; `gate` draws the
+  go / no-go diamond on the rail after a step. Outputs are facts Rahul
+  confirmed, so ask before adding one.
+- Line drawings live in `_includes/art/`, one inline SVG each: the four steps
+  (by step id), the notes (`art:` in a note's front matter, shown beside its
+  title from 1024px) and the 404 page. They draw with classes from
+  `src/styles/_art.scss` (`art__key`, `art__guide`, `art__fill`, ...), never
+  colours or `style`, so they follow the theme and the CSP, and they stay
+  `aria-hidden`; print leaves them out. A note's `icon:` shows on its row in
+  the lists and in the command menu.
+- `_data/fluent.yml` sets the six words of the About lead as icons. They are
+  Rahul's own sentence, so keep the words and their order.
+  The hover ring pairs hand-offs with steps by id (the `@each` list in
+  `_pages.scss`), so a new step id goes in that list too.
 - The 6502 photo (`_includes/figure-6502.html`) carries numbered callouts whose
   boxes are percentages of the 1280×838 photo (`.callout--*` in
   `_components.scss`). A new photo needs new boxes; passing `caption=` to the

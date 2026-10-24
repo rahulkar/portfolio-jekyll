@@ -2,6 +2,8 @@
 title: Vintage silicon
 date: 2026-10-21
 description: "Three chips from my vintage CPU collection: a logic chip of the kind used in the Apollo Guidance Computer, an Intel 4004 and a 60 MHz Pentium."
+icon: microchip
+art: silicon
 ---
 Three chips from my vintage CPU collection, oldest first.
 

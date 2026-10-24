@@ -1,24 +1,46 @@
 ---
 layout: default
 title: How I work
-description: The steps Rahul Kar usually follows on a project - discover, prototype, architect, scale.
+description: The steps Rahul Kar usually follows on a project (discover, prototype, architect, scale) and what each one produces.
 permalink: /how-i-work/
 ---
-<div class="wrap grid page">
-  <header class="page__head">
+{%- assign steps = site.data.playbook -%}
+<div class="wrap grid page approach">
+  <header class="page__head approach__head">
     <h1>How I work</h1>
     <p class="page__lede">The steps I usually follow on a project.</p>
+    {% include book-cta.html %}
     <p class="print-only">Rahul Kar &middot; Enterprise Solution Architect &amp; Technology Lead &middot; {{ site.email }} &middot; www.rahulkar.com/how-i-work/</p>
   </header>
 
   <ol class="playbook" role="list">
-    <li class="playbook__stage"><h2>Discover</h2><p>Understand the problem, the constraints and the existing systems.</p></li>
-    <li class="playbook__stage"><h2>Prototype</h2><p>Build a proof of concept to test the risky parts first.</p></li>
-    <li class="playbook__stage"><h2>Architect</h2><p>Solution architecture, platform strategy and the roadmap.</p></li>
-    <li class="playbook__stage"><h2>Scale</h2><p>CI/CD pipelines, test automation and delivery.</p></li>
+    {%- for step in steps %}
+    <li class="playbook__stage{% if step.gate %} has-gate{% endif %}" id="{{ step.id }}">
+      <h2>{{ step.name }}</h2>
+      <p class="playbook__summary">{{ step.summary }}</p>
+      <div class="playbook__art">{% include art/{{ step.id }}.html %}</div>
+      <div class="playbook__produces">
+        <p class="playbook__label">Produces</p>
+        <ul class="playbook__out" role="list">
+          {%- for out in step.produces %}
+          <li>
+            {% include icon.html name=out.icon class="icon--md" %}
+            <span class="playbook__out-name">{{ out.name }}</span>
+            {%- if out.next -%}
+              {%- for s in steps -%}{%- if s.id == out.next -%}{%- assign to_n = forloop.index -%}{%- assign to_name = s.name -%}{%- endif -%}{%- endfor %}
+            <a class="playbook__next" href="#{{ out.next }}">{% include icon.html name="arrow" %}<span class="playbook__next-n" aria-hidden="true">0{{ to_n }}</span><span class="sr-only">Step {{ to_n }}, {{ to_name }}</span></a>
+            {%- endif %}
+            {%- if out.detail %}
+            <span class="playbook__out-detail">{{ out.detail }}</span>
+            {%- endif %}
+          </li>
+          {%- endfor %}
+        </ul>
+      </div>
+      {%- if step.gate %}
+      <p class="playbook__gate" aria-hidden="true">Go / no-go</p>
+      {%- endif %}
+    </li>
+    {%- endfor %}
   </ol>
-
-  <div class="playbook__cta">
-    {% include book-cta.html %}
-  </div>
 </div>

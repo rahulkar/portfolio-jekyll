@@ -7,6 +7,9 @@ layout: default
 {%- unless next_note -%}{%- assign next_note = notes.first -%}{%- endunless -%}
 {%- if next_note.url == page.url -%}{%- assign next_note = nil -%}{%- endif -%}
 <article class="wrap grid page note">
+  {%- if page.art %}
+  <div class="note__art">{% include art/{{ page.art }}.html %}</div>
+  {%- endif %}
   <header class="note__head">
     <p class="note__crumb"><a href="{{ "/notes/" | relative_url }}">Notes</a></p>
     <h1>{{ page.title }}</h1>

@@ -89,6 +89,28 @@
     break-inside: avoid;
   }
 
+  // The steps set tighter than on screen, so the brief is one A4 page.
+  .playbook {
+    --gate-space: var(--s-7);
+    margin-top: 0;
+    padding-top: var(--s-4);
+  }
+
+  .playbook__stage {
+    padding-bottom: var(--s-4);
+  }
+
+  .playbook__out {
+    --out-pad: var(--s-1);
+  }
+
+  // Drawings stay on screen; icons print.
+  .playbook__art,
+  .note__art,
+  .error__art {
+    display: none !important;
+  }
+
   h1,
   h2,
   h3 {
