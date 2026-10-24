@@ -9,18 +9,21 @@
     "build:css": "sass src/styles/main.scss assets/css/main.css --style=compressed --no-source-map",
     "build:js": "esbuild src/js/app.js --bundle --minify --format=iife --target=es2018 --outfile=assets/js/main.js",
     "build:orbit": "esbuild src/js/orbit.ts --bundle --minify --format=iife --target=es2018 --outfile=assets/js/orbit.js",
-    "build": "npm run build:css && npm run build:js && npm run build:orbit",
+    "build:notes": "esbuild src/js/notes.js --bundle --minify --format=iife --target=es2018 --outfile=assets/js/notes.js",
+    "build": "npm run build:css && npm run build:js && npm run build:orbit && npm run build:notes",
     "typecheck": "tsc -p tsconfig.json",
     "check:csp": "node tools/check-csp.mjs",
     "watch:css": "sass --watch src/styles/main.scss:assets/css/main.css --style=compressed --no-source-map",
     "watch:js": "esbuild src/js/app.js --bundle --minify --format=iife --target=es2018 --outfile=assets/js/main.js --watch",
     "watch:orbit": "esbuild src/js/orbit.ts --bundle --minify --format=iife --target=es2018 --outfile=assets/js/orbit.js --watch",
+    "watch:notes": "esbuild src/js/notes.js --bundle --minify --format=iife --target=es2018 --outfile=assets/js/notes.js --watch",
     "fonts": "node tools/fonts.mjs",
     "icons": "node tools/icons.mjs",
     "brand": "node tools/brand.mjs",
+    "cards": "node tools/note-cards.mjs",
     "serve": "bundle exec jekyll serve --force_polling",
     "serve:light": "bundle exec jekyll build && node tools/serve.mjs 4001 _site",
-    "dev": "npm run build && concurrently -k -n css,js,orbit,jekyll \"npm:watch:css\" \"npm:watch:js\" \"npm:watch:orbit\" \"npm:serve\"",
+    "dev": "npm run build && concurrently -k -n css,js,orbit,notes,jekyll \"npm:watch:css\" \"npm:watch:js\" \"npm:watch:orbit\" \"npm:watch:notes\" \"npm:serve\"",
     "test": "playwright test",
     "lhci": "lhci autorun",
     "validate:html": "html-validate \"_site/**/*.html\"",
@@ -50,6 +53,6 @@
     "typescript": "^7.0.2"
   },
   "simple-git-hooks": {
-    "pre-commit": "npm run build && npm run typecheck && npm run check:csp && git add assets/css/main.css assets/js/main.js assets/js/orbit.js"
+    "pre-commit": "npm run build && npm run typecheck && npm run check:csp && git add assets/css/main.css assets/js/main.js assets/js/orbit.js assets/js/notes.js"
   }
 }

@@ -109,7 +109,7 @@ if (existsSync(mainCss)) {
 }
 
 // Runtime: the scripts must never write inline styles or raw HTML strings.
-for (const bundle of ["assets/js/main.js", "assets/js/theme.js", "assets/js/orbit.js"]) {
+for (const bundle of ["assets/js/main.js", "assets/js/theme.js", "assets/js/orbit.js", "assets/js/notes.js"]) {
   if (!existsSync(bundle)) continue;
   const js = readFileSync(bundle, "utf8");
   const patterns = [

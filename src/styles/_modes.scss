@@ -75,6 +75,21 @@
   .playbook__stage > h2::before {
     border: 1px solid CanvasText;
   }
+
+  // The current topic, the section being read and the progress line keep
+  // their marks.
+  .topic[aria-current] {
+    outline: 2px solid Highlight;
+    outline-offset: -2px;
+  }
+
+  .toc__list a[aria-current] {
+    border-left-color: Highlight;
+  }
+
+  .progress {
+    background: Highlight;
+  }
 }
 
 // Same specificity as the dark-token selectors, so this also wins in dark.

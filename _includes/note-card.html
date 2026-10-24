@@ -1,0 +1,23 @@
+{%- comment -%} A note on the /notes/ index: its drawing, date and reading time, title, summary and topics. The title link covers the card; the topic links sit above it. data-topics holds the topic slugs for the filter (notes.js). {%- endcomment -%}
+{%- assign note = include.note -%}
+{%- capture minutes %}{% include reading-time.html content=note.content %}{% endcapture -%}
+<li class="note-card"{% if note.topics %} data-topics="{% for t in note.topics %}{{ t | slugify }}{% unless forloop.last %}{{ " " }}{% endunless %}{% endfor %}"{% endif %}>
+  <article class="note-card__inner">
+    {%- if note.art %}
+    <div class="note-card__art">{% include art/{{ note.art }}.html %}</div>
+    {%- endif %}
+    <div class="note-card__text">
+      <p class="note-card__meta"><time datetime="{{ note.date | date: '%Y-%m-%d' }}">{{ note.date | date: "%-d %b %Y" }}</time><span aria-hidden="true">&ensp;&middot;&ensp;</span><span>{{ minutes }} min read</span></p>
+      <h2 class="note-card__title"><a class="note-card__link" href="{{ note.url | relative_url }}">{{ note.title }}</a></h2>
+      <p class="note-card__summary">{{ note.description }}</p>
+      <p class="note-card__more" aria-hidden="true"><span>Read note</span>{% include icon.html name="arrow" %}</p>
+      {%- if note.topics %}
+      <ul class="tags" role="list" aria-label="Topics">
+        {%- for t in note.topics %}
+        <li><a class="tag" href="{{ "/notes/" | relative_url }}?topic={{ t | slugify }}">{{ t }}</a></li>
+        {%- endfor %}
+      </ul>
+      {%- endif %}
+    </div>
+  </article>
+</li>

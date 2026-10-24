@@ -1,18 +1,34 @@
 ---
 layout: default
 title: Notes
-description: "Write-ups by Rahul Kar: a 6502 computer on breadboards and how this site is built."
+description: "Write-ups by Rahul Kar: vintage chips, a 6502 computer on breadboards and how this site is built."
 permalink: /notes/
 ---
+{%- assign notes = site.notes | sort: "date" | reverse -%}
+{%- assign topics = "" | split: "" -%}
+{%- for note in notes -%}{%- if note.topics -%}{%- assign topics = topics | concat: note.topics -%}{%- endif -%}{%- endfor -%}
+{%- assign topics = topics | uniq | sort_natural -%}
 <div class="wrap grid page notes-index">
-  <header class="page__head">
+  <header class="page__head notes-index__head">
     <h1>Notes</h1>
-    <p class="notes-index__feed">Write-ups of things I've built. <a href="{{ "/feed.xml" | relative_url }}">Atom feed</a></p>
+    <p class="page__lede">Write-ups of things I've built.</p>
+    <p class="notes-index__meta"><span>{{ notes.size }} notes</span><a class="notes-index__feed" href="{{ "/feed.xml" | relative_url }}">{% include icon.html name="feed" %}<span>Atom feed</span></a></p>
   </header>
-  {% assign notes = site.notes | sort: "date" | reverse %}
-  <ul class="rows" role="list">
+  {%- comment -%} The topic filter needs the script (notes.js), so it starts hidden; a topic link elsewhere still lands here, on the full list. {%- endcomment %}
+  <nav class="topics" aria-label="Topics" data-topics hidden>
+    <ul class="topics__list" role="list">
+      <li><a class="topic" href="{{ "/notes/" | relative_url }}" data-topic="">All<span class="topic__n"><span class="sr-only">, </span>{{ notes.size }}<span class="sr-only"> notes</span></span></a></li>
+      {%- for t in topics %}
+      {%- assign tagged = notes | where_exp: "n", "n.topics contains t" %}
+      <li><a class="topic" href="{{ "/notes/" | relative_url }}?topic={{ t | slugify }}" data-topic="{{ t | slugify }}">{{ t }}<span class="topic__n"><span class="sr-only">, </span>{{ tagged.size }}<span class="sr-only"> {% if tagged.size == 1 %}note{% else %}notes{% endif %}</span></span></a></li>
+      {%- endfor %}
+    </ul>
+    <p class="sr-only" role="status" data-topics-status></p>
+  </nav>
+  <ul class="note-grid" role="list" data-note-grid>
     {%- for note in notes %}
-    {% include note-row.html note=note level="h2" %}
+    {% include note-card.html note=note %}
     {%- endfor %}
   </ul>
 </div>
+<script defer src="{{ "/assets/js/notes.js" | relative_url }}?v={{ site.time | date: '%s' }}"></script>

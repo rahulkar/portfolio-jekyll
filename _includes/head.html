@@ -11,6 +11,26 @@
   {% seo %}{% if page.noindex %}
   <meta name="robots" content="noindex">{% endif %}
   <link type="application/atom+xml" rel="alternate" href="{{ "/feed.xml" | absolute_url }}" title="{{ site.title }} | Notes">
+{%- if page.collection == "notes" %}
+  {%- comment -%} jekyll-seo-tag writes the publish date and the BlogPosting; a note adds when it changed, its topics and where it sits on the site. {%- endcomment -%}
+  {%- if page.last_modified_at %}
+  <meta property="article:modified_time" content="{{ page.last_modified_at | date_to_xmlschema }}">
+  {%- endif %}
+  {%- for t in page.topics %}
+  <meta property="article:tag" content="{{ t }}">
+  {%- endfor %}
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Home", "item": {{ "/" | absolute_url | jsonify }} },
+      { "@type": "ListItem", "position": 2, "name": "Notes", "item": {{ "/notes/" | absolute_url | jsonify }} },
+      { "@type": "ListItem", "position": 3, "name": {{ page.title | jsonify }}, "item": {{ page.url | absolute_url | jsonify }} }
+    ]
+  }
+  </script>
+{%- endif %}
 
   <link rel="preload" as="font" type="font/woff2" href="{{ "/assets/fonts/instrument-sans-v1.woff2" | relative_url }}" crossorigin>
   <link rel="preload" as="font" type="font/woff2" href="{{ "/assets/fonts/fragment-mono-v1.woff2" | relative_url }}" crossorigin>

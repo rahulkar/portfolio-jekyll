@@ -26,7 +26,7 @@ Jekyll can run against the globally installed gems by bypassing Bundler:
 ## Everyday loop
 
 ```powershell
-npm run build          # sass + esbuild -> assets/css/main.css, assets/js/main.js, assets/js/orbit.js
+npm run build          # sass + esbuild -> assets/css/main.css, assets/js/main.js, assets/js/orbit.js, assets/js/notes.js
 npm run typecheck      # tsc over src/js/**/*.ts; checks types and emits nothing
 npm run check:csp      # lint markup and scripts for CSP regressions, plus the accent guard
 bundle exec jekyll build
@@ -41,7 +41,7 @@ server, not `jekyll serve`. `npm run dev` still runs the sass/esbuild watchers
 next to `jekyll serve --force_polling` for quick iteration without reload.
 
 **Run `npm run build` before every commit.** CI rebuilds and fails if the
-committed `assets/css/main.css`, `assets/js/main.js` or `assets/js/orbit.js` differ from `src/`.
+committed `assets/css/main.css`, `assets/js/main.js`, `assets/js/orbit.js` or `assets/js/notes.js` differ from `src/`.
 
 ## Tests
 
@@ -58,9 +58,15 @@ layout shift when the scripts run, the theme toggle, the ink focus ring, the
 skip link, `prefers-contrast`, a scan proving red only appears on the tick and
 the current nav item, the steps on `/how-i-work/` (what each produces, the
 hand-off links and the chips they ring, one rail from 1280px) and its print
-brief, which must fit one A4 page (saved as `how-i-work.pdf`), the redirects,
-the feed IDs, the sitemap and the
-home page's JSON-LD. Tests wait for `html.is-ready`, which `main.js` sets once
+brief, which must fit one A4 page (saved as `how-i-work.pdf`), the notes (the
+card grid closing every row at three widths, the topic filter and its address,
+Back, unknown topics and topic links from a note, the facts and the contents
+against the sections, the rail from 1024px and the section it marks, every
+share link's address, Copy link with and without clipboard access, the photo
+viewer with the keyboard and axe while open, the progress line, 44px targets
+and the pages without JavaScript), the redirects, the feed IDs and topics, the
+sitemap, the home page's JSON-LD and a note's share card, article tags and
+breadcrumbs. Tests wait for `html.is-ready`, which `main.js` sets once
 the fonts are in (or after a second); keep that contract if the script changes.
 Lighthouse CI asserts accessibility and SEO scores (`lighthouserc.json`).
 
@@ -82,6 +88,7 @@ a console error. For a local run against the preview, block it:
 | `npm run fonts` | Subsets Instrument Sans and Fragment Mono (from their Fontsource packages) to Latin, writes `assets/fonts/*-v1.woff2` and their OFL notices, and generates `src/styles/_font-faces.scss` with metric-matched fallbacks. Reads Arial and Consolas from `C:\Windows\Fonts` (or `FALLBACK_FONT_DIR`); Roboto comes from `@capsizecss/metrics` | when a font package changes |
 | `npm run brand` | Renders the favicon family (`favicon-vN.svg`, `.ico`, `apple-touch-icon-vN.png`, root `favicon.ico`), the share card `assets/og-vN.png`, and `assets/brand/linkedin-banner-vN.png` (1584×396, left side kept clear for the profile photo), `github-header-vN.png` (1280×320) and `email-signature-vN.png` (600×200 at 2×). Text is set as outlines; the datum is drawn without its red tick. Bump `V` at the top of `tools/brand.mjs` first, then the matching names in `_includes/head.html` and `_config.yml` | after changing the name, title or hero facts |
 | `npm run icons` | Writes `_includes/icon.html` from the list in `tools/icons.mjs`: the site's own 14px icons plus the ones it uses from Lucide (ISC) and Tabler Icons (MIT), both installed as dev dependencies, and copies their licences to `assets/icons/`. Every icon line is 1.5px at any size (`vector-effect: non-scaling-stroke`); sizes are the default 0.875em, `icon--md` (18px) and `icon--lg` (24px) | when adding an icon (name it in `tools/icons.mjs`, then use `{% include icon.html name="..." %}`) |
+| `npm run cards` | Renders each note's share card (the `og:image` the networks show with a link, 1200×630): its title and summary as outlines, its date and its drawing from `_includes/art/` on a framed plate, in the datum colours. Writes to the note's `image.path`; notes without one are skipped | after adding a note or changing its title, summary or drawing (bump the `-vN` in `image.path` first) |
 | `node tools/photo.mjs <photo.heic> <name> [maxWidth]` | Decodes a phone photo (HEIC too), strips metadata, writes `assets/img/<name>-{640,1280}.{webp,jpg}` | when adding a photo (keep the `.heic` source out of git; it is ignored) |
 
 Files under `/assets` are immutable: the live site caches them for a year, so
@@ -98,12 +105,12 @@ any change to a font, icon or image gets a new `-vN` name.
   go / no-go diamond on the rail after a step. Outputs are facts Rahul
   confirmed, so ask before adding one.
 - Line drawings live in `_includes/art/`, one inline SVG each: the four steps
-  (by step id), the notes (`art:` in a note's front matter, shown beside its
-  title from 1024px) and the 404 page. They draw with classes from
+  (by step id), the notes (`art:` in a note's front matter: on its card, on its
+  page beside the title from 1024px, and on its share card) and the 404 page. They draw with classes from
   `src/styles/_art.scss` (`art__key`, `art__guide`, `art__fill`, ...), never
   colours or `style`, so they follow the theme and the CSP, and they stay
   `aria-hidden`; print leaves them out. A note's `icon:` shows on its row in
-  the lists and in the command menu.
+  the home page's Notes list and in the command menu.
 - `_data/fluent.yml` sets the six words of the About lead as icons. They are
   Rahul's own sentence, so keep the words and their order.
   The hover ring pairs hand-offs with steps by id (the `@each` list in
@@ -118,9 +125,13 @@ any change to a font, icon or image gets a new `-vN` name.
 ## Writing a note
 
 Notes are a Jekyll collection: one markdown file per piece under `_notes/`, with
-`title`, `date`, a one-line `description` and, optionally, `last_modified_at`.
+`title`, `date`, a one-line `description` and, optionally, `last_modified_at`,
+`icon` (from `_includes/icon.html`), `art` (a drawing in `_includes/art/`),
+`topics` (a list, e.g. `[Retro computing, Silicon]`) and `image` (its share
+card: `path`, `width`, `height` and `alt`; run `npm run cards` to draw it).
 The index at `/notes/` lists them newest first and each gets its own page at
-`/notes/<name>/`. Liquid includes work inside the markdown, so a photo made
+`/notes/<name>/`. Section headings are `##`: each links to itself, and with two
+or more the note gets a numbered contents list. Liquid includes work inside the markdown, so a photo made
 with `tools/photo.mjs` is
 `{% include photo.html name="<name>" h="<height at 640 wide>" alt="..." caption="..." %}`
 (add `max="960"` if it was made at that width, `class="figure--portrait"` for a
@@ -133,6 +144,42 @@ skips paths that already exist and only writes `/feed/posts.xml`). It keeps the
 entry IDs subscribers already hold: notes that used to live under `/scribbles/`
 carry their old ID in `feed_id`. When a note moves, add a stub in `redirects/`
 (`permalink` and `redirect_to`) and keep its old ID the same way.
+
+## Notes pages
+
+`/notes/` (`notes.html`) sets the notes as cards (`_includes/note-card.html`):
+the drawing on a framed plate, date and reading time, title, summary and
+topics. One card to a row on phones, two from 640px and three from 1024px; the
+first card widens when the count would leave a row short (quantity queries in
+`_notes.scss`), and a card that wide lays its drawing beside its text (a
+container query). The topic filter above them, with a count per topic, needs
+`notes.js`, so it starts hidden: a topic link narrows the grid in place and
+keeps the choice in the address (`/notes/?topic=web`), so Back undoes it and a
+topic link on a note lands on the filtered list. Without the script every note
+shows.
+
+A note (`_layouts/note.html`) opens with its facts (author, published, updated,
+reading time at 220 words a minute, topics), then the drawing, a numbered
+contents list built from the `##` headings at build time, the text, the share
+links, the author, and links to the newer and older notes. From 1024px the
+drawing sits beside the title, and the contents and share links stay beside the
+text as it scrolls, with the section being read marked in ink. A 2px ink line
+under the top edge shows how far down the page you are; it is a CSS
+scroll-driven animation, so browsers without them simply do not draw it.
+Tables are wrapped so a wide one scrolls on its own.
+
+The share links (LinkedIn, X, Bluesky, Hacker News, Reddit, WhatsApp, email)
+are plain links to each network's own share page, so nothing loads from them
+until a reader clicks; the link checker in CI skips them, as those pages turn
+bots away. `notes.js` (`src/js/notes.js`, loaded only on notes pages) adds Copy
+link (or, without clipboard access, the address selected in a field), Share,
+which opens the device's share sheet where the browser has one, the topic
+filter, the contents marker, a Copy button on code blocks, and the photo viewer:
+a photo opens large in a `<dialog>` the layout renders, on the dark tokens in
+either theme, with the arrow keys stepping through the note's photos. Without
+the script, photos link to their files. Each note's head also carries
+`article:modified_time`, `article:tag` and a `BreadcrumbList`, and the feed
+lists its topics as categories.
 
 ## The datum
 

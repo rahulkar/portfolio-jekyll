@@ -4,6 +4,12 @@ date: 2026-10-21
 description: "Three chips from my vintage CPU collection: a logic chip of the kind used in the Apollo Guidance Computer, an Intel 4004 and a 60 MHz Pentium."
 icon: microchip
 art: silicon
+topics: [Retro computing, Silicon]
+image:
+  path: /assets/og/notes/vintage-silicon-v1.png
+  width: 1200
+  height: 630
+  alt: "Vintage silicon, a note by Rahul Kar, with a line drawing of three chips"
 ---
 Three chips from my vintage CPU collection, oldest first.
 

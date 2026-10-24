@@ -74,13 +74,32 @@
     color: var(--ink-2);
   }
 
-  .row__link::after {
+  .row__link::after,
+  .note-card__link::after {
     position: static;
     inset: auto;
   }
 
   .row::before {
     display: none;
+  }
+
+  // A note prints as its title, facts, contents and text.
+  .progress,
+  .topics,
+  .tags,
+  .note__topics,
+  .note__share,
+  .note__foot,
+  .lightbox,
+  .code-copy {
+    display: none !important;
+  }
+
+  // A photo prints as itself, not the address of its full-size file.
+  .heading-link::after,
+  .figure__link::after {
+    content: none;
   }
 
   .playbook__stage,
@@ -107,6 +126,7 @@
   // Drawings stay on screen; icons print.
   .playbook__art,
   .note__art,
+  .note-card__art,
   .error__art {
     display: none !important;
   }

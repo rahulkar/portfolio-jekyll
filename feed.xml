@@ -22,6 +22,9 @@ sitemap: false
     <published>{{ note.date | date_to_xmlschema }}</published>
     <updated>{{ note.last_modified_at | default: note.date | date_to_xmlschema }}</updated>
     <id>{{ note.feed_id | default: note.id | absolute_url | xml_escape }}</id>
+    {%- for t in note.topics %}
+    <category term="{{ t | slugify }}" label="{{ t | xml_escape }}"/>
+    {%- endfor %}
     <content type="html" xml:base="{{ note.url | absolute_url | xml_escape }}">{{ note.content | strip | xml_escape }}</content>
     <summary type="html">{{ note.description | xml_escape }}</summary>
   </entry>

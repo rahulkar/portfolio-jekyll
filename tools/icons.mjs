@@ -53,6 +53,16 @@ const PACK = {
   // Notes (the `icon` in each note's front matter)
   microchip: "microchip",
   "code-xml": "code-xml",
+  // Notes: share, back to top and the photo viewer
+  link: "link",
+  share: "share",
+  "arrow-up": "arrow-up",
+  close: "x",
+  "brand-x": "tabler:brand-x",
+  bluesky: "tabler:brand-bluesky",
+  "hacker-news": "tabler:brand-ycombinator",
+  reddit: "tabler:brand-reddit",
+  whatsapp: "tabler:brand-whatsapp",
   // Profiles
   github: "tabler:brand-github",
   linkedin: "tabler:brand-linkedin",
