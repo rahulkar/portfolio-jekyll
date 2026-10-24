@@ -1,0 +1,840 @@
+// Notes: the index (a grid of cards with a topic filter) and each note's page
+// (facts under the title, contents and share links in a rail beside the text,
+// a reading-progress line, the author and the newer and older notes), plus
+// the photo viewer and code blocks. Square corners and ink only, never the
+// accent; the drawings come from _includes/art/.
+@use "mixins" as *;
+
+/* Index: head and topics -------------------------------------------------- */
+
+// From 1024px the title takes the left half and the lede the right, as on
+// How I work.
+.notes-index__head {
+  @include wide {
+    grid-template-columns: subgrid;
+    column-gap: var(--gutter);
+
+    > h1 { @include cols(1, 6); grid-row: 1 / span 2; }
+    > .page__lede,
+    > .notes-index__meta { @include cols(7, 12); }
+  }
+}
+
+.notes-index__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 var(--s-5);
+  margin-top: calc(-1 * var(--s-2));
+  font-size: var(--fs-small);
+  color: var(--ink-2);
+
+  > span { @include data; }
+}
+
+.notes-index__feed {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  min-height: 44px;
+
+  .icon { color: var(--ink-3); }
+}
+
+// The filter: one link per topic with its count. The current one is set in
+// ink, like the number chips on How I work.
+.topics {
+  padding-top: var(--s-4);
+  border-top: 1px solid var(--ink);
+}
+
+.topics__list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2);
+}
+
+.topic {
+  @include label;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-3);
+  min-height: 44px;
+  padding: 0 var(--s-3);
+  border: 1px solid var(--ink-3);
+  color: var(--ink);
+  text-decoration: none;
+  transition: background-color 120ms var(--ease);
+
+  &:hover { background: var(--bg-inset); }
+
+  &[aria-current] {
+    border-color: var(--ink);
+    background: var(--ink);
+    color: var(--on-ink);
+  }
+}
+
+.topic__n {
+  @include data;
+  font-size: 0.75rem;
+  color: var(--ink-2);
+
+  .topic[aria-current] & { color: var(--on-ink); }
+}
+
+/* Index: the grid of cards ------------------------------------------------ */
+
+// One card to a row on phones, two from 640px, three from 1024px. When the
+// count would leave a row short, the first row changes instead (quantity
+// queries): one card across, or from 1024px two halves, so every row closes.
+// A card wide enough lays its drawing beside its text.
+.note-grid {
+  display: grid;
+  grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
+  gap: var(--s-7) var(--gutter);
+  margin-top: var(--s-2);
+}
+
+.note-card {
+  container-type: inline-size;
+  grid-column: 1 / -1;
+  min-width: 0;
+
+  @include mid { grid-column: span 3; }
+  @include wide { grid-column: span 4; }
+}
+
+@include mid {
+  .note-card:first-child:nth-last-child(odd) { grid-column: 1 / -1; }
+}
+
+@include wide {
+  .note-card:first-child:nth-last-child(odd) { grid-column: span 4; }
+  .note-card:first-child:nth-last-child(3n + 1) { grid-column: 1 / -1; }
+
+  .note-card:first-child:nth-last-child(3n + 2),
+  .note-card:first-child:nth-last-child(3n + 2) + .note-card { grid-column: span 6; }
+}
+
+.note-card__inner {
+  position: relative;
+  display: grid;
+  gap: var(--s-4);
+  align-content: start;
+}
+
+// The drawing on a framed plate. Pointing at the card firms up the frame and
+// the lines.
+.note-card__art {
+  aspect-ratio: 7 / 4;
+  padding: var(--s-5);
+  border: 1px solid var(--rule);
+  color: var(--ink-2);
+  transition: border-color 120ms var(--ease), color 120ms var(--ease);
+
+  > .art {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.note-card__text {
+  display: grid;
+  gap: var(--s-2);
+  align-content: start;
+}
+
+.note-card__meta {
+  @include data;
+  color: var(--ink-2);
+}
+
+.note-card__title {
+  font-size: var(--fs-h3);
+  line-height: 1.25;
+}
+
+// The underline is the affordance; the whole card is the target.
+.note-card__link {
+  text-decoration: underline 1px var(--ink-3);
+  text-underline-offset: 0.18em;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+  }
+}
+
+.note-card__inner:hover {
+  .note-card__art { border-color: var(--ink-3); color: var(--ink); }
+  .note-card__link { text-decoration: underline 2px var(--ink); }
+}
+
+// Keyboard focus rings the whole card where :has() can tell it to.
+@supports selector(:has(*)) {
+  .note-card__link:focus-visible { outline: none; }
+
+  .note-card__inner:has(.note-card__link:focus-visible) {
+    outline: 2px solid var(--focus);
+    outline-offset: 6px;
+  }
+}
+
+.note-card__summary {
+  max-width: var(--measure);
+  font-size: var(--fs-small);
+  line-height: 1.45;
+  color: var(--ink-2);
+}
+
+.note-card__more {
+  display: none;
+  align-items: center;
+  gap: 0.375rem;
+  font-weight: 500;
+
+  > span {
+    text-decoration: underline 1px var(--ink-3);
+    text-underline-offset: 0.18em;
+  }
+}
+
+// Topic links sit above the card's own link.
+.note-card .tags {
+  position: relative;
+  z-index: 1;
+  margin-top: var(--s-2);
+}
+
+@container (min-width: 40rem) {
+  .note-card__inner {
+    grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+    column-gap: var(--gutter);
+    align-items: center;
+  }
+
+  .note-card__title { font-size: var(--fs-h2); line-height: 1.15; }
+  .note-card__summary { font-size: var(--fs-body); line-height: 1.55; }
+  .note-card__more { display: inline-flex; }
+}
+
+/* Topic tags -------------------------------------------------------------- */
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2);
+}
+
+.tag {
+  @include label;
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.75rem;
+  padding: 0 var(--s-2);
+  border: 1px solid var(--rule);
+  color: var(--ink-2);
+  text-decoration: none;
+  transition: border-color 120ms var(--ease), background-color 120ms var(--ease);
+
+  &:hover {
+    border-color: var(--ink-3);
+    background: var(--bg-inset);
+    color: var(--ink);
+  }
+}
+
+/* Note: layout ------------------------------------------------------------ */
+
+// Phones and tablets: the title, facts, drawing and contents, the text, then
+// sharing, the author and the newer and older notes. From 1024px the drawing
+// sits beside the title and facts, and the contents and share links stay
+// beside the text as it scrolls. From 1280px the title and text take the
+// middle six columns, with the contents and share links on the left and the
+// drawing and facts on the right, both staying in view as the text scrolls.
+.note {
+  @include wide {
+    > .note__head { @include cols(4, 12); grid-row: 1; }
+    > .note__facts { @include cols(4, 12); grid-row: 2; }
+    > .note__art { @include cols(1, 3); grid-row: 1 / span 2; }
+    > .note__rail { @include cols(1, 3); grid-row: 3 / span 2; }
+    > .note__body { @include cols(4, 12); grid-row: 3; }
+    > .note__foot { @include cols(4, 12); grid-row: 4; }
+  }
+
+  @include xl {
+    > .note__head { @include cols(4, 9); grid-row: 1; }
+    > .note__body { @include cols(4, 9); grid-row: 2; }
+    > .note__foot { @include cols(4, 9); grid-row: 3; }
+    > .note__rail { grid-row: 1 / span 3; }
+    > .note__art { @include cols(10, 12); grid-row: 1; }
+    > .note__facts { @include cols(10, 12); grid-row: 2 / span 2; }
+  }
+}
+
+.note__head {
+  display: grid;
+  gap: var(--s-4);
+}
+
+.note__crumb a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+}
+
+// Facts like a spec sheet: label over value, as many to a line as fit; from
+// 1280px two to a line beside the text, staying in view.
+.note__facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-4) var(--s-6);
+  padding-top: var(--s-3);
+  border-top: 1px solid var(--rule);
+
+  > div {
+    display: grid;
+    gap: var(--s-1);
+    align-content: start;
+  }
+
+  dt {
+    @include label;
+    color: var(--ink-3);
+  }
+
+  // Every value as tall as a topic tag, so the values share a line.
+  dd {
+    @include data;
+    display: flex;
+    align-items: center;
+    min-height: 1.75rem;
+  }
+
+  @include xl {
+    position: sticky;
+    top: calc(64px + var(--s-5));
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--s-4) var(--gutter);
+
+    > .note__topics { grid-column: 1 / -1; }
+  }
+}
+
+.note__art {
+  padding: var(--s-5);
+  border: 1px solid var(--rule);
+  color: var(--ink-2);
+
+  > .art {
+    max-width: 20rem;
+    margin-inline: auto;
+  }
+
+  @include wide {
+    padding: var(--s-4);
+
+    > .art { max-width: none; }
+  }
+}
+
+.note__rail {
+  display: grid;
+  gap: var(--s-6);
+  align-content: start;
+
+  @include wide {
+    position: sticky;
+    top: calc(64px + var(--s-5));
+  }
+}
+
+// Share links: in the rail from 1024px, after the text below that.
+.note__rail .note__share {
+  display: none;
+
+  @include wide { display: block; }
+}
+
+.note__foot .note__share {
+  @include wide { display: none; }
+}
+
+// In the middle column from 1280px the lines can run a little longer.
+.note__body {
+  @include xl { --measure: 36em; }
+}
+
+.note__foot {
+  display: grid;
+  gap: var(--s-6);
+  margin-top: var(--s-6);
+  padding-top: var(--s-5);
+  border-top: 1px solid var(--ink);
+}
+
+// The reading-progress line: a scroll-driven animation, so it needs no
+// script; where the browser cannot tie an animation to scrolling, it is not
+// drawn.
+.progress {
+  display: none;
+}
+
+@supports (animation-timeline: scroll()) {
+  .progress {
+    display: block;
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    z-index: 6;
+    height: 2px;
+    background: var(--ink);
+    transform-origin: 0 50%;
+    animation: note-progress linear both;
+    animation-timeline: scroll(root block);
+  }
+}
+
+@keyframes note-progress {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+/* Note: contents and section headings ------------------------------------- */
+
+.toc {
+  display: grid;
+  gap: var(--s-3);
+}
+
+.toc__title {
+  @include label;
+  color: var(--ink-3);
+}
+
+// One hairline down the list; the section being read gets an ink bar on it.
+.toc__list {
+  border-left: 1px solid var(--rule);
+
+  a {
+    display: flex;
+    gap: var(--s-3);
+    margin-left: -1px;
+    padding: var(--s-1) 0 var(--s-1) var(--s-3);
+    border-left: 2px solid transparent;
+    font-size: var(--fs-small);
+    line-height: 1.4;
+    color: var(--ink-2);
+    text-decoration: none;
+
+    &:hover {
+      color: var(--ink);
+
+      > span:last-child { text-decoration: underline 1px var(--ink-3); text-underline-offset: 0.18em; }
+    }
+
+    &[aria-current] {
+      border-left-color: var(--ink);
+      color: var(--ink);
+      font-weight: 500;
+    }
+  }
+}
+
+.toc__n {
+  @include data;
+  flex: none;
+  padding-top: 0.05em;
+  color: var(--ink-3);
+}
+
+// With a contents list, each section heading carries its number.
+.has-toc .note__body {
+  counter-reset: section;
+
+  > h2 { counter-increment: section; }
+
+  > h2::before {
+    @include data;
+    content: counter(section, decimal-leading-zero) / "";
+    margin-right: var(--s-3);
+    color: var(--ink-3);
+    vertical-align: 0.15em;
+  }
+}
+
+// A heading links to itself; the # shows where the pointer or focus is, and
+// always on touch screens.
+.heading-link {
+  text-decoration: none;
+
+  &::after {
+    content: "#" / "";
+    margin-left: 0.35em;
+    font-weight: 400;
+    color: var(--ink-3);
+    opacity: 0;
+    transition: opacity 120ms var(--ease);
+  }
+
+  &:hover::after,
+  &:focus-visible::after { opacity: 1; }
+
+  @media (hover: none) {
+    &::after { opacity: 1; }
+  }
+}
+
+// A table wider than the text scrolls on its own.
+.table-scroll {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+/* Note: share ------------------------------------------------------------- */
+
+.share {
+  display: grid;
+  gap: var(--s-3);
+}
+
+.share__label {
+  @include label;
+  color: var(--ink-3);
+}
+
+.share__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2);
+
+  &:not(:has(> :not([hidden]))) { display: none; }
+}
+
+.share__button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  min-height: 44px;
+  padding: 0 var(--s-3);
+  border: 1px solid var(--ink-3);
+  border-radius: 0;
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+  transition: background-color 120ms var(--ease);
+
+  &:hover { background: var(--bg-inset); }
+}
+
+.share__button-label {
+  @include label;
+  min-width: 6.5em;
+  text-align: left;
+}
+
+.share__url {
+  width: 100%;
+  min-height: 44px;
+  padding: 0 var(--s-3);
+  border: 1px solid var(--ink);
+  border-radius: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font: 0.8125rem / 1.5 var(--mono);
+}
+
+// The networks as one strip of 44px cells, their hairlines shared, each
+// with its name above it on hover or focus. In the rail beside the text
+// (pointer screens) the cells narrow, down to 30px, to stay on one line.
+.share__links {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 0 1px 1px 0;
+
+  > li { margin: 0 -1px -1px 0; }
+
+  .note__rail & {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(30px, 1fr));
+    max-width: calc(7 * 44px);
+
+    .share__link {
+      width: auto;
+      height: auto;
+      aspect-ratio: 1;
+    }
+  }
+}
+
+.share__link {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--rule);
+  color: var(--ink-2);
+  transition: background-color 120ms var(--ease), color 120ms var(--ease);
+
+  &:hover {
+    z-index: 1;
+    border-color: var(--ink-3);
+    background: var(--bg-inset);
+    color: var(--ink);
+  }
+
+  &::after {
+    content: attr(data-label) / "";
+    position: absolute;
+    bottom: calc(100% + 3px);
+    left: 50%;
+    display: none;
+    padding: 0.125rem 0.375rem;
+    background: var(--ink);
+    color: var(--on-ink);
+    font: 0.6875rem / 1.4 var(--mono);
+    white-space: nowrap;
+    transform: translateX(-50%);
+    pointer-events: none;
+  }
+
+  &:hover::after,
+  &:focus-visible::after { display: block; }
+}
+
+/* Note: author, newer and older ------------------------------------------- */
+
+.author {
+  display: grid;
+  gap: var(--s-1);
+}
+
+.author__label {
+  @include label;
+  color: var(--ink-3);
+}
+
+.author__name {
+  font-size: var(--fs-h3);
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+}
+
+.author__role {
+  font-size: var(--fs-small);
+  line-height: 1.45;
+  color: var(--ink-2);
+}
+
+.author__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 var(--s-5);
+}
+
+.pager {
+  display: grid;
+  gap: var(--s-4) var(--gutter);
+
+  @include mid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+.pager__link {
+  display: grid;
+  gap: var(--s-1);
+  align-content: start;
+  padding: var(--s-3) 0 var(--s-4);
+  border-top: 1px solid var(--ink);
+  text-decoration: none;
+
+  &:hover .pager__title { text-decoration: underline 2px var(--ink); }
+}
+
+.pager__link--older {
+  @include mid {
+    grid-column: 2;
+    justify-items: end;
+    text-align: right;
+  }
+}
+
+.pager__dir {
+  @include label;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  color: var(--ink-3);
+}
+
+.pager__title {
+  font-size: var(--fs-h3);
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  text-decoration: underline 1px var(--ink-3);
+  text-underline-offset: 0.18em;
+}
+
+.pager__date {
+  @include data;
+  color: var(--ink-2);
+}
+
+.note__more {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0 var(--s-5);
+}
+
+.note__top {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  min-height: 48px;
+  color: var(--ink-2);
+}
+
+.icon--flip {
+  transform: scaleX(-1);
+}
+
+/* Photo viewer ------------------------------------------------------------ */
+
+// A photo opens over the page on the dark tokens, in either theme, sized to
+// the window. The page behind does not scroll while it is open.
+.lightbox {
+  @include dark-tokens;
+  // Derived tokens resolve where they are declared, so the root's light focus
+  // ink would reach the viewer unless it declares it again (as the orbit stage).
+  --focus: var(--ink);
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  max-height: none;
+  margin: 0;
+  padding: var(--s-3) var(--margin) var(--s-5);
+  border: 0;
+  background: var(--bg);
+  color: var(--ink);
+
+  &[open] {
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+    gap: var(--s-3);
+  }
+
+  // Mirrors the higher-contrast override in _modes.scss, which targets :root.
+  @media (prefers-contrast: more) {
+    --ink-3: var(--ink-2);
+    --rule: var(--ink-3);
+  }
+}
+
+html:has(.lightbox[open]) {
+  overflow: hidden;
+}
+
+.lightbox__bar {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+}
+
+.lightbox__count {
+  @include data;
+  margin-right: auto;
+  color: var(--ink-2);
+}
+
+.lightbox__button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s-2);
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0 var(--s-2);
+  border: 1px solid var(--ink-3);
+  border-radius: 0;
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+  transition: background-color 120ms var(--ease);
+
+  &:hover { background: var(--bg-inset); }
+}
+
+.lightbox__close-label {
+  @include label;
+}
+
+// The photo and its caption, centred together. The photo takes the full width
+// and gives up height when the window is short; `contain` keeps its shape, so
+// the caption always sits right under it.
+.lightbox__figure {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--s-3);
+  min-height: 0;
+}
+
+.lightbox__img {
+  flex: 0 1 auto;
+  width: 100%;
+  height: auto;
+  min-height: 0;
+  object-fit: contain;
+}
+
+.lightbox__caption {
+  flex: none;
+  align-self: center;
+  max-width: var(--measure);
+  font-size: var(--fs-small);
+  line-height: 1.45;
+  text-align: center;
+  color: var(--ink-2);
+}
+
+/* Code -------------------------------------------------------------------- */
+
+// Code blocks get a Copy button (notes.js); highlighting stays in ink:
+// comments faint and strings a shade lighter (Fragment Mono has one weight).
+.code-block {
+  position: relative;
+
+  > pre { padding-right: 5.5rem; }
+}
+
+.code-copy {
+  @include label;
+  position: absolute;
+  top: var(--s-2);
+  right: var(--s-2);
+  min-width: 44px;
+  min-height: 32px;
+  padding: 0 var(--s-2);
+  border: 1px solid var(--ink-3);
+  border-radius: 0;
+  background: var(--bg);
+  color: var(--ink);
+  cursor: pointer;
+
+  &:hover { background: var(--bg-inset); }
+}
+
+.highlight {
+  .c, .ch, .cm, .c1, .cs, .cp, .cpf { color: var(--ink-3); }
+  .s, .sa, .sb, .sc, .dl, .sd, .s2, .se, .sh, .si, .sx, .sr, .s1, .ss { color: var(--ink-2); }
+  .gd { text-decoration: line-through; }
+  .gi { text-decoration: underline; }
+}

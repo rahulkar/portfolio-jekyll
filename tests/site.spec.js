@@ -52,8 +52,10 @@ for (const path of PAGES) {
         expect(errors).toEqual([]);
         expect(await page.evaluate(() => window.__csp)).toEqual([]);
         expect(await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth)).toBeLessThanOrEqual(0);
-        // The command menu is the only dialog, and it starts closed.
-        await expect(page.locator("dialog")).toHaveCount(1);
+        // The command menu is on every page and notes with photos add the photo
+        // viewer; no other dialog, and all start closed.
+        await expect(page.locator("dialog#cmdk")).toHaveCount(1);
+        await expect(page.locator("dialog:not(#cmdk):not(.lightbox)")).toHaveCount(0);
         await expect(page.locator("dialog[open]")).toHaveCount(0);
         // The only style attribute is the datum's: the clock's --now (and the probe's --probe once used).
         const styled = await page.evaluate(() => [...document.querySelectorAll("[style]")].map((el) => [el.matches("[data-datum]"), el.getAttribute("style")]));
@@ -585,12 +587,70 @@ test.describe("icons and drawings", () => {
 });
 
 test.describe("notes", () => {
-  test("index lists every note, newest first", async ({ page }) => {
+  test("index lists every note as a card, newest first", async ({ page }) => {
     await openPage(page, "/notes/");
     await expect(page.locator("h1")).toHaveText("Notes");
-    await expect(page.locator(".row")).toHaveCount(3);
-    await expect(page.locator(".row__title")).toHaveText(["Vintage silicon", "A 6502 computer on two breadboards", "How this site is built"]);
+    await expect(page.locator(".note-card")).toHaveCount(3);
+    await expect(page.locator(".note-card__title")).toHaveText(["Vintage silicon", "A 6502 computer on two breadboards", "How this site is built"]);
+    await expect(page.locator(".note-card__meta").first()).toHaveText(/^\d{1,2} \w{3} \d{4}\s·\s\d+ min read$/);
+    await expect(page.locator(".note-card .note-card__art > svg.art")).toHaveCount(3);
     await expect(page.locator('main a[href="/feed.xml"]')).toHaveCount(1);
+    await expect(page.locator(".notes-index__meta")).toContainText("3 notes");
+    // The whole card is the title link's target.
+    const [card, link] = await Promise.all([page.locator(".note-card__inner").first().boundingBox(), page.locator(".note-card__link").first().evaluate((el) => {
+      const r = getComputedStyle(el, "::after");
+      return [r.position, r.content];
+    })]);
+    expect(card.height).toBeGreaterThan(200);
+    expect(link).toEqual(["absolute", '""']);
+  });
+
+  test("the grid closes every row: three across from 1024px, the first card wide at tablet width", async ({ browser }, testInfo) => {
+    onlyDesktop(testInfo);
+    for (const [width, expected] of [[1440, [1, 1, 1]], [768, [2, 1, 1]], [390, [1, 1, 1]]]) {
+      const ctx = await browser.newContext({ viewport: { width, height: 900 }, reducedMotion: "reduce", baseURL: testInfo.project.use.baseURL || "http://127.0.0.1:4173" });
+      const p = await ctx.newPage();
+      await p.goto("/notes/");
+      await p.waitForSelector("html.is-ready");
+      const tops = await p.locator(".note-card").evaluateAll((els) => els.map((el) => Math.round(el.getBoundingClientRect().top)));
+      const widths = await p.locator(".note-card").evaluateAll((els) => els.map((el) => el.getBoundingClientRect().width));
+      const spans = widths.map((w) => Math.round((w / Math.min(...widths)) * 10) / 10);
+      expect(spans.map(Math.round), `${width}px`).toEqual(expected);
+      if (width === 1440) expect(new Set(tops).size).toBe(1);
+      await ctx.close();
+    }
+  });
+
+  test("topic filter: narrows the grid, keeps the choice in the address, and Back undoes it", async ({ page }) => {
+    await openPage(page, "/notes/");
+    const topics = page.getByRole("navigation", { name: "Topics" });
+    await expect(topics).toBeVisible();
+    await expect(topics.locator(".topic")).toHaveText(["All, 3 notes", "Electronics, 1 note", "Retro computing, 2 notes", "Silicon, 1 note", "Web, 1 note"]);
+    // Chrome puts a space before the count's hidden comma: "All , 3 notes".
+    await expect(topics.locator('[aria-current="true"]')).toHaveAccessibleName(/^All ?, 3 notes$/);
+    await topics.locator('[data-topic="retro-computing"]').click();
+    await expect(page).toHaveURL(/\/notes\/\?topic=retro-computing$/);
+    await expect(page.locator(".note-card__title")).toHaveText(["Vintage silicon", "A 6502 computer on two breadboards"]);
+    await expect(topics.locator('[aria-current="true"]')).toHaveAttribute("data-topic", "retro-computing");
+    await expect(page.locator("[data-topics-status]")).toHaveText("2 notes on Retro computing");
+    // A tag on a card filters in place too.
+    await page.locator('.note-card a.tag[href$="topic=silicon"]').click();
+    await expect(page.locator(".note-card__title")).toHaveText(["Vintage silicon"]);
+    await page.goBack();
+    await expect(page.locator(".note-card")).toHaveCount(2);
+    await page.goBack();
+    await expect(page).toHaveURL(/\/notes\/$/);
+    await expect(page.locator(".note-card")).toHaveCount(3);
+  });
+
+  test("a topic link on a note lands on the filtered list; an unknown topic shows every note", async ({ page }) => {
+    await openPage(page, "/notes/how-this-site-is-built/");
+    await page.locator(".note__facts a.tag").click();
+    await expect(page).toHaveURL(/\/notes\/\?topic=web$/);
+    await page.waitForSelector("html.is-ready");
+    await expect(page.locator(".note-card__title")).toHaveText(["How this site is built"]);
+    await openPage(page, "/notes/?topic=nothing-here");
+    await expect(page.locator(".note-card")).toHaveCount(3);
   });
 
   test("vintage silicon: four photos, the source and the table; About links to it", async ({ page }) => {
@@ -606,16 +666,219 @@ test.describe("notes", () => {
     }
     await expect(page.locator('.note__body a[href^="https://airandspace.si.edu/"]')).toHaveCount(1);
     await expect(page.locator(".note__body tbody tr")).toHaveCount(3);
-    await expect(page.locator(".note__next a")).toHaveText("A 6502 computer on two breadboards");
+    // The table scrolls on its own if it is wider than the text.
+    await expect(page.locator(".note__body .table-scroll > table")).toHaveCount(1);
+    await expect(page.locator(".pager__link")).toHaveCount(1);
+    await expect(page.locator(".pager__link--older .pager__title")).toHaveText("A 6502 computer on two breadboards");
     await openPage(page, "/");
     await expect(page.locator('#about a[href="/notes/vintage-silicon/"]')).toHaveCount(1);
   });
 
-  test("a note links to the next note and back to the list", async ({ page }) => {
+  test("a note links to the newer and older notes and back to the list", async ({ page }) => {
     await openPage(page, "/notes/6502-on-two-breadboards/");
-    await expect(page.locator(".note__next a")).toHaveText("How this site is built");
-    await expect(page.locator(".note__more a")).toHaveText("All notes");
+    await expect(page.locator(".pager__link--newer")).toHaveAttribute("href", "/notes/vintage-silicon/");
+    await expect(page.locator(".pager__link--newer")).toHaveAttribute("rel", "prev");
+    await expect(page.locator(".pager__link--older .pager__title")).toHaveText("How this site is built");
+    await expect(page.locator(".pager__link--older")).toHaveAttribute("rel", "next");
+    await expect(page.locator(".note__more .link-arrow")).toHaveText("All notes");
+    await expect(page.locator(".note__top")).toHaveAttribute("href", "#main");
     await expect(page.locator('.site-nav a[aria-current="true"]')).toHaveText("Notes");
+    await openPage(page, "/notes/how-this-site-is-built/");
+    await expect(page.locator(".pager__link")).toHaveCount(1);
+    await expect(page.locator(".pager__link--newer .pager__title")).toHaveText("A 6502 computer on two breadboards");
+  });
+
+  test("the head of a note: facts, and contents that match its sections", async ({ page }) => {
+    await openPage(page, "/notes/6502-on-two-breadboards/");
+    const facts = page.locator(".note__facts");
+    await expect(facts.locator("dt")).toHaveText(["Author", "Published", "Updated", "Reading time", "Topics"]);
+    await expect(facts.locator("dd").nth(1)).toHaveText("11 Oct 2026");
+    await expect(facts.locator("dd time").nth(1)).toHaveAttribute("datetime", "2026-10-17");
+    await expect(facts.locator("dd").nth(3)).toHaveText(/^\d+ min$/);
+    await expect(facts.locator("a.tag")).toHaveText(["Retro computing", "Electronics"]);
+    // A note without an update shows no Updated line.
+    await openPage(page, "/notes/vintage-silicon/");
+    await expect(page.locator(".note__facts dt")).toHaveText(["Author", "Published", "Reading time", "Topics"]);
+    const toc = page.getByRole("navigation", { name: "Contents" });
+    const ids = await page.locator(".note__body > h2").evaluateAll((hs) => hs.map((h) => "#" + h.id));
+    expect(ids).toHaveLength(4);
+    expect(await toc.locator("a").evaluateAll((as) => as.map((a) => a.getAttribute("href")))).toEqual(ids);
+    await expect(toc.locator("a").first()).toHaveText("01Apollo Guidance Computer logic chip");
+    // Each section heading links to itself.
+    for (const id of ids) await expect(page.locator(`.note__body > h2${id} > a.heading-link`)).toHaveAttribute("href", id);
+    // A note with no sections has no contents list.
+    await openPage(page, "/notes/how-this-site-is-built/");
+    await expect(page.locator(".toc")).toHaveCount(0);
+  });
+
+  test("from 1024px the contents and share links stay beside the text and mark the section being read", async ({ page }, testInfo) => {
+    onlyDesktop(testInfo);
+    await openPage(page, "/notes/vintage-silicon/");
+    const rail = page.locator(".note__rail");
+    await expect(rail.locator(".share")).toBeVisible();
+    await expect(page.locator(".note__foot .share")).toBeHidden();
+    await page.locator("#intel-c4004").scrollIntoViewIfNeeded();
+    await page.evaluate(() => window.scrollBy(0, 200));
+    await expect(rail.locator('.toc a[aria-current="location"]')).toHaveAttribute("href", "#intel-c4004");
+    const box = await rail.boundingBox();
+    expect(box.y).toBeGreaterThanOrEqual(64);
+    expect(box.y).toBeLessThan(120);
+    await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+    await expect(rail.locator('.toc a[aria-current="location"]')).toHaveAttribute("href", "#side-by-side");
+  });
+
+  test("from 1280px the text takes the middle, with the drawing and facts on the right staying in view", async ({ page, browser }, testInfo) => {
+    onlyDesktop(testInfo);
+    await openPage(page, "/notes/vintage-silicon/");
+    const box = (p, sel) => p.locator(sel).boundingBox();
+    const [rail, body, facts, art] = await Promise.all([".note__rail", ".note__body", ".note__facts", ".note__art"].map((sel) => box(page, sel)));
+    expect(rail.x + rail.width).toBeLessThan(body.x);
+    expect(body.x + body.width).toBeLessThan(facts.x);
+    expect(Math.abs(art.x - facts.x)).toBeLessThanOrEqual(1);
+    // Lines run a little longer in the middle column: 36em of 18px.
+    expect(await page.locator(".note__body > p").first().evaluate((el) => getComputedStyle(el).maxWidth)).toBe("648px");
+    // The share strip stays on one line.
+    expect(await page.locator(".note__rail .share__link").evaluateAll((as) => new Set(as.map((a) => Math.round(a.getBoundingClientRect().top))).size)).toBe(1);
+    await page.locator("#intel-c4004").scrollIntoViewIfNeeded();
+    const stuck = await box(page, ".note__facts");
+    expect(stuck.y).toBeGreaterThanOrEqual(64);
+    expect(stuck.y).toBeLessThan(120);
+    // Between 1024 and 1279px the facts sit under the title, over the text.
+    const ctx = await browser.newContext({ viewport: { width: 1100, height: 860 }, reducedMotion: "reduce", baseURL: testInfo.project.use.baseURL || "http://127.0.0.1:4173" });
+    const narrow = await ctx.newPage();
+    await narrow.goto("/notes/vintage-silicon/");
+    await narrow.waitForSelector("html.is-ready");
+    const [h, f, b] = await Promise.all([".note__head", ".note__facts", ".note__body"].map((sel) => box(narrow, sel)));
+    expect(Math.abs(f.x - b.x)).toBeLessThanOrEqual(1);
+    expect(f.y).toBeGreaterThan(h.y + h.height - 1);
+    expect(b.y).toBeGreaterThan(f.y + f.height - 1);
+    await ctx.close();
+  });
+
+  test("share links: each network gets the note's address, and open in a new tab", async ({ page }) => {
+    await openPage(page, "/notes/vintage-silicon/");
+    const u = encodeURIComponent("https://www.rahulkar.com/notes/vintage-silicon/");
+    const t = encodeURIComponent("Vintage silicon");
+    const share = page.locator(".share:visible");
+    await expect(share).toHaveCount(1);
+    const hrefs = await share.locator(".share__link").evaluateAll((as) => as.map((a) => [a.dataset.label, a.getAttribute("href"), a.target, a.rel]));
+    expect(hrefs.map((h) => h[0])).toEqual(["LinkedIn", "X", "Bluesky", "Hacker News", "Reddit", "WhatsApp", "Email"]);
+    const href = Object.fromEntries(hrefs.map((h) => [h[0], h[1]]));
+    expect(href.LinkedIn).toBe(`https://www.linkedin.com/sharing/share-offsite/?url=${u}`);
+    expect(href.X).toBe(`https://x.com/intent/tweet?text=${t}&url=${u}`);
+    expect(href.Bluesky).toBe(`https://bsky.app/intent/compose?text=${t}%20${u}`);
+    expect(href["Hacker News"]).toBe(`https://news.ycombinator.com/submitlink?u=${u}&t=${t}`);
+    expect(href.Reddit).toBe(`https://www.reddit.com/submit?url=${u}&title=${t}`);
+    expect(href.WhatsApp).toBe(`https://wa.me/?text=${t}%20${u}`);
+    expect(href.Email.startsWith(`mailto:?subject=${t}&body=Three%20chips%20from`)).toBe(true);
+    expect(href.Email.endsWith(`%0A%0A${u}`)).toBe(true);
+    for (const [label, , target, rel] of hrefs) {
+      if (label === "Email") continue;
+      expect(target, label).toBe("_blank");
+      expect(rel, label).toBe("noopener noreferrer");
+    }
+    await expect(share.locator(".share__link").first()).toHaveAccessibleName("Share on LinkedIn (opens in a new tab)");
+  });
+
+  test("Copy link copies the note's address and says so", async ({ page, context }, testInfo) => {
+    onlyDesktop(testInfo);
+    await context.grantPermissions(["clipboard-read", "clipboard-write"]);
+    await openPage(page, "/notes/6502-on-two-breadboards/");
+    const copy = page.locator(".share:visible [data-copy-link]");
+    await expect(copy).toBeVisible();
+    await copy.click();
+    await expect(copy).toHaveText("Copied");
+    await expect(page.locator(".share:visible [data-share-status]")).toHaveText("Link copied.");
+    expect(await page.evaluate(() => navigator.clipboard.readText())).toBe("https://www.rahulkar.com/notes/6502-on-two-breadboards/");
+  });
+
+  test("without clipboard access, Copy link shows the address selected", async ({ page }, testInfo) => {
+    onlyDesktop(testInfo);
+    await page.addInitScript(() => Object.defineProperty(navigator, "clipboard", { value: undefined }));
+    await openPage(page, "/notes/6502-on-two-breadboards/");
+    await page.locator(".share:visible [data-copy-link]").click();
+    const field = page.locator(".share:visible .share__url");
+    await expect(field).toBeVisible();
+    await expect(field).toBeFocused();
+    expect(await field.evaluate((el) => el.value.slice(el.selectionStart, el.selectionEnd))).toBe("https://www.rahulkar.com/notes/6502-on-two-breadboards/");
+    await expect(page.locator(".share:visible [data-share-status]")).toContainText("The link is selected");
+  });
+
+  test("the photo viewer opens a photo large, steps through the note's photos and gives focus back", async ({ page }) => {
+    await openPage(page, "/notes/vintage-silicon/");
+    const viewer = page.getByRole("dialog", { name: "Photo viewer" });
+    const first = page.locator(".note__body .figure__link").first();
+    await first.click();
+    await expect(viewer).toBeVisible();
+    await expect(page.locator("[data-lightbox-count]")).toHaveText("1 of 4");
+    await expect(viewer.locator("img")).toHaveAttribute("src", "/assets/img/apollo-agc-chip-1-1280.webp");
+    await expect(viewer.locator("figcaption")).toHaveText("In its potting compound, on an anti-static bag.");
+    await page.keyboard.press("ArrowRight");
+    await expect(page.locator("[data-lightbox-count]")).toHaveText("2 of 4");
+    await page.keyboard.press("ArrowLeft");
+    await page.keyboard.press("ArrowLeft");
+    await expect(page.locator("[data-lightbox-count]")).toHaveText("4 of 4");
+    await expect(viewer.locator("img")).toHaveAttribute("alt", /Pentium/);
+    await page.keyboard.press("Escape");
+    await expect(viewer).toBeHidden();
+    await expect(first).toBeFocused();
+  });
+
+  test("the photo viewer passes axe while open", async ({ page }, testInfo) => {
+    onlyDesktop(testInfo);
+    for (const scheme of SCHEMES) {
+      await openPage(page, "/notes/6502-on-two-breadboards/", scheme);
+      await page.locator(".note__body .figure__link").first().click();
+      await expect(page.locator(".lightbox[open]")).toBeVisible();
+      // The parts key does not carry over (the viewer has no callouts); the alt text stands in.
+      await expect(page.locator(".lightbox figcaption")).toHaveText(/^A 6502 computer built on two breadboards/);
+      const results = await new AxeBuilder({ page }).include(".lightbox").analyze();
+      const serious = results.violations.filter((v) => v.impact === "serious" || v.impact === "critical");
+      expect(serious.map((v) => `${v.id}: ${v.nodes.map((n) => n.target.join(" ")).join(", ")}`), scheme).toEqual([]);
+    }
+  });
+
+  test("a reading-progress line follows the scroll, with no script", async ({ page }, testInfo) => {
+    onlyDesktop(testInfo);
+    await openPage(page, "/notes/vintage-silicon/");
+    const progress = page.locator(".progress");
+    expect(await progress.evaluate((el) => [getComputedStyle(el).animationName, getComputedStyle(el).position])).toEqual(["note-progress", "fixed"]);
+    const scale = () => progress.evaluate((el) => new DOMMatrix(getComputedStyle(el).transform).a);
+    expect(await scale()).toBeLessThan(0.05);
+    await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+    await expect.poll(scale).toBeGreaterThan(0.95);
+  });
+
+  test("touch targets on notes are at least 44px", async ({ page }, testInfo) => {
+    test.skip(testInfo.project.name === "desktop", "phone sizes only");
+    for (const [path, sels] of [["/notes/", [".topic", ".notes-index__feed"]], ["/notes/6502-on-two-breadboards/", [".note__crumb a", ".share:visible .share__link", ".share:visible .share__button:visible", ".pager__link", ".note__more a"]]]) {
+      await openPage(page, path);
+      for (const sel of sels) {
+        const els = await page.locator(sel).all();
+        expect(els.length, sel).toBeGreaterThan(0);
+        for (const el of els) {
+          const box = await el.boundingBox();
+          expect(Math.round(box.width), `${sel} width`).toBeGreaterThanOrEqual(44);
+          expect(Math.round(box.height), `${sel} height`).toBeGreaterThanOrEqual(44);
+        }
+      }
+    }
+  });
+});
+
+test.describe("notes without JavaScript", () => {
+  test.use({ javaScriptEnabled: false });
+
+  test("every note shows, the filter and script-only buttons stay hidden, and photos link to their files", async ({ page }) => {
+    await page.goto("/notes/?topic=web");
+    await expect(page.locator(".note-card")).toHaveCount(3);
+    await expect(page.locator(".topics")).toBeHidden();
+    await page.goto("/notes/vintage-silicon/");
+    await expect(page.locator(".share__link:visible")).toHaveCount(7);
+    for (const sel of ["[data-copy-link]", "[data-share-native]", ".share__url", ".lightbox"]) {
+      for (const el of await page.locator(sel).all()) await expect(el).toBeHidden();
+    }
+    await expect(page.locator(".note__body .figure__link").first()).toHaveAttribute("href", "/assets/img/apollo-agc-chip-1-1280.jpg");
   });
 });
 
@@ -643,6 +906,7 @@ test.describe("urls, feed and structured data", () => {
     const xml = await (await request.get("/feed.xml")).text();
     expect(xml).toContain("Rahul Kar | Notes");
     expect(xml).toContain("<name>Rahul Kar</name>");
+    expect(xml).toContain('<category term="retro-computing" label="Retro computing"/>');
     const links = [...xml.matchAll(/<entry>[\s\S]*?<link href="([^"]+)"/g)].map((m) => m[1]);
     expect(links.length).toBe(3);
     for (const href of links) expect(href.startsWith("https://www.rahulkar.com/notes/")).toBe(true);
@@ -675,6 +939,25 @@ test.describe("urls, feed and structured data", () => {
       const others = (await page.locator('script[type="application/ld+json"]').allTextContents()).map((t) => JSON.parse(t));
       expect(others.filter((b) => b["@type"] === "ProfilePage").length).toBe(0);
     }
+  });
+
+  test("a note shares as an article: its own card, dates, topics and breadcrumbs", async ({ page }, testInfo) => {
+    onlyDesktop(testInfo);
+    await page.goto("/notes/6502-on-two-breadboards/");
+    const meta = (sel) => page.locator(sel).getAttribute("content");
+    expect(await meta('meta[property="og:type"]')).toBe("article");
+    expect(await meta('meta[property="og:image"]')).toBe("https://www.rahulkar.com/assets/og/notes/6502-on-two-breadboards-v1.png");
+    expect(await meta('meta[property="twitter:image"]')).toBe("https://www.rahulkar.com/assets/og/notes/6502-on-two-breadboards-v1.png");
+    expect(await meta('meta[property="article:modified_time"]')).toMatch(/^2026-10-17T/);
+    expect(await page.locator('meta[property="article:tag"]').evaluateAll((ms) => ms.map((m) => m.content))).toEqual(["Retro computing", "Electronics"]);
+    const card = await page.request.get("/assets/og/notes/6502-on-two-breadboards-v1.png");
+    expect(card.status()).toBe(200);
+    expect(card.headers()["content-type"]).toBe("image/png");
+    const blocks = (await page.locator('script[type="application/ld+json"]').allTextContents()).map((t) => JSON.parse(t));
+    const crumbs = blocks.find((b) => b["@type"] === "BreadcrumbList");
+    expect(crumbs.itemListElement.map((i) => i.name)).toEqual(["Home", "Notes", "A 6502 computer on two breadboards"]);
+    expect(crumbs.itemListElement[2].item).toBe("https://www.rahulkar.com/notes/6502-on-two-breadboards/");
+    expect(blocks.find((b) => b["@type"] === "BlogPosting").dateModified).toMatch(/^2026-10-17/);
   });
 });
 

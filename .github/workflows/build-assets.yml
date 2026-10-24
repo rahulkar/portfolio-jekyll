@@ -32,9 +32,9 @@ jobs:
 
       - name: Check built assets match source
         run: |
-          if ! git diff --quiet -- assets/css/main.css assets/js/main.js assets/js/orbit.js; then
-            echo "::error::Built assets are out of date. Run 'npm run build' and commit assets/css/main.css, assets/js/main.js and assets/js/orbit.js."
-            git --no-pager diff --stat -- assets/css/main.css assets/js/main.js assets/js/orbit.js
+          if ! git diff --quiet -- assets/css/main.css assets/js/main.js assets/js/orbit.js assets/js/notes.js; then
+            echo "::error::Built assets are out of date. Run 'npm run build' and commit assets/css/main.css, assets/js/main.js, assets/js/orbit.js and assets/js/notes.js."
+            git --no-pager diff --stat -- assets/css/main.css assets/js/main.js assets/js/orbit.js assets/js/notes.js
             exit 1
           fi
           echo "Built assets are in sync with source."
@@ -77,12 +77,14 @@ jobs:
 
       # Runs last so the Playwright and Lighthouse reports exist even when a link is
       # broken. Absolute www.rahulkar.com links (canonical, og:url, the feed) are remapped
-      # to the build output: the live site may not have deployed this commit yet.
+      # to the build output: the live site may not have deployed this commit yet. The
+      # share links on notes open the networks' compose pages, which turn bots away.
       - name: Check links
         uses: lycheeverse/lychee-action@v2
         with:
           args: >-
             --no-progress --exclude 'linkedin\.com'
+            --exclude '^https://(x\.com/intent|bsky\.app/intent|news\.ycombinator\.com/submitlink|www\.reddit\.com/submit|wa\.me/)'
             --root-dir "${{ github.workspace }}/_site" --index-files index.html
             --remap 'https://www\.rahulkar\.com(/.*)? file://${{ github.workspace }}/_site${1}'
             './_site/**/*.html'

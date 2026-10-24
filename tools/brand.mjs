@@ -6,7 +6,8 @@
 // filenames are deliberate: the live site caches /assets/* for a year.
 // Not part of `npm run build`; outputs are committed.
 import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
-import { join } from "node:path";
+import { join, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 import opentype from "opentype.js";
 import subsetFont from "subset-font";
 import { Resvg } from "@resvg/resvg-js";
@@ -16,10 +17,10 @@ import pngToIco from "png-to-ico";
 // _includes/head.html and _config.yml: /assets/* is cached for a year.
 const V = "v5";
 
-const BG = "#F6F5F1";
-const INK = "#161615";
-const INK2 = "#4A4945";
-const INK3 = "#6A6964";
+export const BG = "#F6F5F1";
+export const INK = "#161615";
+export const INK2 = "#4A4945";
+export const INK3 = "#6A6964";
 const DARK_BG = "#121211";
 const DARK_INK = "#ECEAE4";
 
@@ -33,12 +34,13 @@ const FACTS = [
 
 const toArrayBuffer = (buf) => buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength);
 
-async function loadFonts() {
+// `extra` adds characters beyond printable ASCII to the subsets.
+export async function loadFonts(extra = "") {
   const sans = readFileSync("assets/fonts/instrument-sans-v1.woff2");
   const mono = readFileSync("assets/fonts/fragment-mono-v1.woff2");
   let latin = "";
   for (let c = 0x20; c < 0x7f; c++) latin += String.fromCharCode(c);
-  latin += "·–—’×";
+  latin += "·–—’×" + extra;
   const instance = async (buf, axes) => {
     const opts = { targetFormat: "sfnt" };
     if (axes) opts.variationAxes = axes; // Fragment Mono is static: no axes
@@ -54,7 +56,7 @@ async function loadFonts() {
 
 // Lays out a string glyph by glyph (kerning plus optional tracking in em)
 // and returns one <path>, along with its width.
-function layout(font, str, size, tracking = 0) {
+export function layout(font, str, size, tracking = 0) {
   const glyphs = font.stringToGlyphs(str);
   const scale = size / font.unitsPerEm;
   const pos = [];
@@ -67,7 +69,7 @@ function layout(font, str, size, tracking = 0) {
   return { glyphs, pos, width: x - (glyphs.length ? tracking * size : 0) };
 }
 
-function text(font, str, x, y, size, fill, { tracking = 0, anchor = "start", cls = "" } = {}) {
+export function text(font, str, x, y, size, fill, { tracking = 0, anchor = "start", cls = "" } = {}) {
   const l = layout(font, str, size, tracking);
   const x0 = anchor === "end" ? x - l.width : anchor === "middle" ? x - l.width / 2 : x;
   const d = l.glyphs.map((g, i) => g.getPath(x0 + l.pos[i], y, size).toPathData(2)).join("");
@@ -91,10 +93,10 @@ function datum(f, { x, w, labelY, lineY, marksY, labelSize = 15, markSize = 16, 
   return out;
 }
 
-const svg = (w, h, body, bg = BG) =>
+export const svg = (w, h, body, bg = BG) =>
   `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}"><rect width="${w}" height="${h}" fill="${bg}"/>${body}</svg>`;
 
-const render = (markup, width) =>
+export const render = (markup, width) =>
   new Resvg(markup, { fitTo: { mode: "width", value: width }, font: { loadSystemFonts: false } }).render().asPng();
 
 // ---------------------------------------------------------------- favicon --
@@ -166,7 +168,10 @@ async function main() {
   console.log(`brand assets written (${V}): favicon (svg, ico, apple-touch), favicon.ico, og card, LinkedIn banner, GitHub header, email signature`);
 }
 
-main().catch((err) => {
-  console.error(err);
-  process.exit(1);
-});
+// Run as a script; tools/note-cards.mjs imports the helpers above.
+if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  main().catch((err) => {
+    console.error(err);
+    process.exit(1);
+  });
+}

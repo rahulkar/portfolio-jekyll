@@ -2,24 +2,93 @@
 layout: default
 ---
 {%- assign notes = site.notes | sort: "date" | reverse -%}
-{%- assign found = false -%}{%- assign next_note = nil -%}
-{%- for n in notes -%}{%- if found and next_note == nil -%}{%- assign next_note = n -%}{%- endif -%}{%- if n.url == page.url -%}{%- assign found = true -%}{%- endif -%}{%- endfor -%}
-{%- unless next_note -%}{%- assign next_note = notes.first -%}{%- endunless -%}
-{%- if next_note.url == page.url -%}{%- assign next_note = nil -%}{%- endif -%}
-<article class="wrap grid page note">
-  {%- if page.art %}
-  <div class="note__art">{% include art/{{ page.art }}.html %}</div>
-  {%- endif %}
+{%- for n in notes -%}{%- if n.url == page.url -%}{%- assign at = forloop.index0 -%}{%- endif -%}{%- endfor -%}
+{%- assign newer = nil -%}
+{%- if at > 0 -%}{%- assign i = at | minus: 1 -%}{%- assign newer = notes[i] -%}{%- endif -%}
+{%- assign i = at | plus: 1 -%}{%- assign older = notes[i] -%}
+{%- capture minutes %}{% include reading-time.html content=content %}{% endcapture -%}
+{%- assign published = page.date | date: "%Y-%m-%d" -%}
+{%- assign updated = page.last_modified_at | date: "%Y-%m-%d" -%}
+{%- comment -%} Section headings: kramdown writes each as <h2 id="...">. Each one becomes a link to itself, and with two or more the page gets a numbered contents list. Tables are wrapped so a wide one scrolls on its own instead of the page. {%- endcomment -%}
+{%- assign chunks = content | split: '<h2 id="' -%}
+{%- assign sections = chunks.size | minus: 1 -%}
+{%- capture body -%}
+{{ chunks.first }}
+{%- for chunk in chunks offset: 1 -%}
+{%- assign id = chunk | split: '"' | first -%}
+{%- assign rest = chunk | remove_first: id | remove_first: '">' -%}
+{%- assign label = rest | split: '</h2>' | first -%}
+<h2 id="{{ id }}"><a class="heading-link" href="#{{ id }}">{{ label }}</a></h2>{{ rest | remove_first: label | remove_first: '</h2>' }}
+{%- endfor -%}
+{%- endcapture -%}
+<div class="progress" aria-hidden="true"></div>
+<article class="wrap grid page note{% if sections > 1 %} has-toc{% endif %}">
   <header class="note__head">
     <p class="note__crumb"><a href="{{ "/notes/" | relative_url }}">Notes</a></p>
     <h1>{{ page.title }}</h1>
-    <p class="note__meta"><time datetime="{{ page.date | date: '%Y-%m-%d' }}">{{ page.date | date: "%-d %b %Y" }}</time>{% if page.last_modified_at %} &middot; Updated <time datetime="{{ page.last_modified_at | date: '%Y-%m-%d' }}">{{ page.last_modified_at | date: "%-d %b %Y" }}</time>{% endif %}</p>
   </header>
+  <dl class="note__facts">
+    <div><dt>Author</dt><dd><a href="{{ "/#about" | relative_url }}" rel="author">{{ site.username }}</a></dd></div>
+    <div><dt>Published</dt><dd><time datetime="{{ published }}">{{ page.date | date: "%-d %b %Y" }}</time></dd></div>
+    {%- if page.last_modified_at and updated != published %}
+    <div><dt>Updated</dt><dd><time datetime="{{ updated }}">{{ page.last_modified_at | date: "%-d %b %Y" }}</time></dd></div>
+    {%- endif %}
+    <div><dt>Reading time</dt><dd>{{ minutes }} min</dd></div>
+    {%- if page.topics %}
+    <div class="note__topics"><dt>Topics</dt><dd><ul class="tags" role="list">{% for t in page.topics %}<li><a class="tag" href="{{ "/notes/" | relative_url }}?topic={{ t | slugify }}">{{ t }}</a></li>{% endfor %}</ul></dd></div>
+    {%- endif %}
+  </dl>
+  {%- if page.art %}
+  <div class="note__art">{% include art/{{ page.art }}.html %}</div>
+  {%- endif %}
+  <div class="note__rail">
+    {%- if sections > 1 %}
+    <nav class="toc" aria-labelledby="toc-title" data-toc>
+      <h2 class="toc__title" id="toc-title">Contents</h2>
+      <ol class="toc__list" role="list">
+        {%- for chunk in chunks offset: 1 %}
+        {%- assign id = chunk | split: '"' | first %}
+        <li><a href="#{{ id }}"><span class="toc__n" aria-hidden="true">{{ forloop.index | prepend: "0" | slice: -2, 2 }}</span><span>{{ chunk | remove_first: id | remove_first: '">' | split: '</h2>' | first | strip_html | strip }}</span></a></li>
+        {%- endfor %}
+      </ol>
+    </nav>
+    {%- endif %}
+    <div class="note__share">{% include share.html id="rail" %}</div>
+  </div>
   <div class="note__body prose">
-    {{ content }}
+    {{ body | replace: "<table>", '<div class="table-scroll" role="region" aria-label="Table" tabindex="0"><table>' | replace: "</table>", "</table></div>" }}
   </div>
   <footer class="note__foot">
-    {% if next_note %}<p class="note__next">Next note: <a href="{{ next_note.url | relative_url }}">{{ next_note.title }}</a></p>{% endif %}
-    <p class="note__more"><a href="{{ "/notes/" | relative_url }}">All notes</a></p>
+    <div class="note__share">{% include share.html id="foot" %}</div>
+    <div class="author">
+      <p class="author__label">Written by</p>
+      <p class="author__name"><a href="{{ "/#about" | relative_url }}">{{ site.username }}</a></p>
+      <p class="author__role">{{ site.user_title | escape }} &middot; Kolkata, India</p>
+      <p class="author__links"><a class="link-arrow" href="{{ "/how-i-work/" | relative_url }}"><span>How I work</span>{% include icon.html name="arrow" %}</a><a class="link-arrow" href="mailto:{{ site.email }}?subject={{ page.title | url_encode | replace: "+", "%20" }}"><span>Email me</span>{% include icon.html name="arrow" %}</a></p>
+    </div>
+    {%- if newer or older %}
+    <nav class="pager" aria-label="Newer and older notes">
+      {%- if newer %}
+      <a class="pager__link pager__link--newer" href="{{ newer.url | relative_url }}" rel="prev"><span class="pager__dir">{% include icon.html name="arrow" class="icon--flip" %}Newer note</span><span class="pager__title">{{ newer.title }}</span><time class="pager__date" datetime="{{ newer.date | date: '%Y-%m-%d' }}">{{ newer.date | date: "%-d %b %Y" }}</time></a>
+      {%- endif %}
+      {%- if older %}
+      <a class="pager__link pager__link--older" href="{{ older.url | relative_url }}" rel="next"><span class="pager__dir">Older note{% include icon.html name="arrow" %}</span><span class="pager__title">{{ older.title }}</span><time class="pager__date" datetime="{{ older.date | date: '%Y-%m-%d' }}">{{ older.date | date: "%-d %b %Y" }}</time></a>
+      {%- endif %}
+    </nav>
+    {%- endif %}
+    <p class="note__more"><a class="link-arrow" href="{{ "/notes/" | relative_url }}"><span>All notes</span>{% include icon.html name="arrow" %}</a><a class="note__top" href="#main">{% include icon.html name="arrow-up" %}<span>Back to top</span></a></p>
   </footer>
 </article>
+{%- if content contains 'class="figure__link"' %}
+<dialog class="lightbox" aria-labelledby="lightbox-title" data-lightbox>
+  <h2 class="sr-only" id="lightbox-title">Photo viewer</h2>
+  <div class="lightbox__bar">
+    <p class="lightbox__count" data-lightbox-count></p>
+    <button class="lightbox__button" type="button" data-lightbox-step="-1" aria-label="Previous photo">{% include icon.html name="arrow" class="icon--md icon--flip" %}</button>
+    <button class="lightbox__button" type="button" data-lightbox-step="1" aria-label="Next photo">{% include icon.html name="arrow" class="icon--md" %}</button>
+    <button class="lightbox__button lightbox__close" type="button" data-lightbox-close>{% include icon.html name="close" class="icon--md" %}<span class="lightbox__close-label">Close</span></button>
+  </div>
+  <figure class="lightbox__figure" data-lightbox-figure></figure>
+</dialog>
+{%- endif %}
+<script defer src="{{ "/assets/js/notes.js" | relative_url }}?v={{ site.time | date: '%s' }}"></script>
