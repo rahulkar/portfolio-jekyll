@@ -1,10 +1,11 @@
 # Local development
 
-The site is a Jekyll build (GitHub Pages runs Jekyll 3.10 with jekyll-seo-tag,
-jekyll-sitemap and jekyll-feed) with a small Node toolchain for the CSS, the
-bundled JavaScript, the fonts and the brand images. Locally you run Jekyll 4.4;
-the output is the same apart from the generator meta tag, because the Gemfile
-pins the three plugins to the versions GitHub Pages runs.
+The site is a Jekyll 4.4 build (with jekyll-seo-tag, jekyll-sitemap and
+jekyll-feed) with a small Node toolchain for the CSS, the bundled JavaScript,
+the fonts and the brand images. GitHub Actions builds it with the versions in
+`Gemfile.lock`, tests it and deploys it to GitHub Pages (see Deploy below), so a
+local build writes the same pages as the live site, apart from dates: CI builds
+in UTC, a local build in your machine's time zone (set `TZ=UTC` to match).
 
 ## Prerequisites
 
@@ -238,6 +239,16 @@ It is off under `prefers-reduced-motion`.
   live site). Dependabot also watches the GitHub Actions. To run the link check locally:
   `docker run --rm -v "$PWD/_site:/site:ro" -w /site lycheeverse/lychee:0.24.2 --root-dir /site --index-files index.html --remap 'https://www\.rahulkar\.com(/.*)? file:///site${1}' './**/*.html'`.
 
+## Deploy
+
+The **Verify and deploy site** workflow (`.github/workflows/build-assets.yml`) runs on
+every pull request and push to master. On master, once the bundle check and every site
+check have passed, it uploads that `_site` and the `deploy` job publishes it to GitHub
+Pages; pull requests only verify. This needs **Settings → Pages → Build and deployment
+→ Source** set to **GitHub Actions**. The custom domain is kept on that settings page
+(the `CNAME` file is not used by this kind of deploy). To deploy again without a new
+commit, open the workflow in the Actions tab and use **Run workflow** on master.
+
 ## Production notes
 
 - The site is fronted by Cloudflare: purge the cache after deploying (the root
@@ -250,8 +261,8 @@ It is off under `prefers-reduced-motion`.
   button falls back to the visible address.
 - Cloudflare features that inject inline scripts (Rocket Loader, Mirage) must
   stay off; the CSP would block them.
-- GitHub Pages publishes root `.md` files as pages, which is why
-  `LOCAL_SETUP.md` and `LICENSE.txt` are excluded in `_config.yml`.
+- `LOCAL_SETUP.md` and `LICENSE.txt` are excluded in `_config.yml`, so they are
+  not published with the site.
 
 ## Security headers (Cloudflare)
 

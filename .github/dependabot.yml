@@ -1,18 +1,13 @@
 # Keeps dependencies patched and consolidates update PRs.
-# GitHub Pages builds the live site with its own github-pages gem; the Ruby
-# gems here build it locally and in CI. The npm packages are build and test
-# tooling only (Sass, esbuild, Playwright, Lighthouse CI).
+# The Ruby gems build the live site: CI builds it with them, tests it and
+# deploys it to GitHub Pages. The npm packages are build and test tooling only
+# (Sass, esbuild, Playwright, Lighthouse CI).
 version: 2
 updates:
   - package-ecosystem: "bundler"
     directory: "/"
     schedule:
       interval: "weekly"
-    # Pinned to the versions GitHub Pages runs (see Gemfile).
-    ignore:
-      - dependency-name: "jekyll-sitemap"
-      - dependency-name: "jekyll-feed"
-      - dependency-name: "jekyll-seo-tag"
     groups:
       ruby:
         patterns: ["*"]

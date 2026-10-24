@@ -1,13 +1,16 @@
-name: Verify site
+name: Verify and deploy site
 
 # Two guards: (1) the committed CSS/JS bundles match src/ and the markup is
 # CSP-clean; (2) the built site validates, has no broken links, and passes
 # Playwright + axe checks at phone and desktop widths plus Lighthouse CI
 # thresholds. Screenshots and reports are kept as artifacts for a human look.
+# On master, the build that passed both is deployed to GitHub Pages (the
+# repository's Pages source is "GitHub Actions"); pull requests only verify.
 on:
   push:
     branches: [master]
   pull_request:
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -104,3 +107,31 @@ jobs:
           include-hidden-files: true
           if-no-files-found: ignore
           retention-days: 14
+
+      # Master only, and only when every check above passed, so the deployed site
+      # is this tested build. Hidden files are kept for .well-known/security.txt.
+      - name: Upload the site for GitHub Pages
+        if: github.ref == 'refs/heads/master'
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: _site
+          include-hidden-files: true
+
+  deploy:
+    name: Deploy to GitHub Pages
+    if: github.ref == 'refs/heads/master'
+    needs: [assets, site]
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    # One deploy at a time; a newer push waits instead of cancelling one mid-way.
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v5
