@@ -3,12 +3,13 @@
 The site is a Jekyll build (GitHub Pages runs Jekyll 3.10 with jekyll-seo-tag,
 jekyll-sitemap and jekyll-feed) with a small Node toolchain for the CSS, the
 bundled JavaScript, the fonts and the brand images. Locally you run Jekyll 4.4;
-the output is the same apart from the generator meta tag.
+the output is the same apart from the generator meta tag, because the Gemfile
+pins the three plugins to the versions GitHub Pages runs.
 
 ## Prerequisites
 
-- Node.js 20+ and npm (CI uses Node 22)
-- Ruby 3.1+ with the MSYS2 devkit (RubyInstaller "Ruby+Devkit"), then `gem install bundler`
+- Node.js 22.22+ or 24.8+ and npm (CI uses Node 22)
+- Ruby 3.2+ with the MSYS2 devkit (RubyInstaller "Ruby+Devkit"), then `gem install bundler`
 - Python 3, only for the browser-pane `portfolio` launch config (`python -m http.server 4001` on `_site`); `npm run serve:light` uses `tools/serve.mjs` instead
 
 ## One-time setup

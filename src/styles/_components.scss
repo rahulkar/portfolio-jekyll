@@ -1,3 +1,4 @@
+@use "sass:list";
 @use "mixins" as *;
 
 /* Header ------------------------------------------------------------------ */
@@ -381,7 +382,7 @@
 $parts: cpu, rom, ram, via, nand, osc, lcd;
 
 @each $part in $parts {
-  $i: index($parts, $part);
+  $i: list.index($parts, $part);
 
   .figure--parts:has(.parts > li:nth-child(#{$i}):hover) .callout--#{$part} {
     @include callout-on;
