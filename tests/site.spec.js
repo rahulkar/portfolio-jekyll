@@ -125,9 +125,10 @@ test.describe("datum for a visitor in London", () => {
     await expect(slider).toHaveAttribute("aria-valuenow", "75");
     await page.keyboard.press("End");
     await expect(slider).toHaveAttribute("aria-valuenow", "1435");
-    // The red tick stays put while the ink probe moves.
+    // The red tick stays put while the ink probe moves. The scale sits on the
+    // dark orbit stage, so its ink is the dark theme's in both page themes.
     await expect(page.locator(".datum__tick")).toBeVisible();
-    expect(await page.locator(".datum__probe").evaluate((el) => getComputedStyle(el).borderLeftColor)).toBe(INK.light);
+    expect(await page.locator(".datum__probe").evaluate((el) => getComputedStyle(el).borderLeftColor)).toBe(INK.dark);
     await page.keyboard.press("Escape");
     await expect(page.locator("[data-datum]")).not.toHaveClass(/is-probing/);
 
@@ -600,5 +601,69 @@ test.describe("urls, feed and structured data", () => {
       const others = (await page.locator('script[type="application/ld+json"]').allTextContents()).map((t) => JSON.parse(t));
       expect(others.filter((b) => b["@type"] === "ProfilePage").length).toBe(0);
     }
+  });
+});
+
+test.describe("home hero orbit", () => {
+  // A checksum of the canvas pixels: it changes whenever the frame changes.
+  const frame = (page) =>
+    page.evaluate(() => {
+      const c = document.querySelector(".orbital-hero__canvas");
+      const d = c.getContext("2d").getImageData(0, 0, c.width, c.height).data;
+      let h = 0;
+      for (let i = 0; i < d.length; i += 997) h = (h * 31 + d[i]) | 0;
+      return h;
+    });
+
+  test("holds still until the pointer is over it, moves while it is, and stops after it leaves", async ({ page }, testInfo) => {
+    onlyDesktop(testInfo);
+    await page.emulateMedia({ colorScheme: "dark", reducedMotion: "no-preference" });
+    await page.goto("/");
+    await page.waitForSelector("html.is-ready");
+    const box = await page.locator("[data-orbital-hero]").boundingBox();
+    const still = await frame(page);
+    await page.waitForTimeout(400);
+    expect(await frame(page)).toBe(still);
+    await page.mouse.move(box.x + box.width * 0.7, box.y + box.height * 0.5);
+    await page.waitForTimeout(800);
+    expect(await frame(page)).not.toBe(still);
+    await page.mouse.move(box.x + box.width * 0.5, 5);
+    await page.waitForTimeout(5000);
+    const rested = await frame(page);
+    await page.waitForTimeout(500);
+    expect(await frame(page)).toBe(rested);
+  });
+
+  test("reduced motion: the frame does not move, even under the pointer", async ({ page }, testInfo) => {
+    onlyDesktop(testInfo);
+    await page.emulateMedia({ colorScheme: "dark", reducedMotion: "reduce" });
+    await page.goto("/");
+    await page.waitForSelector("html.is-ready");
+    const box = await page.locator("[data-orbital-hero]").boundingBox();
+    const still = await frame(page);
+    await page.mouse.move(box.x + box.width * 0.7, box.y + box.height * 0.5);
+    await page.waitForTimeout(800);
+    expect(await frame(page)).toBe(still);
+  });
+
+  test("the canvas is hidden from assistive tech, and drawn only where the hero has two columns", async ({ page }, testInfo) => {
+    await openPage(page, "/");
+    const canvas = page.locator(".orbital-hero__canvas");
+    await expect(canvas).toHaveCount(testInfo.project.name === "desktop" ? 1 : 0);
+    if (testInfo.project.name === "desktop") await expect(canvas).toHaveAttribute("aria-hidden", "true");
+    await expect(page.locator("#hero-name")).toHaveText("Rahul Kar");
+  });
+
+  test("the copy, datum and contact stay above the orbit", async ({ page }, testInfo) => {
+    onlyDesktop(testInfo);
+    await openPage(page, "/");
+    const covered = await page.evaluate(() =>
+      [".hero__name", ".hero__role", ".datum", ".contact__title", ".email__address", ".links"].filter((sel) => {
+        const r = document.querySelector(sel).getBoundingClientRect();
+        const hit = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
+        return !(hit && hit.closest(sel));
+      })
+    );
+    expect(covered).toEqual([]);
   });
 });
