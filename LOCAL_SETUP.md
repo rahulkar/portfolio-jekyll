@@ -163,9 +163,13 @@ reading time at 220 words a minute, topics), then the drawing, a numbered
 contents list built from the `##` headings at build time, the text, the share
 links, the author, and links to the newer and older notes. From 1024px the
 drawing sits beside the title, and the contents and share links stay beside the
-text as it scrolls, with the section being read marked in ink. A 2px ink line
-under the top edge shows how far down the page you are; it is a CSS
-scroll-driven animation, so browsers without them simply do not draw it.
+text as it scrolls, with the section being read marked in ink. From 1280px the
+title and text take the middle six columns (lines up to 36em), with the contents
+and share links on the left and the drawing and facts on the right, so neither
+side of the text stands empty; the share strip narrows its cells to stay on one
+line there. A 2px ink line under the top edge shows how far down the page you
+are; it is a CSS scroll-driven animation, so browsers without them simply do
+not draw it.
 Tables are wrapped so a wide one scrolls on its own.
 
 The share links (LinkedIn, X, Bluesky, Hacker News, Reddit, WhatsApp, email)

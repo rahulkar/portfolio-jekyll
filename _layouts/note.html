@@ -26,18 +26,18 @@ layout: default
   <header class="note__head">
     <p class="note__crumb"><a href="{{ "/notes/" | relative_url }}">Notes</a></p>
     <h1>{{ page.title }}</h1>
-    <dl class="note__facts">
-      <div><dt>Author</dt><dd><a href="{{ "/#about" | relative_url }}" rel="author">{{ site.username }}</a></dd></div>
-      <div><dt>Published</dt><dd><time datetime="{{ published }}">{{ page.date | date: "%-d %b %Y" }}</time></dd></div>
-      {%- if page.last_modified_at and updated != published %}
-      <div><dt>Updated</dt><dd><time datetime="{{ updated }}">{{ page.last_modified_at | date: "%-d %b %Y" }}</time></dd></div>
-      {%- endif %}
-      <div><dt>Reading time</dt><dd>{{ minutes }} min</dd></div>
-      {%- if page.topics %}
-      <div class="note__topics"><dt>Topics</dt><dd><ul class="tags" role="list">{% for t in page.topics %}<li><a class="tag" href="{{ "/notes/" | relative_url }}?topic={{ t | slugify }}">{{ t }}</a></li>{% endfor %}</ul></dd></div>
-      {%- endif %}
-    </dl>
   </header>
+  <dl class="note__facts">
+    <div><dt>Author</dt><dd><a href="{{ "/#about" | relative_url }}" rel="author">{{ site.username }}</a></dd></div>
+    <div><dt>Published</dt><dd><time datetime="{{ published }}">{{ page.date | date: "%-d %b %Y" }}</time></dd></div>
+    {%- if page.last_modified_at and updated != published %}
+    <div><dt>Updated</dt><dd><time datetime="{{ updated }}">{{ page.last_modified_at | date: "%-d %b %Y" }}</time></dd></div>
+    {%- endif %}
+    <div><dt>Reading time</dt><dd>{{ minutes }} min</dd></div>
+    {%- if page.topics %}
+    <div class="note__topics"><dt>Topics</dt><dd><ul class="tags" role="list">{% for t in page.topics %}<li><a class="tag" href="{{ "/notes/" | relative_url }}?topic={{ t | slugify }}">{{ t }}</a></li>{% endfor %}</ul></dd></div>
+    {%- endif %}
+  </dl>
   {%- if page.art %}
   <div class="note__art">{% include art/{{ page.art }}.html %}</div>
   {%- endif %}

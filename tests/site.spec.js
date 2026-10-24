@@ -727,6 +727,34 @@ test.describe("notes", () => {
     await expect(rail.locator('.toc a[aria-current="location"]')).toHaveAttribute("href", "#side-by-side");
   });
 
+  test("from 1280px the text takes the middle, with the drawing and facts on the right staying in view", async ({ page, browser }, testInfo) => {
+    onlyDesktop(testInfo);
+    await openPage(page, "/notes/vintage-silicon/");
+    const box = (p, sel) => p.locator(sel).boundingBox();
+    const [rail, body, facts, art] = await Promise.all([".note__rail", ".note__body", ".note__facts", ".note__art"].map((sel) => box(page, sel)));
+    expect(rail.x + rail.width).toBeLessThan(body.x);
+    expect(body.x + body.width).toBeLessThan(facts.x);
+    expect(Math.abs(art.x - facts.x)).toBeLessThanOrEqual(1);
+    // Lines run a little longer in the middle column: 36em of 18px.
+    expect(await page.locator(".note__body > p").first().evaluate((el) => getComputedStyle(el).maxWidth)).toBe("648px");
+    // The share strip stays on one line.
+    expect(await page.locator(".note__rail .share__link").evaluateAll((as) => new Set(as.map((a) => Math.round(a.getBoundingClientRect().top))).size)).toBe(1);
+    await page.locator("#intel-c4004").scrollIntoViewIfNeeded();
+    const stuck = await box(page, ".note__facts");
+    expect(stuck.y).toBeGreaterThanOrEqual(64);
+    expect(stuck.y).toBeLessThan(120);
+    // Between 1024 and 1279px the facts sit under the title, over the text.
+    const ctx = await browser.newContext({ viewport: { width: 1100, height: 860 }, reducedMotion: "reduce", baseURL: testInfo.project.use.baseURL || "http://127.0.0.1:4173" });
+    const narrow = await ctx.newPage();
+    await narrow.goto("/notes/vintage-silicon/");
+    await narrow.waitForSelector("html.is-ready");
+    const [h, f, b] = await Promise.all([".note__head", ".note__facts", ".note__body"].map((sel) => box(narrow, sel)));
+    expect(Math.abs(f.x - b.x)).toBeLessThanOrEqual(1);
+    expect(f.y).toBeGreaterThan(h.y + h.height - 1);
+    expect(b.y).toBeGreaterThan(f.y + f.height - 1);
+    await ctx.close();
+  });
+
   test("share links: each network gets the note's address, and open in a new tab", async ({ page }) => {
     await openPage(page, "/notes/vintage-silicon/");
     const u = encodeURIComponent("https://www.rahulkar.com/notes/vintage-silicon/");
