@@ -63,4 +63,4 @@ defaults:
         alt: "Rahul Kar, Enterprise Solution Architect & Technology Lead, Kolkata"
 
 include: ['.well-known']
-exclude: ['package.json', 'package-lock.json', 'src', 'node_modules', 'rahul', 'tools', 'tests', 'playwright.config.js', 'lighthouserc.json', 'test-results', 'playwright-report', 'LOCAL_SETUP.md', 'LICENSE.txt', '*.heic', 'assets/img/vintage_silicon']
+exclude: ['package.json', 'package-lock.json', 'src', 'node_modules', 'rahul', 'tools', 'tests', 'playwright.config.js', 'tsconfig.json', 'lighthouserc.json', 'test-results', 'playwright-report', 'LOCAL_SETUP.md', 'LICENSE.txt', '*.heic', 'assets/img/vintage_silicon']

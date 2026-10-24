@@ -47,6 +47,16 @@
     display: block !important;
   }
 
+  // The orbital hero prints as plain copy on white, without the canvas.
+  .orbit-stage {
+    @include light-tokens;
+    background: transparent;
+  }
+
+  .orbital-hero__canvas {
+    display: none !important;
+  }
+
   a[href^="http"]::after {
     content: " (" attr(href) ")";
     font: 9pt var(--mono);

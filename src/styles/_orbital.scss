@@ -1,0 +1,57 @@
+// The orbital hero on the home page. From 1024px, where the hero has two
+// columns, the stage is dark in both page themes, so the copy on it takes the
+// dark tokens, and the canvas sits behind the copy. Narrower screens show no
+// orbit and keep the page's own colours.
+@use "mixins" as *;
+
+.orbit-stage {
+  // Derived tokens resolve where they are declared, so the root's light values
+  // would reach the stage unless the stage declares them again.
+  --datum: var(--ink-3);
+  --focus: var(--ink);
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--ink);
+
+  @include wide {
+    @include dark-tokens;
+  }
+
+  // Mirrors the higher-contrast override in _modes.scss, which targets :root.
+  @media (prefers-contrast: more) {
+    --ink-3: var(--ink-2);
+    --rule: var(--ink-3);
+  }
+
+  > :not(canvas) {
+    position: relative;
+    z-index: 1;
+  }
+}
+
+.orbital-hero__canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+// This veil is drawn over the canvas and under the copy. Its radial part keeps
+// the contact column clear of the wakes, and its bottom part fades the orbit
+// into the section below rather than cutting it off. Both use the stage colour.
+@include wide {
+  .orbit-stage::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background:
+      linear-gradient(to bottom, rgba(18, 18, 17, 0) 84%, rgba(18, 18, 17, 1) 100%),
+      radial-gradient(ellipse 24% 36% at 80% 42%, rgba(18, 18, 17, 0.9) 0%, rgba(18, 18, 17, 0.7) 45%, rgba(18, 18, 17, 0) 100%);
+  }
+}

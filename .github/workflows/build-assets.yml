@@ -32,9 +32,9 @@ jobs:
 
       - name: Check built assets match source
         run: |
-          if ! git diff --quiet -- assets/css/main.css assets/js/main.js; then
-            echo "::error::Built assets are out of date. Run 'npm run build' and commit assets/css/main.css and assets/js/main.js."
-            git --no-pager diff --stat -- assets/css/main.css assets/js/main.js
+          if ! git diff --quiet -- assets/css/main.css assets/js/main.js assets/js/orbit.js; then
+            echo "::error::Built assets are out of date. Run 'npm run build' and commit assets/css/main.css, assets/js/main.js and assets/js/orbit.js."
+            git --no-pager diff --stat -- assets/css/main.css assets/js/main.js assets/js/orbit.js
             exit 1
           fi
           echo "Built assets are in sync with source."

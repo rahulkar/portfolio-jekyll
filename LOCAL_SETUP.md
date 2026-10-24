@@ -26,7 +26,8 @@ Jekyll can run against the globally installed gems by bypassing Bundler:
 ## Everyday loop
 
 ```powershell
-npm run build          # sass + esbuild -> assets/css/main.css, assets/js/main.js
+npm run build          # sass + esbuild -> assets/css/main.css, assets/js/main.js, assets/js/orbit.js
+npm run typecheck      # tsc over src/js/**/*.ts; checks types and emits nothing
 npm run check:csp      # lint markup and scripts for CSP regressions, plus the accent guard
 bundle exec jekyll build
 npm run serve:light    # builds, then serves _site on http://127.0.0.1:4001
@@ -40,7 +41,7 @@ server, not `jekyll serve`. `npm run dev` still runs the sass/esbuild watchers
 next to `jekyll serve --force_polling` for quick iteration without reload.
 
 **Run `npm run build` before every commit.** CI rebuilds and fails if the
-committed `assets/css/main.css` or `assets/js/main.js` differ from `src/`.
+committed `assets/css/main.css`, `assets/js/main.js` or `assets/js/orbit.js` differ from `src/`.
 
 ## Tests
 
@@ -156,9 +157,9 @@ It is off under `prefers-reduced-motion`.
 
 ## Guard rails
 
-- A **pre-commit hook** (installed by `npm install` via simple-git-hooks) runs the build
-  and the CSP lint and stages the rebuilt bundles, so a stale `assets/js/main.js` can
-  no longer be committed.
+- A **pre-commit hook** (installed by `npm install` via simple-git-hooks) runs the build,
+  the typecheck and the CSP lint, and stages the rebuilt bundles, so a stale
+  `assets/js/main.js` or `assets/js/orbit.js` can no longer be committed.
 - CI validates the built HTML (`npm run validate:html`, config in `.htmlvalidate.json`),
   runs the Playwright suite and Lighthouse CI, then checks every link with lychee
   (LinkedIn is excluded because it blocks bots; absolute `www.rahulkar.com` links are
