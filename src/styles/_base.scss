@@ -31,7 +31,7 @@ ul, ol {
   padding: 0;
 }
 
-.playbook, .rows, .links, .career, .career__items, .site-nav ul {
+.playbook, .playbook__out, .rows, .links, .career, .career__items, .site-nav ul {
   list-style: none;
 }
 
@@ -46,6 +46,22 @@ svg.icon {
   flex: none;
   width: 0.875em;
   height: 0.875em;
+}
+
+// Every icon line stays 1.5px at any size, so the packs' 24px icons and the
+// site's own 14px ones read as one set (tools/icons.mjs).
+svg.icon * {
+  vector-effect: non-scaling-stroke;
+}
+
+svg.icon--md {
+  width: 1.125rem;
+  height: 1.125rem;
+}
+
+svg.icon--lg {
+  width: 1.5rem;
+  height: 1.5rem;
 }
 
 em, i, strong, b {

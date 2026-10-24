@@ -201,6 +201,17 @@
 
 .career__now { color: var(--ink); }
 
+// Each group's icon hangs beside its name, centred on the first line.
+.career__stage > h3 {
+  display: flex;
+  gap: var(--s-2);
+
+  > .icon {
+    margin-top: calc((1.3em - 1.125rem) / 2);
+    color: var(--ink-2);
+  }
+}
+
 // Each group's tools read as one line, separated by quiet dots.
 .career__items {
   color: var(--ink-2);
@@ -234,6 +245,35 @@
   font-weight: 450;
   line-height: 1.35;
   letter-spacing: -0.01em;
+}
+
+// The lead's six words as icons, each under a hairline like the parts key
+// under the photo: two to a row, three once the text column has room for
+// the longest word (a container query, since that column is narrow both on
+// phones and from 1024px).
+.about__text { container-type: inline-size; }
+
+.fluent {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: var(--s-4);
+  max-width: var(--measure);
+
+  @container (min-width: 26rem) {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  > li {
+    @include label;
+    display: flex;
+    align-items: center;
+    gap: var(--s-2);
+    padding: var(--s-2) 0;
+    border-top: 1px solid var(--rule);
+    color: var(--ink-2);
+  }
+
+  .icon { color: var(--ink); }
 }
 
 .about .figure {
@@ -273,51 +313,308 @@
 
 /* How I work ------------------------------------------------------------ */
 
+// From 1024px the title takes the left half of the page grid, and the lede and
+// the email button the right half.
+.approach__head {
+  .page__lede { text-wrap: balance; }
+
+  @include wide {
+    grid-template-columns: subgrid;
+    column-gap: var(--gutter);
+
+    > h1 { @include cols(1, 6); grid-row: 1 / span 2; }
+    > .page__lede,
+    > .book { @include cols(7, 12); }
+  }
+}
+
+// The steps on one rail, like the career scale on the home page. Each step
+// opens with an ink chip carrying its number, and the diamond after Prototype
+// is its go / no-go decision. Below 1280px the rail runs down the left edge and
+// each step is a row on the page grid: name, summary and drawing on the left
+// half, what it produces on the right. From 1280px the steps stand side by side
+// on the rail, three columns each, and subgrid rows line up their summaries,
+// drawings and lists. Ink only, never the accent.
+$chip: 1.75rem;    // the number chip's width; the rail runs down its middle
+$chip-h: 1.375rem;
+
 .playbook {
+  // From a step's top to the middle of its name, where the chip and rail sit.
+  --rail-y: calc(1.15 * var(--fs-h2) / 2);
+  // The gap after Prototype that holds the go / no-go mark below 1280px.
+  --gate-space: var(--s-8);
   margin-top: var(--s-6);
+  padding-top: var(--s-5);
   border-top: 1px solid var(--ink);
   counter-reset: stage;
+
+  @include mid {
+    display: grid;
+    grid-template-columns: subgrid;
+  }
+
+  @include xl {
+    position: relative;
+    grid-template-rows: repeat(4, auto);
+    row-gap: var(--s-5);
+    padding-top: var(--s-6);
+
+    // The rail runs on past the last step.
+    &::after {
+      content: "";
+      position: absolute;
+      top: calc(var(--s-6) + var(--rail-y) - 3.5px);
+      right: 1px;
+      width: 7px;
+      height: 7px;
+      border-top: 1px solid var(--ink-3);
+      border-right: 1px solid var(--ink-3);
+      transform: rotate(45deg);
+    }
+  }
 }
 
-// Each step is a name and one plain line; from 1024px they sit side by side.
 .playbook__stage {
+  position: relative;
   display: grid;
-  grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
-  column-gap: var(--gutter);
-  row-gap: var(--s-2);
-  padding: var(--s-4) 0;
-  border-bottom: 1px solid var(--rule);
+  align-content: start;
+  row-gap: var(--s-3);
+  padding: 0 0 var(--s-6) calc(#{$chip} + var(--s-4));
   counter-increment: stage;
 
-  > * { grid-column: 1 / -1; min-width: 0; }
-
-  h2 {
-    @include wide { @include cols(1, 3); }
+  // The rail, from this chip down to the next.
+  &::before {
+    content: "";
+    position: absolute;
+    top: var(--rail-y);
+    bottom: calc(-1 * var(--rail-y));
+    left: calc(#{$chip} / 2);
+    border-left: 1px solid var(--ink-3);
   }
 
-  // Numbered like the career scale on the home page; the list already gives
-  // screen readers the position, so the number has empty alternative text.
-  h2::before {
-    @include label;
-    content: counter(stage, decimal-leading-zero) / "";
-    display: block;
-    margin-bottom: var(--s-1);
-    color: var(--ink-3);
+  &:last-child {
+    padding-bottom: 0;
+
+    &::before { display: none; }
   }
 
-  p {
-    max-width: var(--measure);
-    font-size: var(--fs-h3);
-    font-weight: 450;
-    line-height: 1.35;
-    padding-top: 0.15em;
+  // Room on the rail for the go / no-go mark.
+  &.has-gate { padding-bottom: var(--gate-space); }
 
-    @include wide { @include cols(4, 12); }
+  @include mid {
+    grid-column: 1 / -1;
+    grid-template-columns: subgrid;
+    grid-template-rows: auto auto 1fr;
+
+    > h2,
+    > .playbook__summary,
+    > .playbook__art { @include cols(1, 3); }
+    > .playbook__produces { @include cols(4, 6); grid-row: 1 / span 3; }
+  }
+
+  @include wide {
+    > h2,
+    > .playbook__summary,
+    > .playbook__art { @include cols(1, 6); }
+    > .playbook__produces { @include cols(7, 12); }
+  }
+
+  @include xl {
+    grid-column: span 3;
+    grid-row: span 4;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: subgrid;
+    row-gap: var(--s-5);
+    padding: 0;
+
+    > h2,
+    > .playbook__summary,
+    > .playbook__art,
+    > .playbook__produces { grid-column: 1; grid-row: auto; }
+
+    &::before { display: none; }
   }
 }
 
-.playbook__cta {
-  margin-top: var(--s-6);
+// Each step's drawing: under the summary, as wide as its column from 1280px.
+.playbook__art {
+  max-width: 16rem;
+  padding-block: var(--s-2);
+
+  @include mid { max-width: 18rem; }
+  @include xl { max-width: none; padding-block: 0; }
+}
+
+// The number chip. The list already gives screen readers the position, so the
+// number has empty alternative text.
+.playbook__stage > h2::before {
+  content: counter(stage, decimal-leading-zero) / "";
+  position: absolute;
+  top: calc(var(--rail-y) - #{$chip-h} / 2);
+  left: 0;
+  min-width: $chip;
+  padding: 0 0.25rem;
+  background: var(--ink);
+  color: var(--on-ink);
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  font-weight: 400;
+  line-height: $chip-h;
+  letter-spacing: 0;
+  text-align: center;
+}
+
+// From 1280px the name sits on the rail: chip, name, then the rail on to the
+// next chip, across the gutter.
+@include xl {
+  .playbook__stage > h2 {
+    display: flex;
+    align-items: center;
+    gap: var(--s-3);
+    margin-right: calc(-1 * var(--gutter));
+
+    &::before { position: static; flex: none; }
+
+    &::after {
+      content: "";
+      flex: 1 1 0;
+      min-width: var(--s-5);
+      border-top: 1px solid var(--ink-3);
+    }
+  }
+
+  .playbook__stage:last-child > h2 { margin-right: 0; }
+}
+
+// The go / no-go decision: a diamond on the rail after the step that makes it,
+// in the gap below it on narrower screens and in the gutter from 1280px.
+.playbook__gate {
+  @include label;
+  position: absolute;
+  bottom: calc(var(--gate-space) / 2 - 0.525rem);
+  left: 0;
+  display: grid;
+  grid-template-columns: $chip auto;
+  column-gap: var(--s-4);
+  align-items: center;
+  color: var(--ink-2);
+
+  &::before {
+    content: "";
+    justify-self: center;
+    width: 9px;
+    height: 9px;
+    border: 1px solid var(--ink);
+    background: var(--bg);
+    transform: rotate(45deg);
+  }
+
+  @include xl {
+    top: calc(var(--rail-y) - 4.5px);
+    right: calc(var(--gutter) / -2 - 4.5px);
+    bottom: auto;
+    left: auto;
+    grid-template-columns: auto;
+    justify-items: end;
+    row-gap: var(--s-2);
+  }
+}
+
+.playbook__summary {
+  max-width: var(--measure);
+  font-size: var(--fs-h3);
+  font-weight: 450;
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+}
+
+// Beside the name, the label sits on the name's middle line.
+.playbook__produces {
+  margin-top: var(--s-2);
+
+  @include mid {
+    margin-top: 0;
+    padding-top: calc(var(--rail-y) - 0.525rem);
+  }
+
+  @include xl { padding-top: 0; }
+}
+
+.playbook__label {
+  @include label;
+  padding-bottom: var(--s-2);
+  color: var(--ink-3);
+}
+
+// What a step produces, one item to a hairline, like a parts list, each with
+// its icon in the margin, centred on the first line.
+.playbook__out {
+  --out-pad: var(--s-2);
+
+  > li {
+    position: relative;
+    padding: var(--out-pad) 0 var(--out-pad) 1.875rem;
+    border-top: 1px solid var(--rule);
+  }
+
+  > li > .icon {
+    position: absolute;
+    top: calc(var(--out-pad) + (1.6em - 1.125rem) / 2);
+    left: 0;
+    color: var(--ink-2);
+  }
+}
+
+.playbook__out-name {
+  font-weight: 500;
+}
+
+.playbook__out-detail {
+  display: block;
+  font-size: var(--fs-small);
+  line-height: 1.45;
+  color: var(--ink-2);
+}
+
+// A hand-off: the step an output feeds, as a link to it. Pointing at one rings
+// that step's chip, and so does arriving at the step through it; :has() pairs
+// them, so it needs no script. Negative margins keep the 44px target from
+// opening up the line.
+.playbook__next {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  min-width: 44px;
+  min-height: 44px;
+  margin: -14px 0 -14px var(--s-1);
+  vertical-align: middle;
+  color: var(--ink-2);
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  line-height: 1;
+  text-decoration: none;
+
+  &:hover { color: var(--ink); }
+}
+
+.playbook__next-n {
+  padding: 0.1875rem 0.3125rem;
+  border: 1px solid currentColor;
+}
+
+@mixin chip-ring {
+  outline: 1px solid var(--ink);
+  outline-offset: 2px;
+}
+
+.playbook__stage:target > h2::before { @include chip-ring; }
+
+@each $id in discover, prototype, architect, scale {
+  .playbook:has(.playbook__next[href="##{$id}"]:hover) ##{$id} > h2::before,
+  .playbook:has(.playbook__next[href="##{$id}"]:focus-visible) ##{$id} > h2::before {
+    @include chip-ring;
+  }
 }
 
 /* Notes index and note page ----------------------------------------------- */
@@ -335,6 +632,19 @@
   gap: var(--s-4);
 
   @include wide { @include cols(4, 11); }
+}
+
+// A note's drawing: above the title on narrower screens; from 1024px in the
+// first three columns, beside it.
+.note__art {
+  max-width: 14rem;
+
+  @include wide {
+    @include cols(1, 3);
+    grid-row: 1 / span 2;
+    max-width: none;
+    padding-top: var(--s-2);
+  }
 }
 
 .note__crumb a {
@@ -382,6 +692,22 @@
 }
 
 /* 404 --------------------------------------------------------------------- */
+
+// From 1024px the open circuit sits beside the message.
+.error > :not(.error__art) {
+  @include wide { @include cols(1, 7); }
+}
+
+.error__art {
+  max-width: 20rem;
+
+  @include wide {
+    @include cols(8, 12);
+    grid-row: 1 / span 3;
+    align-self: center;
+    max-width: none;
+  }
+}
 
 .error__code {
   @include label;

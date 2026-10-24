@@ -1,0 +1,56 @@
+# The steps on /how-i-work/, in order, with what each one usually produces
+# (outputs confirmed by Rahul on 2026-10-24). Each step is drawn by
+# _includes/art/<id>.html; each output has an icon from _includes/icon.html
+# (tools/icons.mjs). `next` names the step an output feeds, drawn as a link to
+# it; `gate` puts the go / no-go mark on the rail after the step.
+- id: discover
+  name: Discover
+  summary: Understand the problem, the constraints and the existing systems.
+  produces:
+    - name: Problem statement
+      icon: file-text
+      detail: A short written statement of the problem and the constraints.
+    - name: Map of current systems
+      icon: network
+      detail: A diagram or inventory of the existing systems and integrations.
+    - name: Risks and open questions
+      icon: triangle-alert
+      detail: The risks and unknowns found early.
+    - name: Shortlist to prototype
+      icon: list-checks
+      detail: The risky parts picked out for the proof of concept.
+      next: prototype
+- id: prototype
+  name: Prototype
+  summary: Build a proof of concept to test the risky parts first.
+  gate: true
+  produces:
+    - name: Working proof of concept
+      icon: flask-conical
+      detail: Running code that exercises the risky parts.
+    - name: Effort and cost estimate
+      icon: calculator
+      detail: An estimate for the full build, based on the prototype.
+    - name: Go / no-go decision
+      icon: split
+      detail: A recommendation on whether to build it.
+      next: architect
+- id: architect
+  name: Architect
+  summary: Solution architecture, platform strategy and the roadmap.
+  produces:
+    - name: Architecture diagrams
+      icon: workflow
+      detail: System context, components and data flows.
+    - name: Roadmap in releases
+      icon: milestone
+- id: scale
+  name: Scale
+  summary: CI/CD pipelines, test automation and delivery.
+  produces:
+    - name: CI/CD pipelines
+      icon: infinity
+      detail: Build, test and deploy pipelines for the product.
+    - name: Runbooks and documentation
+      icon: book-open-text
+      detail: How to run, release and support it.

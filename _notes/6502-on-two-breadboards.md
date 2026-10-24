@@ -4,6 +4,8 @@ date: 2026-10-11
 last_modified_at: 2026-10-17
 description: A homebrew W65C02S computer, the chips on the board, and some 6502 history.
 feed_id: /scribbles/6502-on-two-breadboards
+icon: circuit-board
+art: breadboard
 ---
 A homebrew 8-bit computer on two breadboards. Every connection is a jumper wire, so every signal can be traced by eye or with a probe.
 

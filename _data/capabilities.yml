@@ -1,10 +1,15 @@
-# Background on the home page, in career order (earliest first). Plain lists:
-# no ratings, no logos. Also feeds knowsAbout in the home page's JSON-LD.
+# Background on the home page, in career order (earliest first). Plain lists,
+# each group with one icon from _includes/icon.html: no ratings, no tool logos.
+# Also feeds knowsAbout in the home page's JSON-LD.
 - group: Quality engineering and automation
+  icon: badge-check
   items: [Automation frameworks, Playwright, API tooling, Java, Python, JavaScript]
 - group: DevOps and cloud
+  icon: cloud-cog
   items: [Jenkins, GitLab CI/CD, Azure DevOps, Docker, AWS, Azure]
 - group: Architecture and delivery
+  icon: blocks
   items: [Solution architecture, Proofs of concept, Enterprise delivery, Platform strategy, Roadmapping]
 - group: Agentic AI
+  icon: bot
   items: [Generative AI, LLMs, AI agents, AI loops, Google ADK]

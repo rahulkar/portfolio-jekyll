@@ -1,0 +1,86 @@
+// Line art (_includes/art/): technical drawings in the page's own colours, so
+// they follow the theme. Lines are ink-2, emphasis ink, guides ink-3; fills
+// are the page and its inset; never the accent. Strokes keep their weight at
+// any size, except the dashed rows of holes, pins and cells, which are
+// measured in the drawing's own units so they scale with it.
+
+.art {
+  display: block;
+  width: 100%;
+  height: auto;
+  color: var(--ink-2);
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.25;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+
+  * { vector-effect: non-scaling-stroke; }
+}
+
+.art__key { stroke: var(--ink); }
+
+.art__guide {
+  stroke: var(--ink-3);
+  stroke-width: 1;
+}
+
+.art__faint {
+  stroke: var(--ink-3);
+  stroke-width: 1;
+  stroke-dasharray: 3 3;
+}
+
+.art__columns {
+  stroke: var(--rule);
+  stroke-width: 1;
+  stroke-dasharray: 2 3;
+}
+
+.art__paper { fill: var(--bg); }
+
+.art__fill,
+.art__glass { fill: var(--bg-inset); }
+
+.art__ink {
+  fill: var(--ink);
+  stroke: none;
+}
+
+// The notch and pin-1 dot on a chip show the board through it.
+.art__notch {
+  fill: var(--bg-inset);
+  stroke: none;
+}
+
+.art__pins {
+  stroke: var(--ink);
+  stroke-width: 1.75;
+  stroke-linecap: butt;
+}
+
+.art__wire { stroke-width: 2; }
+
+.art__holes {
+  vector-effect: none;
+  stroke: var(--ink-3);
+  stroke-width: 2;
+  stroke-linecap: butt;
+  stroke-dasharray: 2 6;
+}
+
+.art__holes--grid {
+  stroke: var(--ink-2);
+  stroke-dasharray: 2 5;
+}
+
+.art__holes--cells {
+  stroke: var(--rule);
+  stroke-width: 7;
+  stroke-dasharray: 2.5 1;
+}
+
+.art__holes--ticks {
+  stroke-width: 4;
+  stroke-dasharray: 1 8.5;
+}

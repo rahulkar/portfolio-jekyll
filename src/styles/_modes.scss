@@ -70,6 +70,11 @@
   .theme-toggle {
     border: 1px solid ButtonText;
   }
+
+  // Forced colours drop the chip's ink fill; a border keeps its box.
+  .playbook__stage > h2::before {
+    border: 1px solid CanvasText;
+  }
 }
 
 // Same specificity as the dark-token selectors, so this also wins in dark.

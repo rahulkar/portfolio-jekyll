@@ -482,23 +482,68 @@ test("the colophon reports the page weight", async ({ page }) => {
 });
 
 test.describe("approach page", () => {
-  test("four stages, all text visible", async ({ page }) => {
+  test("four steps, each with what it produces", async ({ page }) => {
     await openPage(page, "/how-i-work/");
     await expect(page.locator("h1")).toHaveText("How I work");
     await expect(page.locator(".playbook__stage")).toHaveCount(4);
     expect(await page.locator(".playbook__stage").first().evaluate((el) => getComputedStyle(el).listStyleType)).toBe("none");
     await expect(page.locator(".playbook__stage h2")).toHaveText(["Discover", "Prototype", "Architect", "Scale"]);
+    expect(await page.locator(".playbook__out").evaluateAll((lists) => lists.map((l) => l.children.length))).toEqual([4, 3, 2, 2]);
+    // Hand-offs link to the step they feed; the go / no-go mark after
+    // Prototype repeats its last output, so screen readers skip it.
+    await expect(page.getByRole("link", { name: "Step 2, Prototype" })).toHaveAttribute("href", "#prototype");
+    await expect(page.getByRole("link", { name: "Step 3, Architect" })).toHaveAttribute("href", "#architect");
+    await expect(page.locator(".playbook__gate")).toHaveCount(1);
+    await expect(page.locator("#prototype .playbook__gate")).toHaveAttribute("aria-hidden", "true");
     await expect(page.locator('.site-nav a[aria-current="page"]')).toHaveText("How I work");
   });
 
-  test("prints as a brief", async ({ page }, testInfo) => {
+  test("a hand-off rings the chip of the step it feeds", async ({ page }, testInfo) => {
+    onlyDesktop(testInfo);
+    await openPage(page, "/how-i-work/");
+    const ring = (id) => page.locator(`#${id} > h2`).evaluate((el) => getComputedStyle(el, "::before").outlineStyle);
+    const next = page.locator('.playbook__next[href="#prototype"]');
+    await next.hover();
+    expect(await ring("prototype")).toBe("solid");
+    expect(await ring("architect")).toBe("none");
+    await next.click();
+    await expect(page).toHaveURL(/#prototype$/);
+    await page.mouse.move(0, 0);
+    expect(await ring("prototype")).toBe("solid");
+  });
+
+  test("from 1280px the steps share one rail and their rows line up", async ({ page }, testInfo) => {
+    onlyDesktop(testInfo);
+    await openPage(page, "/how-i-work/");
+    const boxes = (sel) => page.locator(sel).evaluateAll((els) => els.map((el) => el.getBoundingClientRect()).map((b) => ({ left: Math.round(b.left), top: Math.round(b.top), right: Math.round(b.right) })));
+    const names = await boxes(".playbook__stage > h2");
+    expect(new Set(names.map((b) => b.top)).size).toBe(1);
+    // Each name's rail runs on to the next step's chip.
+    for (let i = 0; i < 3; i++) expect(Math.abs(names[i].right - names[i + 1].left)).toBeLessThanOrEqual(1);
+    expect(new Set((await boxes(".playbook__label")).map((b) => b.top)).size).toBe(1);
+  });
+
+  test("hand-offs are 44px targets", async ({ page }, testInfo) => {
+    test.skip(testInfo.project.name === "desktop", "phone sizes only");
+    await openPage(page, "/how-i-work/");
+    for (const a of await page.locator(".playbook__next").all()) {
+      const box = await a.boundingBox();
+      expect(Math.round(box.width)).toBeGreaterThanOrEqual(44);
+      expect(Math.round(box.height)).toBeGreaterThanOrEqual(44);
+    }
+  });
+
+  test("prints as a one-page brief", async ({ page }, testInfo) => {
     await openPage(page, "/how-i-work/");
     await page.emulateMedia({ media: "print" });
     for (const sel of [".site-header", ".colophon", ".book", ".skip-link"]) await expect(page.locator(sel)).toBeHidden();
     await expect(page.locator(".print-only")).toBeVisible();
     expect(await page.locator("h1").evaluate((el) => parseFloat(getComputedStyle(el).fontSize))).toBeLessThanOrEqual(30);
     expect(await page.locator(".playbook__stage p").first().evaluate((el) => parseFloat(getComputedStyle(el).fontSize))).toBeLessThanOrEqual(17);
-    if (testInfo.project.name === "desktop") await page.pdf({ path: testInfo.outputPath("how-i-work.pdf"), format: "A4" });
+    if (testInfo.project.name === "desktop") {
+      const pdf = await page.pdf({ path: testInfo.outputPath("how-i-work.pdf"), format: "A4" });
+      expect(pdf.toString("latin1").match(/\/Type\s*\/Page[^s]/g)).toHaveLength(1);
+    }
   });
 
   test("printed links spell out their address", async ({ page }) => {
@@ -507,6 +552,35 @@ test.describe("approach page", () => {
     const content = await page.locator(".row__link").first().evaluate((el) => getComputedStyle(el, "::after").content);
     // Chrome either resolves attr(href) or serialises the tokens separately.
     expect(content).toMatch(/rahulkar\.com(\/notes\/|"\s+attr\(href\))/);
+  });
+});
+
+test.describe("icons and drawings", () => {
+  test("every icon and drawing is hidden from assistive tech", async ({ page }, testInfo) => {
+    onlyDesktop(testInfo);
+    for (const path of PAGES) {
+      await openPage(page, path);
+      const exposed = await page.evaluate(() => [...document.querySelectorAll("svg.icon, svg.art")].filter((svg) => !svg.closest('[aria-hidden="true"]')).map((svg) => svg.outerHTML.slice(0, 60)));
+      expect(exposed, path).toEqual([]);
+    }
+  });
+
+  test("each step has its drawing and each output its icon", async ({ page }) => {
+    await openPage(page, "/how-i-work/");
+    await expect(page.locator(".playbook__art > svg.art")).toHaveCount(4);
+    await expect(page.locator(".playbook__out > li > svg.icon")).toHaveCount(11);
+  });
+
+  test("notes and the 404 carry their drawings; Background, notes and profiles their icons", async ({ page }) => {
+    for (const [path, art] of [["/notes/vintage-silicon/", "silicon"], ["/notes/6502-on-two-breadboards/", "breadboard"], ["/notes/how-this-site-is-built/", "site"], ["/404.html", "open-circuit"]]) {
+      await openPage(page, path);
+      await expect(page.locator(`svg.art--${art}`), path).toHaveCount(1);
+    }
+    await openPage(page, "/");
+    await expect(page.locator(".career__stage > h3 > svg.icon")).toHaveCount(4);
+    await expect(page.locator(".fluent > li > svg.icon")).toHaveCount(6);
+    await expect(page.locator(".rows .row__title > svg.icon")).toHaveCount(3);
+    await expect(page.locator(".links svg.icon--md")).toHaveCount(4);
   });
 });
 
