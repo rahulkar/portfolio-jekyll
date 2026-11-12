@@ -8,6 +8,7 @@ import { initStageHeader } from "./stage-header.js";
 import { initOrbitMini } from "./orbit-mini.js";
 import { initPointer } from "./pointer.js";
 import { initPlot } from "./plot.js";
+import { initLcd } from "./lcd.js";
 
 function start() {
   var root = document.documentElement;
@@ -21,6 +22,7 @@ function start() {
   initOrbitMini(document);
   initPointer(document);
   initPlot(document);
+  initLcd(document);
 
   // 404: show the path that failed to resolve (as text, never as HTML).
   var path = document.getElementById("err-path");

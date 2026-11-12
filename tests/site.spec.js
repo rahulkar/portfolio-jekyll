@@ -163,7 +163,7 @@ test.describe("without JavaScript", () => {
     await page.goto("/");
     await expect(page.locator(".datum__label")).toBeVisible();
     await expect(page.locator(".datum__ticks")).toBeVisible();
-    for (const sel of [".datum__tick", ".datum__now", ".datum__local", "#theme-btn", "#cmdk-btn", ".copy", ".colophon__weight"]) {
+    for (const sel of [".datum__tick", ".datum__now", ".datum__local", "#theme-btn", "#cmdk-btn", ".copy", ".colophon__weight", ".lcd"]) {
       await expect(page.locator(sel)).toBeHidden();
     }
     // Controls that only work with the script are not there at all.

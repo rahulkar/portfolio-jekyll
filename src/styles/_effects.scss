@@ -372,3 +372,44 @@
 @keyframes rail-across {
   from { transform: scaleX(0); }
 }
+
+/* The footer's readout ----------------------------------------------------- */
+
+// A character LCD like the one on the 6502 board: dark dots on a yellow-green
+// backlight, in a black bezel, the same in both themes (lcd.js draws it and
+// reads these three colours). The dots are sized in px, so the box is too.
+.lcd {
+  --lcd-bg: #9CBF2A;
+  --lcd-on: #1B2A0A;
+  --lcd-off: rgba(27, 42, 10, 0.1);
+  box-sizing: content-box;
+  flex: none;
+  width: 287px;
+  max-width: calc(100% - 8px);
+  height: auto;
+  aspect-ratio: 287 / 68;
+  border: 3px solid #1C1C1A;
+  outline: 1px solid var(--ink-3);
+  background: var(--lcd-bg);
+  cursor: pointer;
+}
+
+// With the readout running, the time and page-weight lines stay in the page
+// for screen readers but leave the screen. Forced colours show the lines and
+// drop the readout, whose colours cannot be forced.
+@media screen and (forced-colors: none) {
+  .has-lcd .colophon__clock,
+  .has-lcd .colophon__weight {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+  }
+}
+
+@media (forced-colors: active) {
+  .lcd { display: none; }
+}
