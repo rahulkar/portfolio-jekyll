@@ -491,12 +491,26 @@ $parts: cpu, rom, ram, via, nand, osc, lcd;
   display: grid;
   row-gap: var(--s-5);
 
+  // The contact and the site's details on the left, each on its own line; the
+  // small orbit and the readout on the right, across both.
   @include wide {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
+    grid-template-columns: minmax(0, 1fr) auto;
+    column-gap: var(--gutter);
     row-gap: var(--s-2);
+    align-items: center;
+
+    > .colophon__aside {
+      grid-column: 2;
+      grid-row: 1 / span 2;
+    }
   }
+}
+
+.colophon__aside {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-4) var(--s-5);
 }
 
 .colophon__meta {

@@ -975,23 +975,35 @@ test.describe("home hero orbit", () => {
       return h;
     });
 
-  test("holds still until the pointer is over it, moves while it is, and stops after it leaves", async ({ page }, testInfo) => {
+  test("runs by itself while it is on screen, holds once scrolled away, and picks up on return", async ({ page }, testInfo) => {
     onlyDesktop(testInfo);
     await page.emulateMedia({ colorScheme: "dark", reducedMotion: "no-preference" });
     await page.goto("/");
     await page.waitForSelector("html.is-ready");
-    const box = await page.locator('[data-orbital-hero="wide"]').boundingBox();
-    const still = await frame(page);
-    await page.waitForTimeout(400);
-    expect(await frame(page)).toBe(still);
-    await page.mouse.move(box.x + box.width * 0.7, box.y + box.height * 0.5);
+    const first = await frame(page);
     await page.waitForTimeout(800);
-    expect(await frame(page)).not.toBe(still);
-    await page.mouse.move(box.x + box.width * 0.5, 5);
-    await page.waitForTimeout(5000);
-    const rested = await frame(page);
-    await page.waitForTimeout(500);
-    expect(await frame(page)).toBe(rested);
+    expect(await frame(page)).not.toBe(first);
+    // Out of view the loop stops, so the last frame holds.
+    await page.locator("#notes").scrollIntoViewIfNeeded();
+    await page.waitForTimeout(800);
+    const held = await frame(page);
+    await page.waitForTimeout(600);
+    expect(await frame(page)).toBe(held);
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await page.waitForTimeout(800);
+    expect(await frame(page)).not.toBe(held);
+  });
+
+  test("below 1024px the orbit in the band runs by itself too", async ({ page }, testInfo) => {
+    test.skip(testInfo.project.name === "desktop", "phone and tablet widths only");
+    await page.emulateMedia({ colorScheme: "light", reducedMotion: "no-preference" });
+    await page.goto("/");
+    await page.waitForSelector("html.is-ready");
+    await page.locator('[data-orbital-hero="narrow"]').scrollIntoViewIfNeeded();
+    await page.waitForTimeout(400);
+    const first = await frame(page);
+    await page.waitForTimeout(800);
+    expect(await frame(page)).not.toBe(first);
   });
 
   test("reduced motion: the frame does not move, even under the pointer", async ({ page }, testInfo) => {

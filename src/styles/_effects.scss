@@ -114,3 +114,58 @@
     backdrop-filter: none;
   }
 }
+
+/* The footer's orbit ------------------------------------------------------- */
+
+// Three planets on tilted rings round a sun, in the hues of the big one. Like
+// the hero's orbit it turns by itself, but only while it is on screen
+// (orbit-mini.js), and never under reduced motion.
+.orbit-mini {
+  flex: none;
+  width: 7.5rem;
+  height: auto;
+  overflow: visible;
+  fill: none;
+
+  * { vector-effect: non-scaling-stroke; }
+}
+
+.orbit-mini__ring {
+  stroke: var(--ink-3);
+  stroke-width: 1;
+  opacity: 0.55;
+}
+
+.orbit-mini__sun {
+  fill: var(--ink);
+  stroke: none;
+}
+
+.orbit-mini__planet {
+  stroke-width: 5;
+  stroke-linecap: round;
+}
+
+.orbit-mini__planet--a { stroke: var(--hue-venus); }
+.orbit-mini__planet--b { stroke: var(--hue-earth); }
+.orbit-mini__planet--c { stroke: var(--hue-neptune); }
+
+.orbit-mini__turn {
+  animation: orbit-mini-turn linear infinite paused;
+}
+
+.orbit-mini__turn--a { animation-duration: 9s; }
+.orbit-mini__turn--b { animation-duration: 17s; animation-delay: -6s; }
+.orbit-mini__turn--c { animation-duration: 31s; animation-delay: -11s; }
+
+.orbit-mini.is-running .orbit-mini__turn { animation-play-state: running; }
+
+@keyframes orbit-mini-turn {
+  to { transform: rotate(-360deg); }
+}
+
+// The blanket reduced-motion rule shortens every animation; an endless one
+// has to be switched off outright.
+@media (prefers-reduced-motion: reduce) {
+  .orbit-mini__turn { animation: none; }
+}

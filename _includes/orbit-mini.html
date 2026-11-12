@@ -1,0 +1,16 @@
+{%- comment -%} The footer's small orbit: three planets on tilted rings round a sun, turned by CSS (_effects.scss). Each planet is a zero-length round-capped stroke, so it stays a dot although its ring's plane is squashed. Decorative. {%- endcomment -%}
+<svg class="orbit-mini" width="120" height="72" viewBox="-60 -36 120 72" aria-hidden="true" focusable="false" data-orbit-mini>
+  <g transform="rotate(-18) scale(1 .34)">
+    <circle class="orbit-mini__ring" r="52"/>
+    <g class="orbit-mini__turn orbit-mini__turn--c"><path class="orbit-mini__planet orbit-mini__planet--c" d="M52 0h0"/></g>
+  </g>
+  <g transform="rotate(24) scale(1 .42)">
+    <circle class="orbit-mini__ring" r="36"/>
+    <g class="orbit-mini__turn orbit-mini__turn--b"><path class="orbit-mini__planet orbit-mini__planet--b" d="M36 0h0"/></g>
+  </g>
+  <g transform="rotate(-48) scale(1 .5)">
+    <circle class="orbit-mini__ring" r="20"/>
+    <g class="orbit-mini__turn orbit-mini__turn--a"><path class="orbit-mini__planet orbit-mini__planet--a" d="M20 0h0"/></g>
+  </g>
+  <circle class="orbit-mini__sun" r="2.5"/>
+</svg>
