@@ -20,12 +20,13 @@ permalink: /notes/
       <li><a class="topic" href="{{ "/notes/" | relative_url }}" data-topic="">All<span class="topic__n"><span class="sr-only">, </span>{{ notes.size }}<span class="sr-only"> notes</span></span></a></li>
       {%- for t in topics %}
       {%- assign tagged = notes | where_exp: "n", "n.topics contains t" %}
-      <li><a class="topic" href="{{ "/notes/" | relative_url }}?topic={{ t | slugify }}" data-topic="{{ t | slugify }}">{{ t }}<span class="topic__n"><span class="sr-only">, </span>{{ tagged.size }}<span class="sr-only"> {% if tagged.size == 1 %}note{% else %}notes{% endif %}</span></span></a></li>
+      {%- assign slug = t | slugify %}
+      <li><a class="topic{% if site.data.topics[slug] %} hue--{{ site.data.topics[slug] }}{% endif %}" href="{{ "/notes/" | relative_url }}?topic={{ slug }}" data-topic="{{ slug }}">{{ t }}<span class="topic__n"><span class="sr-only">, </span>{{ tagged.size }}<span class="sr-only"> {% if tagged.size == 1 %}note{% else %}notes{% endif %}</span></span></a></li>
       {%- endfor %}
     </ul>
     <p class="sr-only" role="status" data-topics-status></p>
   </nav>
-  <ul class="note-grid" role="list" data-note-grid>
+  <ul class="note-grid" id="note-grid" role="list" data-note-grid>
     {%- for note in notes %}
     {% include note-card.html note=note %}
     {%- endfor %}

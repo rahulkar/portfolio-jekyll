@@ -48,9 +48,13 @@
   }
 
   .button:hover .icon,
-  .link-arrow:hover .icon {
+  .link-arrow:hover .icon,
+  .note-card__inner:hover .note-card__more .icon,
+  .pager__link:hover .icon:not(.icon--flip) {
     transform: none;
   }
+
+  .pager__link:hover .icon--flip { transform: scaleX(-1); }
 }
 
 @media (forced-colors: active) {

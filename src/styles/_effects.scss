@@ -1,0 +1,67 @@
+// The colour and light layer over the datum's ink: the orbit's hues carried
+// down the page, soft glows behind headings, pressed states, and underlines
+// that draw in. The lights that follow the pointer are further down. Red is
+// not part of this: it still only means "now".
+@use "mixins" as *;
+
+/* Hues -------------------------------------------------------------------- */
+
+// A hue class names one of the planet colours for everything inside it; each
+// also picks the glow of its family.
+@each $hue, $glow in (venus: warm, saturn: warm, mars: warm, earth: cool, uranus: cool, neptune: blue) {
+  .hue--#{$hue} {
+    --hue: var(--hue-#{$hue});
+    --glow: var(--glow-#{$glow});
+  }
+}
+
+/* Glows ------------------------------------------------------------------- */
+
+// A pool of light behind each section heading and page title. It stays inside
+// the page's width, so it never adds a scrollbar, and sits under the text.
+.section,
+.page__head,
+.note__head {
+  position: relative;
+  isolation: isolate;
+}
+
+// The pool is an ellipse that reaches transparent at its own box, so it has
+// no edge. The box may run off the left of the window, never the right.
+.section::before,
+.page__head::before,
+.note__head::before {
+  content: "";
+  position: absolute;
+  top: calc(-1 * var(--s-8));
+  left: calc(-1 * var(--margin) - 10rem);
+  z-index: -1;
+  width: min(56rem, 100% + var(--margin) + 10rem);
+  height: 24rem;
+  background: radial-gradient(closest-side, var(--glow, var(--glow-warm)), transparent);
+  pointer-events: none;
+}
+
+.section:nth-of-type(3n + 2) { --glow: var(--glow-cool); }
+.section:nth-of-type(3n) { --glow: var(--glow-blue); }
+
+/* Pressed states ---------------------------------------------------------- */
+
+.button,
+.copy,
+.topic,
+.tag,
+.theme-toggle,
+.cmdk-trigger,
+.share__button,
+.share__link,
+.code-copy,
+.lightbox__button {
+  transition:
+    background-color var(--dur-1) var(--ease),
+    border-color var(--dur-1) var(--ease),
+    color var(--dur-1) var(--ease),
+    transform var(--dur-1) var(--ease);
+
+  &:active { transform: scale(0.96); }
+}

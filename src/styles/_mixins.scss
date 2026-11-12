@@ -17,6 +17,20 @@
   text-transform: uppercase;
 }
 
+// An underline that draws in. The resting underline is the link's own
+// text-decoration and stays; pointing at the link draws a heavier ink line
+// along it from the left, and the thin one fades out under it. --line-y lifts
+// the drawn line to where the font puts its underline.
+@mixin draw-line {
+  background: linear-gradient(currentColor, currentColor) 0 calc(100% - var(--line-y, 0.07em)) / 0 2px no-repeat;
+  transition: background-size var(--dur-2) var(--ease), text-decoration-color var(--dur-2) var(--ease);
+}
+
+@mixin draw-line-on {
+  background-size: 100% 2px;
+  text-decoration-color: transparent;
+}
+
 @mixin data {
   font-family: var(--mono);
   font-size: 0.8125rem;

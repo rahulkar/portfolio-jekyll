@@ -22,7 +22,9 @@ layout: default
 {%- endfor -%}
 {%- endcapture -%}
 <div class="progress" aria-hidden="true"></div>
-<article class="wrap grid page note{% if sections > 1 %} has-toc{% endif %}">
+{%- assign first = page.topics | first | slugify -%}
+{%- assign hue = site.data.topics[first] %}
+<article class="wrap grid page note{% if sections > 1 %} has-toc{% endif %}{% if hue %} hue--{{ hue }}{% endif %}">
   <header class="note__head">
     <p class="note__crumb"><a href="{{ "/notes/" | relative_url }}">Notes</a></p>
     <h1>{{ page.title }}</h1>
@@ -35,7 +37,7 @@ layout: default
     {%- endif %}
     <div><dt>Reading time</dt><dd>{{ minutes }} min</dd></div>
     {%- if page.topics %}
-    <div class="note__topics"><dt>Topics</dt><dd><ul class="tags" role="list">{% for t in page.topics %}<li><a class="tag" href="{{ "/notes/" | relative_url }}?topic={{ t | slugify }}">{{ t }}</a></li>{% endfor %}</ul></dd></div>
+    <div class="note__topics"><dt>Topics</dt><dd><ul class="tags" role="list">{% for t in page.topics %}{% assign slug = t | slugify %}<li><a class="tag{% if site.data.topics[slug] %} hue--{{ site.data.topics[slug] }}{% endif %}" href="{{ "/notes/" | relative_url }}?topic={{ slug }}">{{ t }}</a></li>{% endfor %}</ul></dd></div>
     {%- endif %}
   </dl>
   {%- if page.art %}
@@ -69,10 +71,10 @@ layout: default
     {%- if newer or older %}
     <nav class="pager" aria-label="Newer and older notes">
       {%- if newer %}
-      <a class="pager__link pager__link--newer" href="{{ newer.url | relative_url }}" rel="prev"><span class="pager__dir">{% include icon.html name="arrow" class="icon--flip" %}Newer note</span><span class="pager__title">{{ newer.title }}</span><time class="pager__date" datetime="{{ newer.date | date: '%Y-%m-%d' }}">{{ newer.date | date: "%-d %b %Y" }}</time></a>
+      <a class="pager__link pager__link--newer" href="{{ newer.url | relative_url }}" rel="prev"><span class="pager__dir">{% include icon.html name="arrow" class="icon--flip" %}Newer note</span><span class="pager__title"><span>{{ newer.title }}</span></span><time class="pager__date" datetime="{{ newer.date | date: '%Y-%m-%d' }}">{{ newer.date | date: "%-d %b %Y" }}</time></a>
       {%- endif %}
       {%- if older %}
-      <a class="pager__link pager__link--older" href="{{ older.url | relative_url }}" rel="next"><span class="pager__dir">Older note{% include icon.html name="arrow" %}</span><span class="pager__title">{{ older.title }}</span><time class="pager__date" datetime="{{ older.date | date: '%Y-%m-%d' }}">{{ older.date | date: "%-d %b %Y" }}</time></a>
+      <a class="pager__link pager__link--older" href="{{ older.url | relative_url }}" rel="next"><span class="pager__dir">Older note{% include icon.html name="arrow" %}</span><span class="pager__title"><span>{{ older.title }}</span></span><time class="pager__date" datetime="{{ older.date | date: '%Y-%m-%d' }}">{{ older.date | date: "%-d %b %Y" }}</time></a>
       {%- endif %}
     </nav>
     {%- endif %}

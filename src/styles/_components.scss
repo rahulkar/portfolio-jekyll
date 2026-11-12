@@ -149,11 +149,12 @@
   text-decoration: none;
 
   > span {
+    @include draw-line;
     text-decoration: underline 1px var(--ink-3);
     text-underline-offset: 0.18em;
   }
 
-  &:hover > span { text-decoration: underline 2px var(--ink); }
+  &:hover > span { @include draw-line-on; }
 
   .icon { transition: transform 150ms var(--ease); }
   &:hover .icon { transform: translateX(3px); }
@@ -230,20 +231,26 @@
   }
 }
 
+// Note titles are set in the serif, here, on the cards and on the note.
 .row__title {
-  font-size: var(--fs-h3);
-  line-height: 1.3;
+  font-family: var(--serif);
+  font-size: calc(var(--fs-h3) * 1.3);
+  font-weight: 400;
+  line-height: 1.15;
+  letter-spacing: -0.005em;
 
-  // The note's own icon, before its title.
+  // The note's own icon, before its title, in its topic's hue.
   > .icon {
     margin-right: var(--s-2);
-    vertical-align: -0.15em;
-    color: var(--ink-2);
+    vertical-align: -0.1em;
+    color: var(--hue, var(--ink-2));
   }
 }
 
 // The underline is the affordance; the whole row is the target.
 .row__link {
+  @include draw-line;
+  --line-y: 0.1em;
   text-decoration: underline 1px var(--ink-3);
   text-underline-offset: 0.18em;
 
@@ -254,7 +261,7 @@
   }
 }
 
-.row:hover .row__link { text-decoration: underline 2px var(--ink); }
+.row:hover .row__link { @include draw-line-on; }
 
 .row__summary {
   font-size: var(--fs-small);
@@ -459,11 +466,12 @@ $parts: cpu, rom, ram, via, nand, osc, lcd;
 }
 
 .links__name {
+  @include draw-line;
   font-weight: 500;
   text-decoration: underline 1px var(--ink-3);
   text-underline-offset: 0.18em;
 
-  a:hover & { text-decoration: underline 2px var(--ink); }
+  a:hover & { @include draw-line-on; }
 }
 
 /* Colophon ---------------------------------------------------------------- */

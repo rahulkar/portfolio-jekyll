@@ -179,7 +179,7 @@ test.describe("home page", () => {
     await expect(page.locator("h1")).toHaveText("Rahul Kar");
     if (testInfo.project.name === "desktop") {
       const size = await page.locator("h1").evaluate((el) => parseFloat(getComputedStyle(el).fontSize));
-      expect(Math.abs(size - 96)).toBeLessThan(0.5);
+      expect(Math.abs(size - 176)).toBeLessThan(0.5);
     }
     await expect(page.locator(".hero__role")).toContainText("11+ years");
     await expect(page.locator(".hero__facts dt")).toHaveText(["Now", "Before"]);

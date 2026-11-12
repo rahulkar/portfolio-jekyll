@@ -1,6 +1,6 @@
 // Line art (_includes/art/): technical drawings in the page's own colours, so
 // they follow the theme. Lines are ink-2, emphasis ink, guides ink-3; fills
-// are the page and its inset; never the accent. Strokes keep their weight at
+// are the page and its inset; emphasis may take a hue, never the accent. Strokes keep their weight at
 // any size, except the dashed rows of holes, pins and cells, which are
 // measured in the drawing's own units so they scale with it.
 
@@ -18,7 +18,9 @@
   * { vector-effect: non-scaling-stroke; }
 }
 
-.art__key { stroke: var(--ink); }
+// Emphasis lines take the hue of whatever the drawing belongs to (a step, a
+// note's topic), and ink where there is none.
+.art__key { stroke: var(--hue, var(--ink)); }
 
 .art__guide {
   stroke: var(--ink-3);
