@@ -775,7 +775,7 @@
   margin: 0;
   padding: var(--s-3) var(--margin) var(--s-5);
   border: 0;
-  background: var(--bg);
+  background: var(--bg) var(--grain);
   color: var(--ink);
 
   &[open] {

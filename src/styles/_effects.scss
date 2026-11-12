@@ -65,3 +65,52 @@
 
   &:active { transform: scale(0.96); }
 }
+
+/* Glass ------------------------------------------------------------------- */
+
+// The sticky header is frosted: the page shows through it, blurred. It stays
+// 85% solid so the nav keeps its contrast over anything that scrolls under.
+// The command menu's panel stays solid; the page behind it is blurred.
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .site-header {
+    background: color-mix(in srgb, var(--bg) 85%, transparent);
+    -webkit-backdrop-filter: blur(14px) saturate(1.5);
+    backdrop-filter: blur(14px) saturate(1.5);
+  }
+
+  .cmdk::backdrop {
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+  }
+}
+
+// On the home page, from 1024px, the header sits over the dark stage and
+// takes the dark tokens, in either theme. Once the stage has scrolled away
+// (stage-header.js sets is-past-stage) it takes the page's own again.
+@include wide {
+  html:not(.is-past-stage) .has-stage .site-header {
+    @include dark-tokens;
+    --focus: var(--ink);
+    border-bottom-color: color-mix(in srgb, var(--ink) 12%, transparent);
+    background: color-mix(in srgb, var(--bg) 35%, transparent);
+    color: var(--ink);
+
+    @media (prefers-contrast: more) {
+      @include more-contrast;
+    }
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .site-header,
+  html:not(.is-past-stage) .has-stage .site-header {
+    background: var(--bg);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
+  .cmdk::backdrop {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}

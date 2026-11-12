@@ -4,6 +4,7 @@ import { initThemeToggle } from "./theme-toggle.js";
 import { initCopyEmail } from "./copy-email.js";
 import { initCommandMenu } from "./command-menu.js";
 import { initPageWeight } from "./page-weight.js";
+import { initStageHeader } from "./stage-header.js";
 
 function start() {
   var root = document.documentElement;
@@ -13,6 +14,7 @@ function start() {
   initCopyEmail(document.querySelectorAll("[data-copy-email]"));
   initCommandMenu(document);
   initPageWeight(document);
+  initStageHeader(root);
 
   // 404: show the path that failed to resolve (as text, never as HTML).
   var path = document.getElementById("err-path");

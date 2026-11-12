@@ -313,7 +313,8 @@ test.describe("theme, focus and skip link", () => {
         const s = getComputedStyle(el);
         return [s.outlineStyle, s.outlineWidth, s.outlineOffset, s.outlineColor];
       });
-      expect(ring).toEqual(["solid", "2px", "3px", INK[scheme]]);
+      // On the home page the header is over the dark stage, so its ring is the dark ink in both themes.
+      expect(ring).toEqual(["solid", "2px", "3px", INK.dark]);
     });
   }
 

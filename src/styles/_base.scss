@@ -13,7 +13,7 @@ html {
 
 body {
   margin: 0;
-  background: var(--bg);
+  background: var(--bg) var(--grain);
   color: var(--ink);
   font-family: var(--sans);
   font-size: var(--fs-body);
