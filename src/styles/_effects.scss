@@ -86,9 +86,11 @@
 
 // On the home page, from 1024px, the header sits over the dark stage and
 // takes the dark tokens, in either theme. Once the stage has scrolled away
-// (stage-header.js sets is-past-stage) it takes the page's own again.
+// (stage-header.js sets is-past-stage) it takes the page's own again. This
+// needs a script to hand the colours back, so it applies only where scripts
+// run (.js, set by theme.js); without one the header keeps the page's colours.
 @include wide {
-  html:not(.is-past-stage) .has-stage .site-header {
+  html.js:not(.is-past-stage) .has-stage .site-header {
     @include dark-tokens;
     --focus: var(--ink);
     border-bottom-color: color-mix(in srgb, var(--ink) 12%, transparent);
@@ -103,7 +105,7 @@
 
 @media (prefers-reduced-transparency: reduce) {
   .site-header,
-  html:not(.is-past-stage) .has-stage .site-header {
+  html.js:not(.is-past-stage) .has-stage .site-header {
     background: var(--bg);
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
@@ -424,7 +426,7 @@
 // glows already give way to ink through the more-contrast tokens.)
 @media (prefers-contrast: more) {
   .site-header,
-  html:not(.is-past-stage) .has-stage .site-header {
+  html.js:not(.is-past-stage) .has-stage .site-header {
     background: var(--bg);
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
@@ -440,12 +442,9 @@
 // the grain, the stage's veil and the orbit itself are left out, and the
 // lines that are drawn as backgrounds take a system colour.
 @media (forced-colors: active) {
-  :root,
-  .orbit-stage,
-  .orbit-band,
-  .lightbox,
-  .site-header {
-    --grain: none;
+  body,
+  .lightbox {
+    background-image: none;
   }
 
   .section::before,
