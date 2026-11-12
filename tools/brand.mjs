@@ -69,10 +69,26 @@ export function layout(font, str, size, tracking = 0) {
   return { glyphs, pos, width: x - (glyphs.length ? tracking * size : 0) };
 }
 
+// A glyph outline as SVG path data, to two decimal places. opentype.js 2.0's
+// own toPathData() turns a coordinate a hair off a whole number
+// (431.0000000000001) into NaN, and a renderer stops drawing a path at the
+// first bad number, which cut a line of text short; so the data is written here.
+const num = (v) => String(+v.toFixed(2));
+function pathData(path) {
+  let d = "";
+  for (const c of path.commands) {
+    if (c.type === "M" || c.type === "L") d += `${c.type}${num(c.x)} ${num(c.y)}`;
+    else if (c.type === "Q") d += `Q${num(c.x1)} ${num(c.y1)} ${num(c.x)} ${num(c.y)}`;
+    else if (c.type === "C") d += `C${num(c.x1)} ${num(c.y1)} ${num(c.x2)} ${num(c.y2)} ${num(c.x)} ${num(c.y)}`;
+    else if (c.type === "Z") d += "Z";
+  }
+  return d;
+}
+
 export function text(font, str, x, y, size, fill, { tracking = 0, anchor = "start", cls = "" } = {}) {
   const l = layout(font, str, size, tracking);
   const x0 = anchor === "end" ? x - l.width : anchor === "middle" ? x - l.width / 2 : x;
-  const d = l.glyphs.map((g, i) => g.getPath(x0 + l.pos[i], y, size).toPathData(2)).join("");
+  const d = l.glyphs.map((g, i) => pathData(g.getPath(x0 + l.pos[i], y, size))).join("");
   return `<path${cls ? ` class="${cls}"` : ""} d="${d}" fill="${fill}"/>`;
 }
 
