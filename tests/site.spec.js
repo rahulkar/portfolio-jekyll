@@ -57,11 +57,13 @@ for (const path of PAGES) {
         await expect(page.locator("dialog#cmdk")).toHaveCount(1);
         await expect(page.locator("dialog:not(#cmdk):not(.lightbox)")).toHaveCount(0);
         await expect(page.locator("dialog[open]")).toHaveCount(0);
-        // The only style attribute is the datum's: the clock's --now (and the probe's --probe once used).
-        const styled = await page.evaluate(() => [...document.querySelectorAll("[style]")].map((el) => [el.matches("[data-datum]"), el.getAttribute("style")]));
-        for (const [isDatum, style] of styled) {
-          expect(isDatum).toBe(true);
-          expect(style).toMatch(/^--now:\s*[\d.]+;(\s*--probe:\s*[\d.]+;)?$/);
+        // Style attributes hold only the numbers the scripts write: the datum's
+        // --now and --probe, and the pointer effects' coordinates.
+        const styled = await page.evaluate(() => [...document.querySelectorAll("[style]")].map((el) => [el.matches("[data-datum]"), el.matches("[data-light], [data-tilt], [data-magnet]"), el.getAttribute("style")]));
+        for (const [isDatum, isPointer, style] of styled) {
+          expect(isDatum || isPointer).toBe(true);
+          if (isDatum) expect(style).toMatch(/^--now:\s*[\d.]+;(\s*--probe:\s*[\d.]+;)?$/);
+          else expect(style).toMatch(/^(\s*--(mx|my|rx|ry|tx|ty):\s*-?[\d.]+;)+$/);
         }
       });
 

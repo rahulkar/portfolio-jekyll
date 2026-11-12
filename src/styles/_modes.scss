@@ -1,5 +1,6 @@
 // Theme switching, reduced motion, forced colours and higher contrast.
 // Loaded after the tokens so these overrides win.
+@use "mixins" as *;
 
 // The toggle adds this for two frames so colour transitions do not fire on
 // every element at once when the tokens swap.
@@ -97,7 +98,6 @@
   :root,
   :root[data-theme],
   :root:not([data-theme="light"]) {
-    --ink-3: var(--ink-2);
-    --rule: var(--ink-3);
+    @include more-contrast;
   }
 }

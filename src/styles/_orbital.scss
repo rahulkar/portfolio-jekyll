@@ -21,8 +21,7 @@
 
   // Mirrors the higher-contrast override in _modes.scss, which targets :root.
   @media (prefers-contrast: more) {
-    --ink-3: var(--ink-2);
-    --rule: var(--ink-3);
+    @include more-contrast;
   }
 
   > :not(canvas) {

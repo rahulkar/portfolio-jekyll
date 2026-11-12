@@ -20,7 +20,7 @@
 [id] {
   scroll-margin-top: var(--s-5);
 
-  @include mid { scroll-margin-top: calc(64px + var(--s-5)); }
+  @include mid { scroll-margin-top: calc(var(--header-h) + var(--s-5)); }
 }
 
 // The tracks of the command-menu button and the theme toggle are always
@@ -34,7 +34,7 @@
   @include mid {
     grid-template-columns: auto 1fr 6.5rem 44px;
     grid-template-areas: "name nav cmdk toggle";
-    min-height: 64px;
+    min-height: var(--header-h);
   }
 }
 

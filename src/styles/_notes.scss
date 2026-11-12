@@ -315,7 +315,7 @@
 
   @include xl {
     position: sticky;
-    top: calc(64px + var(--s-5));
+    top: calc(var(--header-h) + var(--s-5));
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: var(--s-4) var(--gutter);
@@ -348,7 +348,7 @@
 
   @include wide {
     position: sticky;
-    top: calc(64px + var(--s-5));
+    top: calc(var(--header-h) + var(--s-5));
   }
 }
 
@@ -733,8 +733,7 @@
 
   // Mirrors the higher-contrast override in _modes.scss, which targets :root.
   @media (prefers-contrast: more) {
-    --ink-3: var(--ink-2);
-    --rule: var(--ink-3);
+    @include more-contrast;
   }
 }
 
