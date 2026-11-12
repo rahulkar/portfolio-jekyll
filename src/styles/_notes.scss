@@ -1,8 +1,9 @@
 // Notes: the index (a grid of cards with a topic filter) and each note's page
 // (facts under the title, contents and share links in a rail beside the text,
 // a reading-progress line, the author and the newer and older notes), plus
-// the photo viewer and code blocks. Square corners and ink only, never the
-// accent; the drawings come from _includes/art/.
+// the photo viewer and code blocks. Square corners; ink, with each topic's
+// hue on its tags and drawings, never the accent; the drawings come from
+// _includes/art/.
 @use "mixins" as *;
 
 /* Index: head and topics -------------------------------------------------- */

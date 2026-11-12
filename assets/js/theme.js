@@ -32,7 +32,11 @@
   var clicked = "";
   function pair(url) {
     var path;
-    try { path = new URL(url, location.href).pathname; } catch (e) { return; }
+    try {
+      var u = new URL(url, location.href);
+      if (u.origin !== location.origin) return;
+      path = u.pathname;
+    } catch (e) { return; }
     var items = document.querySelectorAll(".note-card, .row");
     for (var i = 0; i < items.length; i++) {
       var link = items[i].querySelector(".note-card__link, .row__link");
@@ -54,8 +58,9 @@
       var to = ev.activation && ev.activation.entry ? ev.activation.entry.url : clicked;
       if (to) pair(to);
     });
-    window.addEventListener("pagereveal", function (ev) {
-      if (!ev.viewTransition) return;
+    // On arrival the pairing is made whether or not a transition runs (the
+    // browser may skip one); without a transition the class does nothing.
+    window.addEventListener("pagereveal", function () {
       var nav = window.navigation && window.navigation.activation;
       var from = nav && nav.from ? nav.from.url : document.referrer;
       if (from) pair(from);

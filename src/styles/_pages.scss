@@ -89,7 +89,7 @@
 
 // The groups in career order on one rail, like the datum's scale: down the
 // left edge on narrower screens, across the top from 1280px. Each node is an
-// ink square; the last, now, is filled. Ink only, never the accent.
+// square in its stage's hue; the last, now, is filled. Never the accent.
 .career {
   display: grid;
 
@@ -355,7 +355,7 @@
 // each step is a row on the page grid: name, summary and drawing on the left
 // half, what it produces on the right. From 1280px the steps stand side by side
 // on the rail, three columns each, and subgrid rows line up their summaries,
-// drawings and lists. Ink only, never the accent.
+// drawings and lists. Each chip takes its step's hue; never the accent.
 $chip: 1.75rem;    // the number chip's width; the rail runs down its middle
 $chip-h: 1.375rem;
 

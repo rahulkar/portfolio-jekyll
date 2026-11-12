@@ -413,3 +413,55 @@
 @media (forced-colors: active) {
   .lcd { display: none; }
 }
+
+/* Modes ------------------------------------------------------------------- */
+
+// Higher contrast: the header is solid and the name plain ink. (The hues and
+// glows already give way to ink through the more-contrast tokens.)
+@media (prefers-contrast: more) {
+  .site-header,
+  html:not(.is-past-stage) .has-stage .site-header {
+    background: var(--bg);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
+  .orbit-stage .hero__name {
+    background: none;
+    -webkit-text-fill-color: currentColor;
+  }
+}
+
+// Forced colours: gradients and canvases are not recoloured, so the glows,
+// the grain, the stage's veil and the orbit itself are left out, and the
+// lines that are drawn as backgrounds take a system colour.
+@media (forced-colors: active) {
+  :root,
+  .orbit-stage,
+  .orbit-band,
+  .lightbox,
+  .site-header {
+    --grain: none;
+  }
+
+  .section::before,
+  .page__head::before,
+  .note__head::before,
+  .orbit-stage::after,
+  .orbital-hero__canvas,
+  .orbit-band {
+    display: none;
+  }
+
+  .site-nav a::before {
+    background: CanvasText;
+  }
+}
+
+@media print {
+  .section::before,
+  .page__head::before,
+  .note__head::before {
+    display: none;
+  }
+}
