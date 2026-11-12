@@ -7,6 +7,7 @@ import { initPageWeight } from "./page-weight.js";
 import { initStageHeader } from "./stage-header.js";
 import { initOrbitMini } from "./orbit-mini.js";
 import { initPointer } from "./pointer.js";
+import { initPlot } from "./plot.js";
 
 function start() {
   var root = document.documentElement;
@@ -19,6 +20,7 @@ function start() {
   initStageHeader(root);
   initOrbitMini(document);
   initPointer(document);
+  initPlot(document);
 
   // 404: show the path that failed to resolve (as text, never as HTML).
   var path = document.getElementById("err-path");

@@ -330,3 +330,45 @@
     &:hover::after { opacity: 1; }
   }
 }
+
+/* Rails that grow --------------------------------------------------------- */
+
+// The career rail on the home page and the steps' rail on How I work run out
+// along their length as they scroll into view: a scroll-driven animation, so
+// it needs no script, and where the browser has none the rails are just there.
+@supports (animation-timeline: view()) {
+  @media screen and (prefers-reduced-motion: no-preference) {
+    .career__stage::before,
+    .playbook__stage::before {
+      transform-origin: 0 0;
+      animation: rail-down linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 45%;
+    }
+
+    @media (min-width: 80em) {
+      .career__stage::before,
+      .playbook__stage > h2::after {
+        transform-origin: 0 0;
+        animation: rail-across linear both;
+        animation-timeline: view();
+      }
+
+      // Across the page the segments follow one another.
+      @for $i from 1 through 4 {
+        .career__stage:nth-child(#{$i})::before,
+        .playbook__stage:nth-child(#{$i}) > h2::after {
+          animation-range: entry #{($i - 1) * 45%} entry #{($i - 1) * 45% + 120%};
+        }
+      }
+    }
+  }
+}
+
+@keyframes rail-down {
+  from { transform: scaleY(0); }
+}
+
+@keyframes rail-across {
+  from { transform: scaleX(0); }
+}
