@@ -130,9 +130,8 @@ export function initLcd(doc) {
     draw();
   }
 
-  canvas.hidden = false;
-  doc.documentElement.classList.add("has-lcd");
   draw();
+  doc.documentElement.classList.add("has-lcd");
   schedule();
 
   function loaded() {

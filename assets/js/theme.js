@@ -1,5 +1,7 @@
 /* Runs before first paint. Loaded synchronously from the same origin (the
    strict CSP forbids inline scripts); under two kilobytes.
+   0. Marks the page as scripted (.js), so controls that wait for a script
+      keep their place in the layout and nothing shifts when it arrives.
    1. Applies a saved light or dark choice.
    2. Arms the drawings that plot themselves (see _art.scss and plot.js): they
       start hidden, which has to be decided before anything is painted. If
@@ -10,6 +12,8 @@
       Its drawing is marked is-still so it does not plot itself again. */
 (function () {
   var root = document.documentElement;
+  // Scripts run here: script-only controls can keep their place (see _base.scss).
+  root.classList.add("js");
   try {
     localStorage.removeItem("motion");
     var t = localStorage.getItem("theme");

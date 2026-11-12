@@ -392,6 +392,10 @@
   outline: 1px solid var(--ink-3);
   background: var(--lcd-bg);
   cursor: pointer;
+  // In place from the start, shown once lcd.js has drawn on it.
+  visibility: hidden;
+
+  .has-lcd & { visibility: visible; }
 }
 
 // With the readout running, the time and page-weight lines stay in the page

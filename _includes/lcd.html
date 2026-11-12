@@ -1,2 +1,2 @@
-{%- comment -%} The footer's readout: a 16 x 2 character LCD like the one on the 6502 board, drawn by lcd.js. Decorative: the time and page-weight lines beside it carry the same facts as text. Hidden until the script runs. {%- endcomment -%}
-<canvas class="lcd" width="287" height="68" aria-hidden="true" hidden data-lcd></canvas>
+{%- comment -%} The footer's readout: a 16 x 2 character LCD like the one on the 6502 board, drawn by lcd.js. Decorative: the time and page-weight lines beside it carry the same facts as text. It keeps its place from the start, so nothing shifts, and shows once the script has drawn on it. {%- endcomment -%}
+<canvas class="lcd" width="287" height="68" aria-hidden="true" data-lcd></canvas>
