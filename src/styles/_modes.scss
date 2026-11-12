@@ -23,6 +23,38 @@
   view-transition-name: site-header;
 }
 
+// A note and its card (or its row on the home page) share two names, so on
+// the way in and out the drawing and the title travel between their places
+// instead of cross-fading. theme.js puts is-vt on the one card or row that
+// matches the note, just before the change, so each name is used once a page.
+.note__art,
+.note-card.is-vt .note-card__art {
+  view-transition-name: note-art;
+}
+
+.note__head h1,
+.note-card.is-vt .note-card__title,
+.row.is-vt .row__title {
+  view-transition-name: note-title;
+}
+
+::view-transition-group(note-art),
+::view-transition-group(note-title),
+::view-transition-group(nav-mark) {
+  animation-duration: 420ms;
+  animation-timing-function: var(--ease);
+}
+
+// The two titles differ in size and line breaks; each keeps its own shape and
+// they cross-fade from the same corner as the box travels.
+::view-transition-old(note-title),
+::view-transition-new(note-title) {
+  width: auto;
+  height: 100%;
+  object-fit: contain;
+  object-position: 0 0;
+}
+
 ::view-transition-old(root) {
   animation: 120ms var(--ease) both vt-out;
 }
@@ -63,8 +95,8 @@
     border-color: Highlight;
   }
 
-  .site-nav a[aria-current] {
-    text-decoration-color: Highlight;
+  .site-nav a[aria-current]::after {
+    background: Highlight;
   }
 
   .row::before {

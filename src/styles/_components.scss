@@ -68,6 +68,7 @@
   }
 
   a {
+    position: relative;
     display: inline-flex;
     align-items: center;
     min-height: 44px;
@@ -76,20 +77,38 @@
     font-weight: 500;
     line-height: 1;
     text-decoration: none;
-    text-underline-offset: 6px;
   }
 
-  a:hover {
-    text-decoration-line: underline;
-    text-decoration-thickness: 1px;
-    text-decoration-color: var(--ink);
+  // Pointing at a link draws an ink line under it from the left.
+  a::before {
+    content: "";
+    position: absolute;
+    right: 0;
+    bottom: 9px;
+    left: 0;
+    height: 1px;
+    background: var(--ink);
+    transform: scaleX(0);
+    transform-origin: 0 50%;
+    transition: transform var(--dur-2) var(--ease);
   }
 
-  // One of only two places the accent appears.
-  a[aria-current] {
-    text-decoration-line: underline;
-    text-decoration-thickness: 2px;
-    text-decoration-color: var(--accent);
+  a:hover::before { transform: none; }
+
+  // The current page's mark: one of only two places the accent appears. It is
+  // a bar of its own rather than an underline so that, on a page change, it
+  // can travel to the next item (view-transition-name, see _modes.scss).
+  a[aria-current]::before { display: none; }
+
+  a[aria-current]::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    bottom: 8px;
+    left: 0;
+    height: 2px;
+    background: var(--accent);
+    view-transition-name: nav-mark;
   }
 }
 
