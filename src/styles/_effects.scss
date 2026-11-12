@@ -169,3 +169,164 @@
 @media (prefers-reduced-motion: reduce) {
   .orbit-mini__turn { animation: none; }
 }
+
+/* Lights that follow the pointer ----------------------------------------- */
+
+// pointer.js writes where the pointer is over a [data-light] element into
+// --mx and --my, as fractions of its box. The light is a pseudo-element under
+// the element's content: a soft pool of its hue, and with $frame a hairline
+// frame that is brightest nearest the pointer. It only shows for a mouse or
+// trackpad, and without the script it never moves from the middle, so the
+// hover is still a quiet wash.
+@mixin light($reach: 22rem, $frame: true) {
+  --light-at: calc(var(--mx, 0.5) * 100%) calc(var(--my, 0.5) * 100%);
+  content: "";
+  position: absolute;
+  z-index: -1;
+  background: radial-gradient($reach circle at var(--light-at), color-mix(in srgb, var(--hue, var(--ink-2)) 14%, transparent), transparent 72%) padding-box;
+  opacity: 0;
+  transition: opacity var(--dur-2) var(--ease);
+  pointer-events: none;
+
+  @if $frame {
+    border: 1px solid transparent;
+    border-image: radial-gradient($reach circle at var(--light-at), var(--hue, var(--ink-2)), transparent 72%) 1;
+  }
+}
+
+@media screen and (hover: hover) and (pointer: fine) and (forced-colors: none) {
+  // Note cards: the pool and frame sit a little outside the card.
+  .note-card__inner {
+    isolation: isolate;
+
+    &::before {
+      @include light;
+      inset: calc(-1 * var(--s-3));
+    }
+
+    &:hover::before { opacity: 1; }
+  }
+
+  // The home page's note rows: the light replaces the flat wash.
+  .row {
+    &::after {
+      @include light(18rem);
+      inset: 0 -0.75rem;
+    }
+
+    &:hover::after { opacity: 1; }
+    &:hover::before { opacity: 0; }
+  }
+
+  // How I work: a pool behind each step, no frame (the rail runs through it).
+  .playbook__stage {
+    isolation: isolate;
+
+    &::after {
+      @include light(26rem, false);
+      inset: calc(-1 * var(--s-4));
+    }
+
+    &:hover::after { opacity: 1; }
+  }
+
+  // The 6502 photo: only a frame, above the photo, so it does not fight the
+  // callouts' own dimming.
+  .figure--parts .figure__link::after {
+    --light-at: calc(var(--mx, 0.5) * 100%) calc(var(--my, 0.5) * 100%);
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    border: 2px solid transparent;
+    border-image: radial-gradient(16rem circle at var(--light-at), var(--hue-venus), transparent 75%) 1;
+    opacity: 0;
+    transition: opacity var(--dur-2) var(--ease);
+    pointer-events: none;
+  }
+
+  .figure--parts .figure__link:hover::after { opacity: 1; }
+}
+
+/* The hero name's sheen --------------------------------------------------- */
+
+// On the dark stage the name is filled with a band of the orbit's light, which
+// slides across it with the pointer (the stage is a [data-light] element).
+// Every colour in the band is a light one, so the name keeps its contrast;
+// print and forced colours get plain ink.
+@media screen and (min-width: 64em) and (forced-colors: none) {
+  @supports ((-webkit-background-clip: text) or (background-clip: text)) {
+    .orbit-stage .hero__name {
+      background: linear-gradient(105deg, var(--ink) 0%, var(--ink) 40%, #FFE2A0 46%, #FFFFFF 50%, #A6E9FF 54%, var(--ink) 60%, var(--ink) 100%) no-repeat;
+      background-size: 250% 100%;
+      background-position: calc(100% - var(--mx, 0.35) * 100%) 0;
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+  }
+}
+
+/* Buttons that lean ------------------------------------------------------- */
+
+// pointer.js writes how far to lean into --tx and --ty on [data-magnet].
+[data-magnet] .button {
+  transform: translate(calc(var(--tx, 0) * 1px), calc(var(--ty, 0) * 1px));
+  transition:
+    background-color var(--dur-1) var(--ease),
+    transform var(--dur-2) var(--ease);
+
+  &:active { transform: translate(calc(var(--tx, 0) * 1px), calc(var(--ty, 0) * 1px)) scale(0.96); }
+}
+
+/* Foil cards -------------------------------------------------------------- */
+
+// A photo marked figure--foil is a card: it tilts toward the pointer (tilt.js
+// writes --rx and --ry in degrees) and a band of the orbit's colours and a
+// glare slide across it (--mx, --my). Mouse or trackpad only, and not under
+// reduced motion; otherwise it is an ordinary photo.
+@media screen and (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) and (forced-colors: none) {
+  .figure--foil {
+    perspective: 56rem;
+  }
+
+  .figure--foil .figure__link {
+    position: relative;
+    overflow: hidden;
+    transform: rotateX(calc(var(--rx, 0) * 1deg)) rotateY(calc(var(--ry, 0) * 1deg));
+    transition: transform 500ms var(--ease), box-shadow var(--dur-2) var(--ease);
+
+    &:hover {
+      box-shadow: 0 1.75rem 3rem -1.5rem rgba(0, 0, 0, 0.55);
+      transition-duration: 90ms, var(--dur-2);
+    }
+
+    &::before,
+    &::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      opacity: 0;
+      transition: opacity var(--dur-2) var(--ease);
+      pointer-events: none;
+    }
+
+    // The foil: the planets' colours in bands, sliding with the pointer.
+    &::before {
+      background: repeating-linear-gradient(115deg, #FFC65A 0%, #5FD8FF 9%, #7BA4FF 18%, #E8B48C 27%, #6FE3D2 36%, #FFC65A 45%);
+      background-size: 320% 320%;
+      background-position: calc(var(--mx, 0.5) * 100%) calc(var(--my, 0.5) * 100%);
+      mix-blend-mode: color-dodge;
+    }
+
+    // The glare, where the pointer is.
+    &::after {
+      background: radial-gradient(circle at calc(var(--mx, 0.5) * 100%) calc(var(--my, 0.5) * 100%), rgba(255, 255, 255, 0.4), transparent 55%);
+      mix-blend-mode: overlay;
+    }
+
+    &:hover::before { opacity: 0.32; }
+    &:hover::after { opacity: 1; }
+  }
+}

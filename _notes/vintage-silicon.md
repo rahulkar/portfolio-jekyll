@@ -16,8 +16,8 @@ Three chips from my vintage CPU collection, oldest first.
 ## Apollo Guidance Computer logic chip
 
 <div class="figure-row">
-{% include photo.html name="apollo-agc-chip-1" h="437" sizes="(min-width: 64em) 435px, (min-width: 40em) 50vw, 100vw" alt="A small chip set in a broken-off block of potting compound, with fine leads at both ends, on a silver anti-static bag." caption="In its potting compound, on an anti-static bag." %}
-{% include photo.html name="apollo-agc-chip-2" h="498" sizes="(min-width: 64em) 435px, (min-width: 40em) 50vw, 100vw" alt="The same block of potting compound and chip from a lower angle, on the anti-static bag held in a hand." caption="The same piece from a lower angle." %}
+{% include photo.html name="apollo-agc-chip-1" h="437" class="figure--foil" sizes="(min-width: 64em) 435px, (min-width: 40em) 50vw, 100vw" alt="A small chip set in a broken-off block of potting compound, with fine leads at both ends, on a silver anti-static bag." caption="In its potting compound, on an anti-static bag." %}
+{% include photo.html name="apollo-agc-chip-2" h="498" class="figure--foil" sizes="(min-width: 64em) 435px, (min-width: 40em) 50vw, 100vw" alt="The same block of potting compound and chip from a lower angle, on the anti-static bag held in a hand." caption="The same piece from a lower angle." %}
 </div>
 
 A logic chip of the kind used in the Apollo Guidance Computer, still set in a piece of potting compound.
@@ -30,14 +30,14 @@ Source: [Apollo Guidance Computer and the First Silicon Chips](https://airandspa
 
 ## Intel C4004
 
-{% include photo.html name="intel-c4004" h="273" sizes="(min-width: 64em) 894px, 100vw" alt="An Intel C4004 microprocessor: a white ceramic package with grey traces, a gold lid marked C4004 K0706 and 16 gold pins, on black foam." caption="White ceramic with grey traces and a gold lid, marked C4004 and K0706." %}
+{% include photo.html name="intel-c4004" h="273" class="figure--foil" sizes="(min-width: 64em) 894px, 100vw" alt="An Intel C4004 microprocessor: a white ceramic package with grey traces, a gold lid marked C4004 K0706 and 16 gold pins, on black foam." caption="White ceramic with grey traces and a gold lid, marked C4004 and K0706." %}
 
 - Intel introduced the 4004 in November 1971. It was the first commercially available single-chip microprocessor.
 - 4-bit, about 2,300 transistors, a 10 µm process and a clock of up to 740 kHz, in a 16-pin package. The C prefix marks the ceramic package.
 
 ## Intel Pentium A80501-60
 
-{% include photo.html name="intel-pentium-a80501-60" max="960" h="675" class="figure--portrait" sizes="(min-width: 40em) 448px, 100vw" alt="An Intel Pentium processor: a grey ceramic package with a gold lid, marked A80501-60, SX835, L4151232 and INTEL 1992, on black foam." caption="Marked A80501-60, SX835 and INTEL ©1992." %}
+{% include photo.html name="intel-pentium-a80501-60" max="960" h="675" class="figure--portrait figure--foil" sizes="(min-width: 40em) 448px, 100vw" alt="An Intel Pentium processor: a grey ceramic package with a gold lid, marked A80501-60, SX835, L4151232 and INTEL 1992, on black foam." caption="Marked A80501-60, SX835 and INTEL ©1992." %}
 
 - The A80501 is the first Pentium (P5). Intel launched it in March 1993 at 60 and 66 MHz.
 - About 3.1 million transistors on a 0.8 µm BiCMOS process, running at 5 V, in a 273-pin ceramic pin grid array (Socket 4).

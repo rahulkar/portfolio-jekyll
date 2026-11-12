@@ -1,4 +1,4 @@
-{%- comment -%} A photo made by tools/photo.mjs: assets/img/<name>-640 and -<max> in WebP and JPEG. Pass name, h (its height at 640 px wide), alt, and optionally max (default 1280), sizes, caption and class (figure--portrait keeps a tall photo narrow). {%- endcomment -%}
+{%- comment -%} A photo made by tools/photo.mjs: assets/img/<name>-640 and -<max> in WebP and JPEG. Pass name, h (its height at 640 px wide), alt, and optionally max (default 1280), sizes, caption and class (figure--portrait keeps a tall photo narrow; figure--foil makes it a card that tilts under the pointer, see tilt.js). {%- endcomment -%}
 {%- assign max = include.max | default: 1280 -%}
 {%- capture base %}/assets/img/{{ include.name }}{% endcapture -%}
 {%- assign sizes = include.sizes | default: "100vw" -%}

@@ -6,6 +6,7 @@ import { initCommandMenu } from "./command-menu.js";
 import { initPageWeight } from "./page-weight.js";
 import { initStageHeader } from "./stage-header.js";
 import { initOrbitMini } from "./orbit-mini.js";
+import { initPointer } from "./pointer.js";
 
 function start() {
   var root = document.documentElement;
@@ -17,6 +18,7 @@ function start() {
   initPageWeight(document);
   initStageHeader(root);
   initOrbitMini(document);
+  initPointer(document);
 
   // 404: show the path that failed to resolve (as text, never as HTML).
   var path = document.getElementById("err-path");

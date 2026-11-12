@@ -4,7 +4,7 @@
 {%- assign first = note.topics | first | slugify -%}
 {%- assign hue = site.data.topics[first] -%}
 <li class="note-card{% if hue %} hue--{{ hue }}{% endif %}"{% if note.topics %} data-topics="{% for t in note.topics %}{{ t | slugify }}{% unless forloop.last %}{{ " " }}{% endunless %}{% endfor %}"{% endif %}>
-  <article class="note-card__inner">
+  <article class="note-card__inner" data-light>
     {%- if note.art %}
     <div class="note-card__art">{% include art/{{ note.art }}.html %}</div>
     {%- endif %}

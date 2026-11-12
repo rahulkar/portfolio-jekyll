@@ -782,6 +782,7 @@
     display: grid;
     grid-template-rows: auto minmax(0, 1fr);
     gap: var(--s-3);
+    animation: lightbox-in var(--dur-2) var(--ease);
   }
 
   // Mirrors the higher-contrast override in _modes.scss, which targets :root.
@@ -792,6 +793,10 @@
 
 html:has(.lightbox[open]) {
   overflow: hidden;
+}
+
+@keyframes lightbox-in {
+  from { opacity: 0; transform: scale(0.985); }
 }
 
 .lightbox__bar {
