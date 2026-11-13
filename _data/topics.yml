@@ -1,0 +1,6 @@
+# The hue of each note topic, by slug (one of the --hue-* tokens). A topic
+# that is not listed here stays in ink.
+electronics: mars
+retro-computing: venus
+silicon: earth
+web: neptune

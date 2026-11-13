@@ -89,7 +89,7 @@
 
 // The groups in career order on one rail, like the datum's scale: down the
 // left edge on narrower screens, across the top from 1280px. Each node is an
-// ink square; the last, now, is filled. Ink only, never the accent.
+// square in its stage's hue; the last, now, is filled. Never the accent.
 .career {
   display: grid;
 
@@ -137,11 +137,11 @@
     left: 0;
     width: 7px;
     height: 7px;
-    border: 1px solid var(--ink);
+    border: 1px solid var(--hue, var(--ink));
     background: var(--bg);
   }
 
-  &.is-now::after { background: var(--ink); }
+  &.is-now::after { background: var(--hue, var(--ink)); }
 
   &:last-child {
     padding-bottom: 0;
@@ -199,6 +199,16 @@
   }
 }
 
+// The stage's number, large, in the serif italic and the stage's hue.
+.career__index > [aria-hidden] {
+  font-family: var(--serif);
+  font-size: 1.75rem;
+  font-style: italic;
+  line-height: 0.8;
+  letter-spacing: 0;
+  color: var(--hue, var(--ink-3));
+}
+
 .career__now { color: var(--ink); }
 
 // Each group's icon hangs beside its name, centred on the first line.
@@ -208,7 +218,7 @@
 
   > .icon {
     margin-top: calc((1.3em - 1.125rem) / 2);
-    color: var(--ink-2);
+    color: var(--hue, var(--ink-2));
   }
 }
 
@@ -240,11 +250,22 @@
   @include wide { @include cols(4, 8); }
 }
 
+// Rahul's own line, large, in the serif italic, across the section; each of
+// its six words is set in its hue (the same hues as the icons below it).
 .about__lead {
-  font-size: var(--fs-h3);
-  font-weight: 450;
-  line-height: 1.35;
+  font-family: var(--serif);
+  font-size: clamp(2rem, 1.3333rem + 2.963vw, 4rem); // 32 -> 64
+  font-style: italic;
+  font-weight: 400;
+  line-height: 1.05;
   letter-spacing: -0.01em;
+  text-wrap: balance;
+
+  > span { color: var(--hue, inherit); }
+}
+
+@include wide {
+  .about > .about__text { grid-row: 2; }
 }
 
 // The lead's six words as icons, each under a hairline like the parts key
@@ -273,7 +294,7 @@
     color: var(--ink-2);
   }
 
-  .icon { color: var(--ink); }
+  .icon { color: var(--hue, var(--ink)); }
 }
 
 .about .figure {
@@ -281,7 +302,7 @@
 
   @include wide {
     @include cols(9, 12);
-    grid-row: 1;
+    grid-row: 2;
     max-width: none;
   }
 }
@@ -334,7 +355,7 @@
 // each step is a row on the page grid: name, summary and drawing on the left
 // half, what it produces on the right. From 1280px the steps stand side by side
 // on the rail, three columns each, and subgrid rows line up their summaries,
-// drawings and lists. Ink only, never the accent.
+// drawings and lists. Each chip takes its step's hue; never the accent.
 $chip: 1.75rem;    // the number chip's width; the rail runs down its middle
 $chip-h: 1.375rem;
 
@@ -454,7 +475,7 @@ $chip-h: 1.375rem;
   left: 0;
   min-width: $chip;
   padding: 0 0.25rem;
-  background: var(--ink);
+  background: var(--hue, var(--ink));
   color: var(--on-ink);
   font-family: var(--mono);
   font-size: 0.75rem;
@@ -561,7 +582,7 @@ $chip-h: 1.375rem;
     position: absolute;
     top: calc(var(--out-pad) + (1.6em - 1.125rem) / 2);
     left: 0;
-    color: var(--ink-2);
+    color: var(--hue, var(--ink-2));
   }
 }
 

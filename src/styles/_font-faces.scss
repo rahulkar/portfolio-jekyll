@@ -19,6 +19,24 @@
 }
 
 @font-face {
+  font-family: "Instrument Serif";
+  src: url("/assets/fonts/instrument-serif-v1.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0020-007E, U+00A0-00FF, U+2013-2014, U+2018-201D, U+2022, U+2026, U+2212;
+}
+
+@font-face {
+  font-family: "Instrument Serif";
+  src: url("/assets/fonts/instrument-serif-italic-v1.woff2") format("woff2");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+  unicode-range: U+0020-007E, U+00A0-00FF, U+2013-2014, U+2018-201D, U+2022, U+2026, U+2212;
+}
+
+@font-face {
   font-family: "Instrument Sans Fallback";
   src: local("Arial"), local("ArialMT"), local("Liberation Sans");
   font-weight: 400 500;
@@ -65,5 +83,27 @@
   size-adjust: 102.65%;
   ascent-override: 92.55%;
   descent-override: 24.35%;
+  line-gap-override: 0.00%;
+}
+
+@font-face {
+  font-family: "Instrument Serif Fallback";
+  src: local("Georgia");
+  font-weight: 400;
+  font-style: normal;
+  size-adjust: 76.49%;
+  ascent-override: 129.43%;
+  descent-override: 40.53%;
+  line-gap-override: 0.00%;
+}
+
+@font-face {
+  font-family: "Instrument Serif Fallback";
+  src: local("Georgia Italic"), local("Georgia-Italic");
+  font-weight: 400;
+  font-style: italic;
+  size-adjust: 78.85%;
+  ascent-override: 125.55%;
+  descent-override: 39.32%;
   line-gap-override: 0.00%;
 }

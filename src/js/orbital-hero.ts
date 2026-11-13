@@ -5,8 +5,10 @@
 //
 // The Sun moves at 19.4 km/s toward the solar apex in Hercules, so the camera
 // rides with it: the stars slide past with depth, and each planet leaves a
-// spiral behind it as it chases the Sun. Time runs only while the pointer is
-// over the stage, and never under reduced motion, so the page starts still.
+// spiral behind it as it chases the Sun. Time runs slowly whenever the stage is
+// on screen, and at full speed while the pointer is over it; the camera leans
+// with the pointer and, as the page scrolls the stage away, tilts and moves in.
+// Under reduced motion one frame is drawn and nothing moves.
 
 export type Planet = {
   name: string;
@@ -32,8 +34,14 @@ export type Planet = {
 export type OrbitalHeroOptions = {
   /** Bodies to run. Defaults to the eight planets with J2000 elements. */
   planets: Planet[];
-  /** Seconds of wall clock per Earth year, while motion is running. */
+  /** Seconds of wall clock per Earth year, with the pointer over the stage. */
   yearSeconds: number;
+  /** Speed with no pointer over the stage, as a fraction of full speed. 0 holds still. */
+  idleRate: number;
+  /** Extra camera pitch, in degrees, once the host has scrolled fully out of view. */
+  scrollTilt: number;
+  /** How far the camera moves in over the same scroll, as a fraction (0.2 is 20% closer). */
+  scrollZoom: number;
   /** How much past track each planet keeps, in Earth years. */
   trailYears: number;
   /**
@@ -110,6 +118,9 @@ export const INNER_PLANETS: Planet[] = SOLAR_SYSTEM.slice(0, 4);
 const DEFAULTS: OrbitalHeroOptions = {
   planets: SOLAR_SYSTEM,
   yearSeconds: 16,
+  idleRate: 0.4,
+  scrollTilt: 0,
+  scrollZoom: 0,
   trailYears: 2.6,
   compress: 0.42,
   maxTurns: 3,
@@ -280,6 +291,11 @@ function createHero(
   let hovering = false;
   let raf = 0;
   let lastFrame = 0;
+  /** Current speed, eased between idleRate and 1. */
+  let rate = 0;
+  /** How far the host has scrolled out of the top of the window, 0 to 1, and its eased value. */
+  let scrollTo = 0;
+  let scrollAt = 0;
 
   // Camera. World axes: x and y span the ecliptic, z points to its north pole.
   let pxPerAU = 1;
@@ -334,7 +350,9 @@ function createHero(
       P.ok = false;
       return;
     }
-    const s = camDist / depth;
+    // Scrolling moves the camera in. It only ever comes closer than the
+    // resting view, which the stars were laid out to fill.
+    const s = (camDist / depth) * (1 + scrollAt * opts.scrollZoom);
     P.x = cx + vx * pxPerAU * s;
     P.y = cy - vy * pxPerAU * s;
     P.depth = depth;
@@ -575,7 +593,7 @@ function createHero(
   /** Draws one frame at simulation time t, in years. */
   function render(t: number) {
     const k = opts.glow;
-    setCamera(opts.spin + camX * 7, opts.tilt + camY * 5, opts.roll);
+    setCamera(opts.spin + camX * 7, opts.tilt + camY * 5 + scrollAt * opts.scrollTilt, opts.roll);
 
     dist = opts.driftSpeed * t;
     cx = width * opts.focus[0];
@@ -816,32 +834,47 @@ function createHero(
     }
   }
 
-  /* Motion. The clock runs only while the pointer is over the host, and the
-     loop stops once nothing is moving, so an idle page costs nothing. */
+  /* Motion. The clock runs whenever the host is on screen and the tab is
+     showing: slowly by itself, at full speed under the pointer. Off screen, in
+     a background tab or when paused the loop stops, so it costs nothing. */
 
   function kick() {
-    if (reduced || !running || !visible || raf) return;
+    if (reduced || !running || !visible || document.hidden || raf) return;
     lastFrame = 0;
     raf = requestAnimationFrame(frame);
   }
 
   function frame(now: number) {
     raf = 0;
-    if (!running || !visible) return;
+    if (!running || !visible || document.hidden) return;
+
+    const goal = opts.paused ? 0 : hovering ? 1 : Math.max(0, opts.idleRate);
+    const settled =
+      Math.abs(pointerX - camX) < 1e-3 &&
+      Math.abs(pointerY - camY) < 1e-3 &&
+      Math.abs(scrollTo - scrollAt) < 1e-3 &&
+      Math.abs(goal - rate) < 1e-3;
+    // Drifting by itself, with nothing easing, the scene is drawn 30 times a
+    // second, which is enough for motion this slow and halves the work.
+    if (!hovering && settled && lastFrame && now - lastFrame < 30) {
+      raf = requestAnimationFrame(frame);
+      return;
+    }
     const elapsed = lastFrame ? (now - lastFrame) / 1000 : 0;
     lastFrame = now;
 
-    const moving = hovering && !reduced && !opts.paused;
-    if (moving) years += Math.min(0.05, elapsed) / Math.max(0.1, opts.yearSeconds);
-    // Ease the camera toward the pointer. The rate is set per second rather
-    // than per frame, so it settles in the same time on a slow machine.
+    // Ease the speed, the camera and the scroll pose. The rates are set per
+    // second rather than per frame, so they settle in the same time on a slow
+    // machine.
     const ease = 1 - Math.pow(0.96, elapsed * 60);
+    rate += (goal - rate) * ease;
+    years += (Math.min(0.05, elapsed) * rate) / Math.max(0.1, opts.yearSeconds);
     camX += (pointerX - camX) * ease;
     camY += (pointerY - camY) * ease;
+    scrollAt += (scrollTo - scrollAt) * (1 - Math.pow(0.88, elapsed * 60));
     render(years);
 
-    const easing = Math.abs(pointerX - camX) > 1e-3 || Math.abs(pointerY - camY) > 1e-3;
-    if (moving || easing) raf = requestAnimationFrame(frame);
+    if (goal > 0 || !settled) raf = requestAnimationFrame(frame);
     else lastFrame = 0;
   }
 
@@ -865,9 +898,22 @@ function createHero(
     kick();
   }
 
+  // How far the host has left the top of the window: 0 at rest, 1 once gone.
+  function onScroll() {
+    if (!opts.scrollTilt && !opts.scrollZoom) return;
+    const rect = host.getBoundingClientRect();
+    scrollTo = Math.max(0, Math.min(1, -rect.top / (rect.height || 1)));
+    kick();
+  }
+
+  function onVisibility() {
+    if (!document.hidden) kick();
+  }
+
   resize();
   configure();
   render(years);
+  kick();
 
   const ro = new ResizeObserver(() => {
     if (!resize()) return;
@@ -889,6 +935,8 @@ function createHero(
   host.addEventListener("pointerenter", onEnter);
   host.addEventListener("pointermove", onMove);
   host.addEventListener("pointerleave", onLeave);
+  window.addEventListener("scroll", onScroll, { passive: true });
+  document.addEventListener("visibilitychange", onVisibility);
 
   return {
     destroy() {
@@ -899,6 +947,8 @@ function createHero(
       host.removeEventListener("pointerenter", onEnter);
       host.removeEventListener("pointermove", onMove);
       host.removeEventListener("pointerleave", onLeave);
+      window.removeEventListener("scroll", onScroll);
+      document.removeEventListener("visibilitychange", onVisibility);
       canvas.remove();
     },
   };

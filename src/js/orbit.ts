@@ -20,6 +20,8 @@ const STAGE: Partial<OrbitalHeroOptions> = {
   viewRadius: 2.6,
   lead: 0.12,
   glow: 0.9,
+  scrollTilt: 16,
+  scrollZoom: 0.22,
 };
 
 // The band below 1024px. Nothing sits over it, so the Sun can sit mid-band.
@@ -30,6 +32,8 @@ const BAND: Partial<OrbitalHeroOptions> = {
   viewRadius: 2.2,
   lead: 0.1,
   glow: 1,
+  scrollTilt: 10,
+  scrollZoom: 0.12,
 };
 
 const wide = window.matchMedia("(min-width: 64em)");

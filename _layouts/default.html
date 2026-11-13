@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="{{ site.lang }}">
   {% include head.html %}
-  <body>
+  <body{% if page.url == "/" %} class="has-stage"{% endif %}>
     <a class="skip-link" href="#main">Skip to content</a>
     {% include header.html %}
     <main id="main" tabindex="-1">

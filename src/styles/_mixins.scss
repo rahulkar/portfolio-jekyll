@@ -17,6 +17,20 @@
   text-transform: uppercase;
 }
 
+// An underline that draws in. The resting underline is the link's own
+// text-decoration and stays; pointing at the link draws a heavier ink line
+// along it from the left, and the thin one fades out under it. --line-y lifts
+// the drawn line to where the font puts its underline.
+@mixin draw-line {
+  background: linear-gradient(currentColor, currentColor) 0 calc(100% - var(--line-y, 0.07em)) / 0 2px no-repeat;
+  transition: background-size var(--dur-2) var(--ease), text-decoration-color var(--dur-2) var(--ease);
+}
+
+@mixin draw-line-on {
+  background-size: 100% 2px;
+  text-decoration-color: transparent;
+}
+
 @mixin data {
   font-family: var(--mono);
   font-size: 0.8125rem;
@@ -25,8 +39,19 @@
   letter-spacing: 0;
 }
 
+// Film grain for the dark surfaces: a small tile of white noise, drawn by the
+// browser from an inline SVG (the CSP allows data: images). Light surfaces
+// carry none.
+$grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 .55 0 0 0 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.11'/%3E%3C/svg%3E");
+
 // Contrast on --bg (light / dark): ink 16.6 / 15.6, ink-2 8.3 / 7.8,
 // ink-3 5.0 / 5.5, accent 5.2 / 5.5. --rule is decorative (about 1.4).
+//
+// The hues are the orbit's planets (src/js/orbital-hero.ts), darkened for
+// paper: each holds at least 5:1 on --bg and --bg-inset in both schemes.
+// Jupiter's orange is left out, as it sits too close to the accent. The glows
+// are the raw planet colours, thin enough that text over them keeps its
+// contrast; they go over --bg only.
 @mixin light-tokens {
   color-scheme: light;
   --bg: #F6F5F1;
@@ -38,6 +63,16 @@
   --accent: #C42B1C;
   --on-ink: #F6F5F1;
   --w-display: 600;
+  --hue-venus: #855600;
+  --hue-saturn: #6B6100;
+  --hue-mars: #8A5532;
+  --hue-earth: #00688A;
+  --hue-uranus: #046E66;
+  --hue-neptune: #2B59C9;
+  --glow-warm: rgba(255, 198, 90, 0.12);
+  --glow-cool: rgba(95, 216, 255, 0.12);
+  --glow-blue: rgba(63, 125, 255, 0.08);
+  --grain: none;
 }
 
 @mixin dark-tokens {
@@ -51,4 +86,31 @@
   --accent: #EE5A3F;
   --on-ink: #121211;
   --w-display: 560;
+  --hue-venus: #FFC65A;
+  --hue-saturn: #FFD884;
+  --hue-mars: #E8B48C;
+  --hue-earth: #5FD8FF;
+  --hue-uranus: #6FE3D2;
+  --hue-neptune: #7BA4FF;
+  --glow-warm: rgba(255, 198, 90, 0.08);
+  --glow-cool: rgba(95, 216, 255, 0.08);
+  --glow-blue: rgba(63, 125, 255, 0.08);
+  --grain: #{$grain};
+}
+
+// Higher contrast: the faintest ink and the rules step up, and the hues and
+// glows give way to ink. Included wherever a block sets the tokens again.
+@mixin more-contrast {
+  --ink-3: var(--ink-2);
+  --rule: var(--ink-3);
+  --hue-venus: var(--ink);
+  --hue-saturn: var(--ink);
+  --hue-mars: var(--ink);
+  --hue-earth: var(--ink);
+  --hue-uranus: var(--ink);
+  --hue-neptune: var(--ink);
+  --glow-warm: transparent;
+  --glow-cool: transparent;
+  --glow-blue: transparent;
+  --grain: none;
 }

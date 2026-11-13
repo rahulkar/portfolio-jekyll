@@ -6,17 +6,26 @@ function kb(bytes) {
   return bytes < 1024 ? bytes + " B" : Math.round(bytes / 1024) + " KB";
 }
 
+// This page's own bytes, the number of requests and the load time in ms, or
+// null before the load event or without the timing APIs. Also read by the
+// footer's LCD (lcd.js).
+export function measure() {
+  if (!window.performance || !performance.getEntriesByType) return null;
+  var nav = performance.getEntriesByType("navigation")[0];
+  if (!nav) return null;
+  var files = [nav].concat(performance.getEntriesByType("resource"));
+  var bytes = files.reduce(function (sum, f) { return sum + (f.encodedBodySize || 0); }, 0);
+  return { bytes: bytes, requests: files.length, ms: Math.round(nav.loadEventStart || nav.domContentLoadedEventEnd) };
+}
+
 export function initPageWeight(doc) {
   var out = doc.querySelector("[data-page-weight]");
   if (!out || !window.performance || !performance.getEntriesByType) return;
 
   function report() {
-    var nav = performance.getEntriesByType("navigation")[0];
-    if (!nav) return;
-    var files = [nav].concat(performance.getEntriesByType("resource"));
-    var bytes = files.reduce(function (sum, f) { return sum + (f.encodedBodySize || 0); }, 0);
-    var ms = Math.round(nav.loadEventStart || nav.domContentLoadedEventEnd);
-    out.textContent = "This page: " + kb(bytes) + ", " + files.length + (files.length === 1 ? " request" : " requests") + ", loaded in " + ms + " ms";
+    var w = measure();
+    if (!w) return;
+    out.textContent = "This page: " + kb(w.bytes) + ", " + w.requests + (w.requests === 1 ? " request" : " requests") + ", loaded in " + w.ms + " ms";
     out.hidden = false;
   }
 

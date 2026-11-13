@@ -13,7 +13,7 @@ html {
 
 body {
   margin: 0;
-  background: var(--bg);
+  background: var(--bg) var(--grain);
   color: var(--ink);
   font-family: var(--sans);
   font-size: var(--fs-body);
@@ -118,6 +118,20 @@ main:focus {
 
 [hidden] {
   display: none !important;
+}
+
+// Controls that only work with a script start hidden. Two of them sit in the
+// flow, where unhiding them would push the page around. Once a script is known
+// to be running (theme.js puts .js on <html> before first paint) they keep
+// their place and only stay invisible until their own script shows them.
+.js .topics[hidden] {
+  display: block !important;
+  visibility: hidden;
+}
+
+.js .copy[hidden] {
+  display: inline-flex !important;
+  visibility: hidden;
 }
 
 .sr-only {

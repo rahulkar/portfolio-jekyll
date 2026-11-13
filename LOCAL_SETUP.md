@@ -50,7 +50,8 @@ committed `assets/css/main.css`, `assets/js/main.js`, `assets/js/orbit.js` or `a
 The site tests itself with Playwright (`tests/site.spec.js`) at three sizes:
 desktop (1440×900), phone (Pixel 7) and small (360×640). Every page is loaded in
 light and dark and must have a clean console, no CSP violations, no horizontal
-overflow and no style attribute other than the datum's `--now` (and `--probe`);
+overflow and no style attribute other than the datum's `--now` (and `--probe`)
+and the pointer effects' coordinates (`--mx`, `--my`, `--rx`, `--ry`, `--tx`, `--ty`);
 axe runs with colour contrast switched on, in both schemes. The rest covers the
 datum and its converter (for a visitor in London, in Kolkata and with JavaScript
 off), the hero and section order, the career scale, the parts key and its
@@ -87,7 +88,7 @@ a console error. For a local run against the preview, block it:
 
 | Script | What it does | When to run |
 |---|---|---|
-| `npm run fonts` | Subsets Instrument Sans and Fragment Mono (from their Fontsource packages) to Latin, writes `assets/fonts/*-v1.woff2` and their OFL notices, and generates `src/styles/_font-faces.scss` with metric-matched fallbacks. Reads Arial and Consolas from `C:\Windows\Fonts` (or `FALLBACK_FONT_DIR`); Roboto comes from `@capsizecss/metrics` | when a font package changes |
+| `npm run fonts` | Subsets Instrument Sans, Fragment Mono and Instrument Serif (regular and italic), from their Fontsource packages, to Latin, writes `assets/fonts/*-v1.woff2` and their OFL notices, and generates `src/styles/_font-faces.scss` with metric-matched fallbacks. Reads Arial, Consolas and Georgia from `C:\Windows\Fonts` (or `FALLBACK_FONT_DIR`); Roboto comes from `@capsizecss/metrics` | when a font package changes |
 | `npm run brand` | Renders the favicon family (`favicon-vN.svg`, `.ico`, `apple-touch-icon-vN.png`, root `favicon.ico`), the share card `assets/og-vN.png`, and `assets/brand/linkedin-banner-vN.png` (1584×396, left side kept clear for the profile photo), `github-header-vN.png` (1280×320) and `email-signature-vN.png` (600×200 at 2×). Text is set as outlines; the datum is drawn without its red tick. Bump `V` at the top of `tools/brand.mjs` first, then the matching names in `_includes/head.html` and `_config.yml` | after changing the name, title or hero facts |
 | `npm run icons` | Writes `_includes/icon.html` from the list in `tools/icons.mjs`: the site's own 14px icons plus the ones it uses from Lucide (ISC) and Tabler Icons (MIT), both installed as dev dependencies, and copies their licences to `assets/icons/`. Every icon line is 1.5px at any size (`vector-effect: non-scaling-stroke`); sizes are the default 0.875em, `icon--md` (18px) and `icon--lg` (24px) | when adding an icon (name it in `tools/icons.mjs`, then use `{% include icon.html name="..." %}`) |
 | `npm run cards` | Renders each note's share card (the `og:image` the networks show with a link, 1200×630): its title and summary as outlines, its date and its drawing from `_includes/art/` on a framed plate, in the datum colours. Writes to the note's `image.path`; notes without one are skipped | after adding a note or changing its title, summary or drawing (bump the `-vN` in `image.path` first) |
@@ -112,7 +113,9 @@ any change to a font, icon or image gets a new `-vN` name.
   `src/styles/_art.scss` (`art__key`, `art__guide`, `art__fill`, ...), never
   colours or `style`, so they follow the theme and the CSP, and they stay
   `aria-hidden`; print leaves them out. A note's `icon:` shows on its row in
-  the home page's Notes list and in the command menu.
+  the home page's Notes list and in the command menu. Plain lines carry
+  `pathLength="1"` so the drawing can plot itself (see "Colour, light and
+  motion"); dashed parts and ink-filled dots do not, and fade in instead.
 - `_data/fluent.yml` sets the six words of the About lead as icons. They are
   Rahul's own sentence, so keep the words and their order.
   The hover ring pairs hand-offs with steps by id (the `@each` list in
@@ -193,7 +196,8 @@ The hero's 24-hour scale is `_includes/datum.html`, `src/styles/_datum.scss` and
 `src/js/clock.js`. IST is UTC + 330 minutes (India has no daylight saving). The
 script places the red tick by writing the `--now` custom property through the
 CSSOM, which `style-src 'self'` allows and the CSP lint checks for; the tick
-jumps once a minute and nothing else on the site moves on its own. Without
+jumps once a minute. Apart from it, only the two orbits move by themselves
+(see "Colour, light and motion"). Without
 JavaScript the scale still renders, and the tick, the time and the visitor's
 own time stay hidden. Every other page shows
 the Kolkata time as one line in the footer.
@@ -225,7 +229,58 @@ measures it for the readout in the corner. Esc hides it.
 
 Pages change with a cross-document view transition (`@view-transition` in
 `_modes.scss`): the header holds still, the page cross-fades and settles 8px.
-It is off under `prefers-reduced-motion`.
+A note and its card on `/notes/` (or its row on the home page) share the names
+`note-art` and `note-title`, so the drawing and the title travel between their
+two places; `assets/js/theme.js` puts `is-vt` on the one card or row that
+matches, on `pageswap` on the way out and on `pagereveal` on the way back
+(`<link rel="expect">` in the head holds the first frame until the list is
+parsed). The red mark under the current nav item is `nav-mark` and travels to
+the next item. All of it is off under `prefers-reduced-motion`, and browsers
+without cross-document transitions just load the page.
+
+## Colour, light and motion
+
+`src/styles/_effects.scss` holds the layer over the datum's ink.
+
+- **Hues.** Six tokens named after the orbit's planets (`--hue-venus`,
+  `-saturn`, `-mars`, `-earth`, `-uranus`, `-neptune` in `_mixins.scss`, a
+  light and a dark value each, all at least 5:1 on the page). A `hue--<name>`
+  class sets `--hue` for whatever is inside it; components read
+  `var(--hue, var(--ink))`. The class comes from data: `hue:` in
+  `_data/fluent.yml`, `capabilities.yml` and `playbook.yml`, and a topic's hue
+  from `_data/topics.yml` (a note takes its first topic's). Higher contrast
+  turns every hue back to ink. Red is not a hue: it still only means "now".
+- **Type.** Instrument Serif sets the About line (italic), note titles and the
+  large numerals. `em` and `i` stay upright; the serif is applied by the
+  component rules, never by markup.
+- **Surfaces.** Dark surfaces carry film grain (`--grain`, an inline SVG data
+  URL in the dark tokens). The sticky header is frosted
+  (`backdrop-filter`, 85% solid). On the home page from 1024px the header sits
+  over the dark stage and wears the dark tokens until the stage has scrolled
+  away (`src/js/stage-header.js` sets `is-past-stage`); the stage fades into
+  the page in a strip of its own below the datum.
+- **What moves by itself.** The hero's orbit (slowly; full speed under the
+  pointer; it tilts and moves in as the page scrolls it away; paused off
+  screen and in a background tab) and the footer's small orbit (CSS, running
+  only while on screen). Nothing else: the rest answers the pointer or the
+  scroll. Reduced motion stops all of it.
+- **Pointer.** `src/js/pointer.js` writes `--mx`/`--my` on `[data-light]`
+  elements (the lights on note cards, rows, steps and the 6502 photo, and the
+  sheen on the hero name) and `--tx`/`--ty` on `[data-magnet]` (the Email me
+  button leans). `src/js/tilt.js` (notes) writes `--rx`/`--ry` on photos given
+  `class="figure--foil"`. Mouse or trackpad only. These are the only custom
+  properties a script may write besides the datum's: the list is in
+  `tools/check-csp.mjs` and in the "loads clean" test, so a new one goes in
+  both.
+- **Drawings that plot.** `assets/js/theme.js` puts `can-plot` on `<html>`
+  before first paint; `src/js/plot.js` adds `is-drawn` to each drawing when a
+  quarter of it is on screen, and `_art.scss` runs the lines. If `main.js`
+  never arrives, `theme.js` takes `can-plot` off after four seconds. The career
+  and step rails grow with a CSS scroll-driven animation.
+- **The readout.** `_includes/lcd.html` and `src/js/lcd.js` draw a 16 x 2
+  character LCD in the footer with a built-in 5 x 7 glyph table (add a glyph
+  there before using a new character). The time and page-weight lines stay in
+  the DOM as text and are only hidden visually while the canvas runs.
 
 ## Guard rails
 

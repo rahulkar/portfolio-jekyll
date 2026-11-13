@@ -15,7 +15,7 @@ permalink: /how-i-work/
 
   <ol class="playbook" role="list">
     {%- for step in steps %}
-    <li class="playbook__stage{% if step.gate %} has-gate{% endif %}" id="{{ step.id }}">
+    <li class="playbook__stage hue--{{ step.hue }}{% if step.gate %} has-gate{% endif %}" id="{{ step.id }}" data-light>
       <h2>{{ step.name }}</h2>
       <p class="playbook__summary">{{ step.summary }}</p>
       <div class="playbook__art">{% include art/{{ step.id }}.html %}</div>

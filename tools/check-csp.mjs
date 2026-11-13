@@ -115,7 +115,8 @@ for (const bundle of ["assets/js/main.js", "assets/js/theme.js", "assets/js/orbi
   const patterns = [
     [/setAttribute\(\s*["'`]style["'`]/, 'setAttribute("style")'],
     [/\.cssText\s*\+?=/, "cssText assignment"],
-    [/\.style\.(?!setProperty\(\s*["'`]--)/, "inline style property (only custom properties via setProperty are allowed)"],
+    // The datum writes --now and --probe; the pointer effects write the rest.
+    [/\.style\.(?!setProperty\(\s*["'`]--(?:now|probe|mx|my|rx|ry|tx|ty)["'`])/, "inline style property (only the listed custom properties via setProperty are allowed)"],
     [/style\s*=\s*\\?["']/, "inline style inside an HTML string"],
     [/\b(innerHTML|outerHTML|insertAdjacentHTML)\b|document\.write\b/, "HTML string injection"],
   ];

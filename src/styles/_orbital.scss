@@ -1,7 +1,9 @@
 // The orbital hero on the home page. From 1024px, where the hero has two
 // columns, the stage is dark in both page themes, so the copy on it takes the
-// dark tokens, and the canvas sits behind the copy. Narrower screens keep the
-// page's own colours for the hero, and show the orbit in a band after it.
+// dark tokens, and the canvas sits behind the copy. There the stage also runs
+// up under the header (which takes the dark tokens while it is over it) and
+// fades into the page below. Narrower screens keep the page's own colours for
+// the hero, and show the orbit in a band after it.
 @use "mixins" as *;
 
 .orbit-stage {
@@ -21,8 +23,7 @@
 
   // Mirrors the higher-contrast override in _modes.scss, which targets :root.
   @media (prefers-contrast: more) {
-    --ink-3: var(--ink-2);
-    --rule: var(--ink-3);
+    @include more-contrast;
   }
 
   > :not(canvas) {
@@ -40,16 +41,32 @@
   height: 100%;
 }
 
-// This veil is drawn over the canvas and under the copy. It fades the orbit into
-// the section below rather than cutting it off, and uses the stage colour.
+// This veil is drawn over the canvas and under the copy: film grain, and a
+// fade into the page that follows. The stage keeps a strip of its own below
+// the datum for that fade, so the page's colour (light, in the light theme)
+// never comes up behind the copy.
+$stage-fade: var(--s-9);
+
 @include wide {
+  .orbit-stage {
+    padding-bottom: $stage-fade;
+  }
+
   .orbit-stage::after {
     content: "";
     position: absolute;
     inset: 0;
     z-index: 0;
     pointer-events: none;
-    background: linear-gradient(to bottom, rgba(18, 18, 17, 0) 84%, rgba(18, 18, 17, 1) 100%);
+    background:
+      var(--grain),
+      linear-gradient(to bottom, transparent calc(100% - #{$stage-fade}), var(--page-bg) 100%);
+  }
+
+  // Under the header: the stage starts at the top of the window.
+  .has-stage .orbit-stage {
+    margin-top: calc(-1 * (var(--header-h) + 1px));
+    padding-top: calc(var(--header-h) + 1px);
   }
 }
 
@@ -64,6 +81,19 @@
   height: 14rem;
   margin-top: var(--s-5);
   background: var(--bg);
+  // Both edges fade out, so in the light theme the band is not a hard bar.
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 22%, #000 78%, transparent);
+  mask-image: linear-gradient(to bottom, transparent, #000 22%, #000 78%, transparent);
+
+  // Grain over the canvas.
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background: var(--grain);
+  }
 
   @include wide {
     display: none;

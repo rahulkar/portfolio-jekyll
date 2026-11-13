@@ -1,6 +1,6 @@
 // Line art (_includes/art/): technical drawings in the page's own colours, so
 // they follow the theme. Lines are ink-2, emphasis ink, guides ink-3; fills
-// are the page and its inset; never the accent. Strokes keep their weight at
+// are the page and its inset; emphasis may take a hue, never the accent. Strokes keep their weight at
 // any size, except the dashed rows of holes, pins and cells, which are
 // measured in the drawing's own units so they scale with it.
 
@@ -18,7 +18,9 @@
   * { vector-effect: non-scaling-stroke; }
 }
 
-.art__key { stroke: var(--ink); }
+// Emphasis lines take the hue of whatever the drawing belongs to (a step, a
+// note's topic), and ink where there is none.
+.art__key { stroke: var(--hue, var(--ink)); }
 
 .art__guide {
   stroke: var(--ink-3);
@@ -83,4 +85,61 @@
 .art__holes--ticks {
   stroke-width: 4;
   stroke-dasharray: 1 8.5;
+}
+
+/* Plotting ---------------------------------------------------------------- */
+
+// A drawing draws itself the first time it scrolls into view, like a pen
+// plotter: the plain lines run out one after another, then the fills, dots
+// and dashed parts fade in. theme.js arms this before first paint (can-plot)
+// and plot.js marks each drawing as it arrives (is-drawn). Not under reduced
+// motion, in print or without the script: there the drawings are simply
+// there. A note's own drawing, and the card a page change is morphing
+// (is-still, set by theme.js), are left alone.
+//
+// The plain lines carry pathLength="1", so one dash can cover a line of any
+// length. Strokes keep their weight at any size (non-scaling-stroke), and
+// browsers disagree on whether such a dash scales with the drawing, so the
+// dash is three lines long: enough for either reading, up to three times the
+// drawing's own size.
+@media screen and (prefers-reduced-motion: no-preference) {
+  .can-plot .art:not(.is-drawn):not(.is-still):not(.note__art > .art) {
+    [pathLength] {
+      fill-opacity: 0;
+      stroke-dasharray: 3;
+      stroke-dashoffset: 3;
+    }
+
+    > :not([pathLength]) { opacity: 0; }
+  }
+
+  .can-plot .art.is-drawn:not(.is-still):not(.note__art > .art) {
+    [pathLength] {
+      stroke-dasharray: 3;
+      animation:
+        art-plot 1.8s linear both,
+        art-fill 500ms var(--ease) 450ms both;
+    }
+
+    > :not([pathLength]) { animation: art-fade 500ms var(--ease) 600ms both; }
+
+    // One line after another, in the order they are drawn in the file.
+    @for $i from 2 through 16 {
+      > :nth-child(#{$i}) { animation-delay: #{($i - 1) * 60}ms, #{450 + ($i - 1) * 60}ms; }
+      > :nth-child(#{$i}):not([pathLength]) { animation-delay: #{600 + ($i - 1) * 40}ms; }
+    }
+  }
+}
+
+@keyframes art-plot {
+  from { stroke-dashoffset: 3; }
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes art-fill {
+  from { fill-opacity: 0; }
+}
+
+@keyframes art-fade {
+  from { opacity: 0; }
 }

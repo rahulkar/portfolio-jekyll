@@ -57,11 +57,13 @@ for (const path of PAGES) {
         await expect(page.locator("dialog#cmdk")).toHaveCount(1);
         await expect(page.locator("dialog:not(#cmdk):not(.lightbox)")).toHaveCount(0);
         await expect(page.locator("dialog[open]")).toHaveCount(0);
-        // The only style attribute is the datum's: the clock's --now (and the probe's --probe once used).
-        const styled = await page.evaluate(() => [...document.querySelectorAll("[style]")].map((el) => [el.matches("[data-datum]"), el.getAttribute("style")]));
-        for (const [isDatum, style] of styled) {
-          expect(isDatum).toBe(true);
-          expect(style).toMatch(/^--now:\s*[\d.]+;(\s*--probe:\s*[\d.]+;)?$/);
+        // Style attributes hold only the numbers the scripts write: the datum's
+        // --now and --probe, and the pointer effects' coordinates.
+        const styled = await page.evaluate(() => [...document.querySelectorAll("[style]")].map((el) => [el.matches("[data-datum]"), el.matches("[data-light], [data-tilt], [data-magnet]"), el.getAttribute("style")]));
+        for (const [isDatum, isPointer, style] of styled) {
+          expect(isDatum || isPointer).toBe(true);
+          if (isDatum) expect(style).toMatch(/^--now:\s*[\d.]+;(\s*--probe:\s*[\d.]+;)?$/);
+          else expect(style).toMatch(/^(\s*--(mx|my|rx|ry|tx|ty):\s*-?[\d.]+;)+$/);
         }
       });
 
@@ -161,7 +163,7 @@ test.describe("without JavaScript", () => {
     await page.goto("/");
     await expect(page.locator(".datum__label")).toBeVisible();
     await expect(page.locator(".datum__ticks")).toBeVisible();
-    for (const sel of [".datum__tick", ".datum__now", ".datum__local", "#theme-btn", "#cmdk-btn", ".copy", ".colophon__weight"]) {
+    for (const sel of [".datum__tick", ".datum__now", ".datum__local", "#theme-btn", "#cmdk-btn", ".copy", ".colophon__weight", ".lcd"]) {
       await expect(page.locator(sel)).toBeHidden();
     }
     // Controls that only work with the script are not there at all.
@@ -177,7 +179,7 @@ test.describe("home page", () => {
     await expect(page.locator("h1")).toHaveText("Rahul Kar");
     if (testInfo.project.name === "desktop") {
       const size = await page.locator("h1").evaluate((el) => parseFloat(getComputedStyle(el).fontSize));
-      expect(Math.abs(size - 96)).toBeLessThan(0.5);
+      expect(Math.abs(size - 176)).toBeLessThan(0.5);
     }
     await expect(page.locator(".hero__role")).toContainText("11+ years");
     await expect(page.locator(".hero__facts dt")).toHaveText(["Now", "Before"]);
@@ -311,7 +313,8 @@ test.describe("theme, focus and skip link", () => {
         const s = getComputedStyle(el);
         return [s.outlineStyle, s.outlineWidth, s.outlineOffset, s.outlineColor];
       });
-      expect(ring).toEqual(["solid", "2px", "3px", INK[scheme]]);
+      // On the home page the header is over the dark stage, so its ring is the dark ink in both themes.
+      expect(ring).toEqual(["solid", "2px", "3px", INK.dark]);
     });
   }
 
@@ -972,23 +975,35 @@ test.describe("home hero orbit", () => {
       return h;
     });
 
-  test("holds still until the pointer is over it, moves while it is, and stops after it leaves", async ({ page }, testInfo) => {
+  test("runs by itself while it is on screen, holds once scrolled away, and picks up on return", async ({ page }, testInfo) => {
     onlyDesktop(testInfo);
     await page.emulateMedia({ colorScheme: "dark", reducedMotion: "no-preference" });
     await page.goto("/");
     await page.waitForSelector("html.is-ready");
-    const box = await page.locator('[data-orbital-hero="wide"]').boundingBox();
-    const still = await frame(page);
-    await page.waitForTimeout(400);
-    expect(await frame(page)).toBe(still);
-    await page.mouse.move(box.x + box.width * 0.7, box.y + box.height * 0.5);
+    const first = await frame(page);
     await page.waitForTimeout(800);
-    expect(await frame(page)).not.toBe(still);
-    await page.mouse.move(box.x + box.width * 0.5, 5);
-    await page.waitForTimeout(5000);
-    const rested = await frame(page);
-    await page.waitForTimeout(500);
-    expect(await frame(page)).toBe(rested);
+    expect(await frame(page)).not.toBe(first);
+    // Out of view the loop stops, so the last frame holds.
+    await page.locator("#notes").scrollIntoViewIfNeeded();
+    await page.waitForTimeout(800);
+    const held = await frame(page);
+    await page.waitForTimeout(600);
+    expect(await frame(page)).toBe(held);
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await page.waitForTimeout(800);
+    expect(await frame(page)).not.toBe(held);
+  });
+
+  test("below 1024px the orbit in the band runs by itself too", async ({ page }, testInfo) => {
+    test.skip(testInfo.project.name === "desktop", "phone and tablet widths only");
+    await page.emulateMedia({ colorScheme: "light", reducedMotion: "no-preference" });
+    await page.goto("/");
+    await page.waitForSelector("html.is-ready");
+    await page.locator('[data-orbital-hero="narrow"]').scrollIntoViewIfNeeded();
+    await page.waitForTimeout(400);
+    const first = await frame(page);
+    await page.waitForTimeout(800);
+    expect(await frame(page)).not.toBe(first);
   });
 
   test("reduced motion: the frame does not move, even under the pointer", async ({ page }, testInfo) => {
@@ -1032,5 +1047,136 @@ test.describe("home hero orbit", () => {
       })
     );
     expect(covered).toEqual([]);
+  });
+});
+
+test.describe("colour, type and light", () => {
+  test("the About line keeps its words, set in the serif italic with a hue on each of the six", async ({ page }) => {
+    await openPage(page, "/");
+    await expect(page.locator(".about__lead")).toHaveText("I speak fluent geek, silicon, crypto, marketing, electronics, and space stuff.");
+    await expect(page.locator('.about__lead > span[class^="hue--"]')).toHaveText(["geek", "silicon", "crypto", "marketing", "electronics", "space"]);
+    const [family, style] = await page.locator(".about__lead").evaluate((el) => [getComputedStyle(el).fontFamily, getComputedStyle(el).fontStyle]);
+    expect(family).toContain("Instrument Serif");
+    expect(style).toBe("italic");
+    expect(await page.evaluate(() => document.fonts.load('italic 32px "Instrument Serif"').then((faces) => faces.length))).toBeGreaterThan(0);
+  });
+
+  test("stages, steps, topics and notes carry their hue as a class", async ({ page }) => {
+    await openPage(page, "/");
+    await expect(page.locator('.career__stage[class*="hue--"]')).toHaveCount(4);
+    await expect(page.locator('.fluent > li[class*="hue--"]')).toHaveCount(6);
+    await expect(page.locator('#notes .row[class*="hue--"]')).toHaveCount(3);
+    await openPage(page, "/how-i-work/");
+    await expect(page.locator('.playbook__stage[class*="hue--"]')).toHaveCount(4);
+    await openPage(page, "/notes/");
+    await expect(page.locator('.note-card[class*="hue--"]')).toHaveCount(3);
+    await expect(page.locator('.topic[class*="hue--"]')).toHaveCount(4);
+    // A hue colours the square before a tag, and it is never the accent.
+    const dot = await page.locator(".tag").first().evaluate((el) => getComputedStyle(el, "::before").backgroundColor);
+    expect(dot).not.toBe("rgba(0, 0, 0, 0)");
+    expect([ACCENT.light, ACCENT.dark]).not.toContain(dot);
+  });
+
+  test("on the home page the header wears the dark tokens over the stage, and the page's own once it is past", async ({ page }, testInfo) => {
+    onlyDesktop(testInfo);
+    await openPage(page, "/", "light");
+    const ink = () => page.locator(".site-header__name").evaluate((el) => getComputedStyle(el).color);
+    expect(await ink()).toBe(INK.dark);
+    await page.locator("#notes").scrollIntoViewIfNeeded();
+    await expect(page.locator("html")).toHaveClass(/is-past-stage/);
+    await expect.poll(ink).toBe(INK.light);
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await expect(page.locator("html")).not.toHaveClass(/is-past-stage/);
+  });
+
+  test("a light follows the mouse over a note card, and only a mouse", async ({ page }, testInfo) => {
+    await page.emulateMedia({ reducedMotion: "no-preference" });
+    await page.goto("/notes/");
+    await page.waitForSelector("html.is-ready");
+    const card = page.locator(".note-card__inner").first();
+    const box = await card.boundingBox();
+    await page.mouse.move(box.x + box.width * 0.25, box.y + box.height * 0.3);
+    await page.mouse.move(box.x + box.width * 0.75, box.y + box.height * 0.3, { steps: 4 });
+    if (testInfo.project.name === "desktop") {
+      await expect.poll(() => card.getAttribute("style")).toMatch(/^--mx:\s*0\.7\d*;\s*--my:\s*0\.[23]\d*;$/);
+    } else {
+      await page.waitForTimeout(300);
+      expect(await card.getAttribute("style")).toBeNull();
+    }
+  });
+
+  test("under reduced motion the pointer writes nothing", async ({ page }, testInfo) => {
+    onlyDesktop(testInfo);
+    await openPage(page, "/notes/");
+    const card = page.locator(".note-card__inner").first();
+    await card.hover();
+    await page.waitForTimeout(300);
+    expect(await card.getAttribute("style")).toBeNull();
+  });
+
+  test("drawings plot themselves once on screen; under reduced motion they are simply there", async ({ page }, testInfo) => {
+    onlyDesktop(testInfo);
+    await page.emulateMedia({ reducedMotion: "no-preference" });
+    await page.goto("/how-i-work/");
+    await page.waitForSelector("html.is-ready");
+    await expect(page.locator("html")).toHaveClass(/can-plot/);
+    await expect(page.locator("html")).toHaveClass(/is-plotting/);
+    await expect(page.locator(".playbook__art .art.is-drawn")).toHaveCount(4);
+    await openPage(page, "/how-i-work/");
+    await expect(page.locator("html")).not.toHaveClass(/can-plot/);
+    const line = await page.locator(".playbook__art .art [pathLength]").first().evaluate((el) => [getComputedStyle(el).strokeDasharray, getComputedStyle(el).opacity]);
+    expect(line).toEqual(["none", "1"]);
+  });
+
+  test("a note and its card are paired for the page change, there and back", async ({ page }, testInfo) => {
+    onlyDesktop(testInfo);
+    await page.emulateMedia({ reducedMotion: "no-preference" });
+    await page.goto("/notes/");
+    await page.waitForSelector("html.is-ready");
+    await expect(page.locator(".is-vt")).toHaveCount(0);
+    await page.locator(".note-card__link").nth(1).click();
+    await page.waitForURL("**/notes/6502-on-two-breadboards/");
+    const names = await page.evaluate(() => [".note__art", ".note__head h1"].map((sel) => getComputedStyle(document.querySelector(sel)).viewTransitionName));
+    expect(names).toEqual(["note-art", "note-title"]);
+    await page.goBack();
+    await page.waitForURL("**/notes/");
+    await expect(page.locator(".note-card.is-vt .note-card__title")).toHaveText(["A 6502 computer on two breadboards"]);
+    expect(await page.locator(".note-card.is-vt .note-card__art").evaluate((el) => getComputedStyle(el).viewTransitionName)).toBe("note-art");
+    expect(await page.locator(".note-card:not(.is-vt) .note-card__art").first().evaluate((el) => getComputedStyle(el).viewTransitionName)).toBe("none");
+  });
+
+  test("the footer has a small orbit and an LCD readout, and still gives the time and page weight as text", async ({ page }) => {
+    await openPage(page, "/notes/");
+    await expect(page.locator(".colophon svg.orbit-mini")).toHaveAttribute("aria-hidden", "true");
+    const lcd = page.locator("canvas.lcd");
+    await expect(lcd).toBeVisible();
+    await expect(lcd).toHaveAttribute("aria-hidden", "true");
+    await expect(page.locator("html")).toHaveClass(/has-lcd/);
+    await expect(page.locator(".colophon__clock")).toHaveText(/^Kolkata \d\d:\d\d IST$/);
+    await expect(page.locator(".colophon__weight")).toHaveText(/^This page: /);
+    // Backlight, lit dots and unlit dots: at least three colours are on it.
+    const colours = await lcd.evaluate((c) => {
+      const d = c.getContext("2d").getImageData(0, 0, c.width, c.height).data;
+      const seen = new Set();
+      for (let i = 0; i < d.length; i += 4) seen.add(d[i] + "," + d[i + 1] + "," + d[i + 2]);
+      return seen.size;
+    });
+    expect(colours).toBeGreaterThanOrEqual(3);
+  });
+
+  test("photos marked as foil tilt under the mouse and still open the viewer", async ({ page }, testInfo) => {
+    onlyDesktop(testInfo);
+    await page.emulateMedia({ reducedMotion: "no-preference" });
+    await page.goto("/notes/vintage-silicon/");
+    await page.waitForSelector("html.is-ready");
+    const card = page.locator(".figure--foil .figure__link").first();
+    await expect(page.locator(".figure--foil .figure__link[data-tilt]")).toHaveCount(4);
+    await card.scrollIntoViewIfNeeded();
+    const box = await card.boundingBox();
+    await page.mouse.move(box.x + box.width * 0.2, box.y + box.height * 0.2);
+    await page.mouse.move(box.x + box.width * 0.25, box.y + box.height * 0.25, { steps: 3 });
+    await expect.poll(() => card.getAttribute("style")).toMatch(/--rx:\s*[\d.]+;\s*--ry:\s*-[\d.]+;/);
+    await card.click();
+    await expect(page.locator("dialog.lightbox[open]")).toHaveCount(1);
   });
 });
