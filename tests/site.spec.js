@@ -1205,10 +1205,12 @@ test.describe("pausing the orbit", () => {
     await button.click();
     await expect(page.locator("html")).toHaveClass(/motion-paused/);
     await expect(button).toHaveAccessibleName("Play orbit");
-    // The scene eases to a stop, then holds.
-    await page.waitForTimeout(2500);
+    // The scene stops within about a second of the press, then holds.
+    await page.waitForTimeout(1200);
     const held = await frame(page);
     await page.waitForTimeout(700);
+    expect(await frame(page)).toBe(held);
+    await page.waitForTimeout(1500);
     expect(await frame(page)).toBe(held);
     await page.locator(".colophon .orbit-mini").scrollIntoViewIfNeeded();
     await expect.poll(() => turning(page)).toBe("paused");
