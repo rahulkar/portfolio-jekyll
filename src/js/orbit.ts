@@ -39,6 +39,11 @@ const BAND: Partial<OrbitalHeroOptions> = {
 const wide = window.matchMedia("(min-width: 64em)");
 const narrow = window.matchMedia("(max-width: 63.99em)");
 
+// The visitor can pause the orbit (src/js/motion.js): the choice is a class
+// on <html>, set before first paint by theme.js, and a change arrives as a
+// "motionchange" event on the document.
+const paused = () => document.documentElement.classList.contains("motion-paused");
+
 // Each host names its own layout: data-orbital-hero="wide" or "narrow".
 function start() {
   document.querySelectorAll<HTMLElement>("[data-orbital-hero]").forEach((host) => {
@@ -47,7 +52,7 @@ function start() {
     const frame = isWide ? STAGE : BAND;
     let hero: OrbitalHero | null = null;
     const sync = () => {
-      if (media.matches && !hero) hero = mountOrbitalHero(host, frame);
+      if (media.matches && !hero) hero = mountOrbitalHero(host, { ...frame, paused: paused() });
       else if (!media.matches && hero) {
         hero.destroy();
         hero = null;
@@ -55,6 +60,9 @@ function start() {
     };
     sync();
     media.addEventListener("change", sync);
+    document.addEventListener("motionchange", () => {
+      if (hero) hero.setPaused(paused());
+    });
   });
 }
 

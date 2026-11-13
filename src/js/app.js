@@ -9,6 +9,7 @@ import { initOrbitMini } from "./orbit-mini.js";
 import { initPointer } from "./pointer.js";
 import { initPlot } from "./plot.js";
 import { initLcd } from "./lcd.js";
+import { initMotion } from "./motion.js";
 
 function start() {
   var root = document.documentElement;
@@ -16,6 +17,9 @@ function start() {
   initClock(document);
   initDatumProbe(document);
   initCopyEmail(document.querySelectorAll("[data-copy-email]"));
+  // Before the command menu reads its commands: under reduced motion the
+  // pause command is taken out.
+  initMotion(document);
   initCommandMenu(document);
   initPageWeight(document);
   initStageHeader(root);

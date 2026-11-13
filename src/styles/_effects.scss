@@ -177,9 +177,9 @@
 // pointer.js writes where the pointer is over a [data-light] element into
 // --mx and --my, as fractions of its box. The light is a pseudo-element under
 // the element's content: a soft pool of its hue, and with $frame a hairline
-// frame that is brightest nearest the pointer. It only shows for a mouse or
-// trackpad, and without the script it never moves from the middle, so the
-// hover is still a quiet wash.
+// frame that is brightest nearest the pointer. A mouse or trackpad shows it on
+// hover; a finger or pen shows it under a press (is-lit). Without the script
+// it never moves from the middle, so the hover is still a quiet wash.
 @mixin light($reach: 22rem, $frame: true) {
   --light-at: calc(var(--mx, 0.5) * 100%) calc(var(--my, 0.5) * 100%);
   content: "";
@@ -196,7 +196,7 @@
   }
 }
 
-@media screen and (hover: hover) and (pointer: fine) and (forced-colors: none) {
+@media screen and (forced-colors: none) {
   // Note cards: the pool and frame sit a little outside the card.
   .note-card__inner {
     isolation: isolate;
@@ -206,7 +206,7 @@
       inset: calc(-1 * var(--s-3));
     }
 
-    &:hover::before { opacity: 1; }
+    &.is-lit::before { opacity: 1; }
   }
 
   // The home page's note rows: the light replaces the flat wash.
@@ -216,8 +216,7 @@
       inset: 0 -0.75rem;
     }
 
-    &:hover::after { opacity: 1; }
-    &:hover::before { opacity: 0; }
+    &.is-lit::after { opacity: 1; }
   }
 
   // How I work: a pool behind each step, no frame (the rail runs through it).
@@ -229,7 +228,18 @@
       inset: calc(-1 * var(--s-4));
     }
 
-    &:hover::after { opacity: 1; }
+    &.is-lit::after { opacity: 1; }
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .note-card__inner:hover::before,
+    .row:hover::after,
+    .playbook__stage:hover::after,
+    .figure--parts .figure__link:hover::after {
+      opacity: 1;
+    }
+
+    .row:hover::before { opacity: 0; }
   }
 
   // The 6502 photo: only a frame, above the photo, so it does not fight the
@@ -247,26 +257,54 @@
     pointer-events: none;
   }
 
-  .figure--parts .figure__link:hover::after { opacity: 1; }
+  .figure--parts .figure__link.is-lit::after { opacity: 1; }
 }
 
 /* The hero name's sheen --------------------------------------------------- */
 
-// On the dark stage the name is filled with a band of the orbit's light, which
-// slides across it with the pointer (the stage is a [data-light] element).
-// Every colour in the band is a light one, so the name keeps its contrast;
-// print and forced colours get plain ink.
-@media screen and (min-width: 64em) and (forced-colors: none) {
+// The name is filled with a band of the orbit's colours, which slides across
+// it with the pointer (the stage is a [data-light] element). On the dark
+// stage, from 1024px, the band is light: pale gold, white, pale blue. Below
+// that the hero is on the page's own colour, so the band is three of the hues,
+// which hold their contrast in either theme. Print, forced colours and higher
+// contrast get plain ink.
+@media screen and (forced-colors: none) {
   @supports ((-webkit-background-clip: text) or (background-clip: text)) {
     .orbit-stage .hero__name {
-      background: linear-gradient(105deg, var(--ink) 0%, var(--ink) 40%, #FFE2A0 46%, #FFFFFF 50%, #A6E9FF 54%, var(--ink) 60%, var(--ink) 100%) no-repeat;
+      --sheen-1: var(--hue-venus);
+      --sheen-2: var(--hue-uranus);
+      --sheen-3: var(--hue-neptune);
+      background: linear-gradient(105deg, var(--ink) 0%, var(--ink) 40%, var(--sheen-1) 46%, var(--sheen-2) 50%, var(--sheen-3) 54%, var(--ink) 60%, var(--ink) 100%) no-repeat;
       background-size: 250% 100%;
       background-position: calc(100% - var(--mx, 0.35) * 100%) 0;
       -webkit-background-clip: text;
       background-clip: text;
       -webkit-text-fill-color: transparent;
+
+      @include wide {
+        --sheen-1: #FFE2A0;
+        --sheen-2: #FFFFFF;
+        --sheen-3: #A6E9FF;
+      }
     }
   }
+}
+
+// A touch screen has no pointer to follow, so there the band crosses the name
+// as the first screen scrolls away: a scroll-driven animation, no script.
+@media screen and (pointer: coarse) and (prefers-reduced-motion: no-preference) and (forced-colors: none) {
+  @supports (animation-timeline: scroll()) {
+    .orbit-stage .hero__name {
+      animation: sheen-sweep linear both;
+      animation-timeline: scroll(root block);
+      animation-range: 0 70vh;
+    }
+  }
+}
+
+@keyframes sheen-sweep {
+  from { background-position: 72% 0; }
+  to { background-position: 8% 0; }
 }
 
 /* Buttons that lean ------------------------------------------------------- */
@@ -467,4 +505,161 @@
   .note__head::before {
     display: none;
   }
+}
+
+/* The orbit's pause control ----------------------------------------------- */
+
+// The two orbits run by themselves, so there is a way to stop them: a button
+// on the hero, the footer's orbit itself (a button lies over it), and a
+// command in the command menu (motion.js). The choice is the class motion-paused on <html>.
+.motion-toggle {
+  @include label;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s-2);
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0 var(--s-3);
+  border: 1px solid var(--ink-3);
+  border-radius: 0;
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+  transition:
+    background-color var(--dur-1) var(--ease),
+    transform var(--dur-1) var(--ease);
+
+  &:hover { background: var(--bg-inset); }
+  &:active { transform: scale(0.96); }
+
+  > span { display: inline-flex; }
+}
+
+.motion-toggle__play { display: none !important; }
+
+.motion-paused {
+  .motion-toggle__pause { display: none !important; }
+  .motion-toggle__play { display: inline-flex !important; }
+
+  // The footer's orbit holds where it is.
+  .orbit-mini.is-running .orbit-mini__turn { animation-play-state: paused; }
+}
+
+// In the footer the orbit itself is the control: the button lies over it, with
+// only the small pause or play mark showing in its corner, and its label kept
+// for screen readers.
+.orbit-control {
+  position: relative;
+  flex: none;
+}
+
+.motion-toggle--over {
+  position: absolute;
+  inset: 0;
+  align-items: flex-end;
+  justify-content: flex-end;
+  min-width: 0;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  color: var(--ink-3);
+
+  &:hover {
+    background: transparent;
+    color: var(--ink);
+  }
+
+  > .motion-toggle__label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+  }
+}
+
+// On the hero: below the datum and above the band on narrower screens; from
+// 1024px in the stage's bottom right corner, over the orbit.
+.orbit-stage__controls {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: var(--s-4);
+
+  @include wide {
+    position: absolute;
+    right: 0;
+    bottom: calc(var(--s-9) + var(--s-2));
+    left: 0;
+    margin-top: 0;
+    pointer-events: none;
+
+    > .motion-toggle {
+      pointer-events: auto;
+      background: color-mix(in srgb, var(--bg) 55%, transparent);
+
+      &:hover { background: var(--bg-inset); }
+    }
+  }
+}
+
+// Nothing moves under reduced motion, so there is nothing to pause.
+@media (prefers-reduced-motion: reduce) {
+  .motion-toggle,
+  .orbit-stage__controls {
+    display: none !important;
+  }
+}
+
+@media print {
+  .motion-toggle { display: none !important; }
+}
+
+/* Foil cards on a touch screen -------------------------------------------- */
+
+// No pointer to tilt toward: the card leans back and forth and its foil slides
+// as it scrolls through the window instead. A scroll-driven animation, so no
+// script and no motion sensor; where the browser has none it is a plain photo.
+@media screen and (pointer: coarse) and (prefers-reduced-motion: no-preference) and (forced-colors: none) {
+  @supports (animation-timeline: view()) {
+    .figure--foil {
+      perspective: 56rem;
+    }
+
+    .figure--foil .figure__link {
+      position: relative;
+      overflow: hidden;
+      animation: foil-pass linear both;
+      animation-timeline: view();
+      animation-range: cover 0% cover 100%;
+
+      &::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+        background: repeating-linear-gradient(115deg, #FFC65A 0%, #5FD8FF 9%, #7BA4FF 18%, #E8B48C 27%, #6FE3D2 36%, #FFC65A 45%);
+        background-size: 320% 320%;
+        mix-blend-mode: color-dodge;
+        opacity: 0.26;
+        pointer-events: none;
+        animation: foil-shine linear both;
+        animation-timeline: view();
+        animation-range: cover 0% cover 100%;
+      }
+    }
+  }
+}
+
+// Gentler than the tilt under a mouse: on a phone the photo is as wide as
+// the screen, so a small lean already reads.
+@keyframes foil-pass {
+  from { transform: rotateX(5deg) rotateY(-2.5deg); }
+  to { transform: rotateX(-5deg) rotateY(2.5deg); }
+}
+
+@keyframes foil-shine {
+  from { background-position: 0% 0%; }
+  to { background-position: 100% 100%; }
 }

@@ -95,6 +95,8 @@ export type OrbitalHeroOptions = {
 };
 
 export type OrbitalHero = {
+  /** Holds the scene on its current frame, or lets it run again. The camera still answers the pointer and the scroll. */
+  setPaused(paused: boolean): void;
   /** Stops the loop and removes the canvas and listeners. */
   destroy(): void;
 };
@@ -187,7 +189,7 @@ type Elements = {
 
 type Shot = { el: Elements; x: number; y: number; depth: number; s: number };
 
-const NOOP: OrbitalHero = { destroy() {} };
+const NOOP: OrbitalHero = { setPaused() {}, destroy() {} };
 
 /** Kepler's equation M = E - e sin E, solved for the eccentric anomaly. */
 function eccentricAnomaly(M: number, e: number): number {
@@ -939,6 +941,10 @@ function createHero(
   document.addEventListener("visibilitychange", onVisibility);
 
   return {
+    setPaused(paused: boolean) {
+      opts.paused = paused;
+      kick();
+    },
     destroy() {
       running = false;
       cancelAnimationFrame(raf);

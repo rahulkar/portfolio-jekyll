@@ -5,6 +5,7 @@
 // elements built through the DOM, never from HTML strings.
 import { copyText } from "./copy-email.js";
 import { gridShown, setGrid } from "./grid-overlay.js";
+import { motionPaused, setMotion } from "./motion.js";
 
 export function initCommandMenu(doc) {
   var dialog = doc.getElementById("cmdk");
@@ -60,6 +61,7 @@ export function initCommandMenu(doc) {
       var action = r.el.getAttribute("data-action");
       if (action === "theme") r.text = themeBtn && themeBtn.getAttribute("aria-pressed") === "true" ? "Switch to light theme" : "Switch to dark theme";
       if (action === "grid") r.text = gridShown() ? "Hide layout grid" : "Show layout grid";
+      if (action === "motion") r.text = motionPaused(doc) ? "Play the orbit" : "Pause the orbit";
     });
   }
 
@@ -153,6 +155,14 @@ export function initCommandMenu(doc) {
     if (action === "grid") {
       close();
       setGrid(doc, !gridShown());
+      return;
+    }
+    if (action === "motion") {
+      setMotion(doc, !motionPaused(doc));
+      relabel();
+      filter();
+      if (shown.indexOf(r) >= 0) select(r, false);
+      say(motionPaused(doc) ? "Orbit paused." : "Orbit playing.");
       return;
     }
     if (action === "copy") {
