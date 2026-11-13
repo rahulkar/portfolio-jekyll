@@ -95,7 +95,7 @@ export type OrbitalHeroOptions = {
 };
 
 export type OrbitalHero = {
-  /** Holds the scene on its current frame, or lets it run again. The camera still answers the pointer and the scroll. */
+  /** Holds the scene on its current frame, or lets it run again. While held the camera ignores the pointer; it still follows the scroll. */
   setPaused(paused: boolean): void;
   /** Stops the loop and removes the canvas and listeners. */
   destroy(): void;
@@ -851,9 +851,10 @@ function createHero(
     if (!running || !visible || document.hidden) return;
 
     const goal = opts.paused ? 0 : hovering ? 1 : Math.max(0, opts.idleRate);
+    // Paused, the camera holds where it is instead of leaning to the pointer.
+    const lean = !opts.paused;
     const settled =
-      Math.abs(pointerX - camX) < 1e-3 &&
-      Math.abs(pointerY - camY) < 1e-3 &&
+      (!lean || (Math.abs(pointerX - camX) < 1e-3 && Math.abs(pointerY - camY) < 1e-3)) &&
       Math.abs(scrollTo - scrollAt) < 1e-3 &&
       Math.abs(goal - rate) < 1e-3;
     // Drifting by itself, with nothing easing, the scene is drawn 30 times a
@@ -869,10 +870,14 @@ function createHero(
     // second rather than per frame, so they settle in the same time on a slow
     // machine.
     const ease = 1 - Math.pow(0.96, elapsed * 60);
-    rate += (goal - rate) * ease;
+    // A pause has to feel like one: the speed is gone in about half a second
+    // rather than gliding out over three.
+    rate += (goal - rate) * (opts.paused ? 1 - Math.pow(0.8, elapsed * 60) : ease);
     years += (Math.min(0.05, elapsed) * rate) / Math.max(0.1, opts.yearSeconds);
-    camX += (pointerX - camX) * ease;
-    camY += (pointerY - camY) * ease;
+    if (lean) {
+      camX += (pointerX - camX) * ease;
+      camY += (pointerY - camY) * ease;
+    }
     scrollAt += (scrollTo - scrollAt) * (1 - Math.pow(0.88, elapsed * 60));
     render(years);
 
