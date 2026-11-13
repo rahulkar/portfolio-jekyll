@@ -31,6 +31,10 @@
 
   <link rel="preload" as="font" type="font/woff2" href="{{ "/assets/fonts/instrument-sans-v1.woff2" | relative_url }}" crossorigin>
   <link rel="preload" as="font" type="font/woff2" href="{{ "/assets/fonts/fragment-mono-v1.woff2" | relative_url }}" crossorigin>
+{%- comment -%} Note titles are set in the serif and sit at the top of a note and of the notes list, so it is fetched early there; elsewhere it is only used further down the page. {%- endcomment -%}
+{%- if page.collection == "notes" or page.url == "/notes/" %}
+  <link rel="preload" as="font" type="font/woff2" href="{{ "/assets/fonts/instrument-serif-v1.woff2" | relative_url }}" crossorigin>
+{%- endif %}
   <link rel="stylesheet" href="{{ "/assets/css/main.css" | relative_url }}?v={{ site.time | date: '%s' }}">
   <script src="{{ "/assets/js/theme.js" | relative_url }}?v={{ site.time | date: '%s' }}"></script>
 {%- comment -%} Coming back from a note, its card or row has to exist before the first frame so the page change can pair them (theme.js): hold rendering until the list is parsed. {%- endcomment -%}

@@ -252,7 +252,8 @@ without cross-document transitions just load the page.
   turns every hue back to ink. Red is not a hue: it still only means "now".
 - **Type.** Instrument Serif sets the About line (italic), note titles and the
   large numerals. `em` and `i` stay upright; the serif is applied by the
-  component rules, never by markup.
+  component rules, never by markup. Notes pages preload the roman, where a
+  title is the first thing painted; the home page does not.
 - **Surfaces.** Dark surfaces carry film grain (`--grain`, an inline SVG data
   URL in the dark tokens). The sticky header is frosted
   (`backdrop-filter`, 85% solid). On the home page from 1024px the header sits
@@ -264,14 +265,28 @@ without cross-document transitions just load the page.
   screen and in a background tab) and the footer's small orbit (CSS, running
   only while on screen). Nothing else: the rest answers the pointer or the
   scroll. Reduced motion stops all of it.
+- **Pausing it.** Motion that starts by itself needs a way to stop it (WCAG
+  2.2.2), so `src/js/motion.js` gives the orbits one: the Pause orbit button
+  on the hero (`_includes/motion-toggle.html`), the footer's orbit itself (the
+  same button laid over it) and "Pause the orbit" in the command menu. The
+  choice is `localStorage.orbit = "paused"`; `assets/js/theme.js` applies it
+  before first paint as `motion-paused` on `<html>`, the stylesheet pauses the
+  footer's orbit from that class, and `orbit.js` hears a `motionchange` event
+  on the document. Under reduced motion the controls and the command are not
+  there, since nothing runs.
 - **Pointer.** `src/js/pointer.js` writes `--mx`/`--my` on `[data-light]`
   elements (the lights on note cards, rows, steps and the 6502 photo, and the
   sheen on the hero name) and `--tx`/`--ty` on `[data-magnet]` (the Email me
   button leans). `src/js/tilt.js` (notes) writes `--rx`/`--ry` on photos given
-  `class="figure--foil"`. Mouse or trackpad only. These are the only custom
-  properties a script may write besides the datum's: the list is in
-  `tools/check-csp.mjs` and in the "loads clean" test, so a new one goes in
-  both.
+  `class="figure--foil"`. These are the only custom properties a script may
+  write besides the datum's: the list is in `tools/check-csp.mjs` and in the
+  "loads clean" test, so a new one goes in both.
+- **Touch.** Nothing hovers on a touch screen, so each effect has another
+  trigger there: a press lights a `[data-light]` element for a moment
+  (`pointer.js` adds `is-lit`); the band on the hero name crosses it as the
+  first screen scrolls away, and the foil photos lean and shimmer as they
+  scroll through the window (both CSS scroll-driven animations under
+  `pointer: coarse`, static where the browser has none).
 - **Drawings that plot.** `assets/js/theme.js` puts `can-plot` on `<html>`
   before first paint; `src/js/plot.js` adds `is-drawn` to each drawing when a
   quarter of it is on screen, and `_art.scss` runs the lines. If `main.js`

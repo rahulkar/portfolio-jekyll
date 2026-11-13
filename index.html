@@ -18,6 +18,7 @@ layout: default
   {% include datum.html %}
   <p class="print-only">{{ site.email }} &middot; github.com/{{ site.github_username }} &middot; {{ site.linkedin_url }} &middot; Based in Kolkata, India</p>
 </section>
+<div class="wrap orbit-stage__controls">{% include motion-toggle.html %}</div>
 </div>
 <div class="orbit-band" data-orbital-hero="narrow"></div>
 <script defer src="{{ "/assets/js/orbit.js" | relative_url }}?v={{ site.time | date: '%s' }}"></script>

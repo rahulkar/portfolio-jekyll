@@ -23,6 +23,9 @@ const OWN = {
   download: '<svg class="icon" width="14" height="14" viewBox="0 0 14 14" aria-hidden="true" focusable="false"><path d="M7 1.5v8M3.5 6L7 9.5 10.5 6M2 12.5h10" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square"/></svg>',
   code: '<svg class="icon" width="14" height="14" viewBox="0 0 14 14" aria-hidden="true" focusable="false"><path d="M4.5 3.5L1 7l3.5 3.5M9.5 3.5L13 7l-3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square"/></svg>',
   feed: '<svg class="icon" width="14" height="14" viewBox="0 0 14 14" aria-hidden="true" focusable="false"><path d="M2.5 2.25a9.25 9.25 0 0 1 9.25 9.25M2.5 6.25a5.25 5.25 0 0 1 5.25 5.25" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="3.25" cy="10.75" r="1.25" fill="currentColor"/></svg>',
+  // The orbit's pause control
+  pause: '<svg class="icon" width="14" height="14" viewBox="0 0 14 14" aria-hidden="true" focusable="false"><path d="M4.5 2.5v9M9.5 2.5v9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square"/></svg>',
+  play: '<svg class="icon" width="14" height="14" viewBox="0 0 14 14" aria-hidden="true" focusable="false"><path d="M4 2.25l7.25 4.75L4 11.75z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="miter"/></svg>',
 };
 
 // Name on the site: "pack:icon" (a bare icon name means Lucide).

@@ -21,7 +21,10 @@
       <p class="colophon__weight" data-page-weight hidden></p>
     </div>
     <div class="colophon__aside">
-      {% include orbit-mini.html %}
+      <div class="orbit-control">
+        {% include orbit-mini.html %}
+        {% include motion-toggle.html class="motion-toggle--over" %}
+      </div>
       {% include lcd.html %}
     </div>
   </div>

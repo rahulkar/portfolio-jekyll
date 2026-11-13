@@ -6,7 +6,8 @@
    2. Arms the drawings that plot themselves (see _art.scss and plot.js): they
       start hidden, which has to be decided before anything is painted. If
       main.js has not taken over within four seconds they are simply shown.
-   3. Pairs a note with its card (or its row on the home page) for the page
+   3. Applies a saved choice to pause the orbit (see src/js/motion.js).
+   4. Pairs a note with its card (or its row on the home page) for the page
       change between them (see _modes.scss): the one that matches the note
       gets is-vt, on the way out and, before the first frame, on the way back.
       Its drawing is marked is-still so it does not plot itself again. */
@@ -22,6 +23,10 @@
       var metas = document.querySelectorAll('meta[name="theme-color"]');
       for (var i = 0; i < metas.length; i++) metas[i].setAttribute("content", t === "dark" ? "#121211" : "#F6F5F1");
     }
+  } catch (e) {}
+
+  try {
+    if (localStorage.getItem("orbit") === "paused") root.classList.add("motion-paused");
   } catch (e) {}
 
   try {

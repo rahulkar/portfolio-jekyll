@@ -163,7 +163,7 @@ test.describe("without JavaScript", () => {
     await page.goto("/");
     await expect(page.locator(".datum__label")).toBeVisible();
     await expect(page.locator(".datum__ticks")).toBeVisible();
-    for (const sel of [".datum__tick", ".datum__now", ".datum__local", "#theme-btn", "#cmdk-btn", ".copy", ".colophon__weight", ".lcd"]) {
+    for (const sel of [".datum__tick", ".datum__now", ".datum__local", "#theme-btn", "#cmdk-btn", ".copy", ".colophon__weight", ".lcd", ".orbit-stage .motion-toggle", ".colophon .motion-toggle"]) {
       await expect(page.locator(sel)).toBeHidden();
     }
     // Controls that only work with the script are not there at all.
@@ -1178,5 +1178,138 @@ test.describe("colour, type and light", () => {
     await expect.poll(() => card.getAttribute("style")).toMatch(/--rx:\s*[\d.]+;\s*--ry:\s*-[\d.]+;/);
     await card.click();
     await expect(page.locator("dialog.lightbox[open]")).toHaveCount(1);
+  });
+});
+
+test.describe("pausing the orbit", () => {
+  // A checksum of the hero canvas: it changes whenever the frame changes.
+  const frame = (page) =>
+    page.evaluate(() => {
+      const c = document.querySelector(".orbital-hero__canvas");
+      const d = c.getContext("2d").getImageData(0, 0, c.width, c.height).data;
+      let h = 0;
+      for (let i = 0; i < d.length; i += 997) h = (h * 31 + d[i]) | 0;
+      return h;
+    });
+  const turning = (page) => page.locator(".orbit-mini__turn").first().evaluate((el) => getComputedStyle(el).animationPlayState);
+
+  test("the hero's button stops both orbits, says so, and starts them again", async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: "no-preference" });
+    await page.goto("/");
+    await page.waitForSelector("html.is-ready");
+    const button = page.locator(".orbit-stage .motion-toggle");
+    await expect(button).toBeVisible();
+    await expect(button).toHaveAccessibleName("Pause orbit");
+    const box = await button.boundingBox();
+    expect(box.height).toBeGreaterThanOrEqual(44);
+    await button.click();
+    await expect(page.locator("html")).toHaveClass(/motion-paused/);
+    await expect(button).toHaveAccessibleName("Play orbit");
+    // The scene eases to a stop, then holds.
+    await page.waitForTimeout(2500);
+    const held = await frame(page);
+    await page.waitForTimeout(700);
+    expect(await frame(page)).toBe(held);
+    await page.locator(".colophon .orbit-mini").scrollIntoViewIfNeeded();
+    await expect.poll(() => turning(page)).toBe("paused");
+    await button.scrollIntoViewIfNeeded();
+    await button.click();
+    await expect(button).toHaveAccessibleName("Pause orbit");
+    await page.waitForTimeout(900);
+    expect(await frame(page)).not.toBe(held);
+  });
+
+  test("the choice is kept: a paused orbit is still paused on the next page and after a reload", async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: "no-preference" });
+    await page.goto("/notes/");
+    await page.waitForSelector("html.is-ready");
+    const over = page.locator(".colophon .motion-toggle");
+    await over.scrollIntoViewIfNeeded();
+    await expect.poll(() => turning(page)).toBe("running");
+    await expect(over).toHaveAccessibleName("Pause orbit");
+    await over.click();
+    await expect.poll(() => turning(page)).toBe("paused");
+    await page.goto("/");
+    await page.waitForSelector("html.is-ready");
+    await expect(page.locator("html")).toHaveClass(/motion-paused/);
+    await expect(page.locator(".orbit-stage .motion-toggle")).toHaveAccessibleName("Play orbit");
+    const held = await frame(page);
+    await page.waitForTimeout(700);
+    expect(await frame(page)).toBe(held);
+    await page.evaluate(() => localStorage.removeItem("orbit"));
+  });
+
+  test("the command menu pauses and plays it too", async ({ page }, testInfo) => {
+    onlyDesktop(testInfo);
+    await page.emulateMedia({ reducedMotion: "no-preference" });
+    await page.goto("/how-i-work/");
+    await page.waitForSelector("html.is-ready");
+    await page.keyboard.press("Control+k");
+    await page.locator("#cmdk-input").fill("pause");
+    await expect(page.locator("#cmdk-motion")).toHaveText("Pause the orbit");
+    await page.keyboard.press("Enter");
+    await expect(page.locator("html")).toHaveClass(/motion-paused/);
+    await expect(page.locator("[data-cmdk-status]")).toHaveText("Orbit paused.");
+    await page.locator("#cmdk-input").fill("orbit");
+    await expect(page.locator("#cmdk-motion")).toHaveText("Play the orbit");
+    await page.keyboard.press("Enter");
+    await expect(page.locator("html")).not.toHaveClass(/motion-paused/);
+  });
+
+  test("under reduced motion nothing moves, so there is no control and no command", async ({ page }) => {
+    await openPage(page, "/");
+    await expect(page.locator(".orbit-stage .motion-toggle")).toBeHidden();
+    await expect(page.locator(".colophon .motion-toggle")).toBeHidden();
+    await expect(page.locator("#cmdk-motion")).toHaveCount(0);
+    await expect(page.locator(".colophon .orbit-mini")).toBeVisible();
+  });
+});
+
+test.describe("touch and loading", () => {
+  test("notes pages fetch the serif early, the home page does not", async ({ page }) => {
+    const preloads = () => page.locator('link[rel="preload"][as="font"]').evaluateAll((els) => els.map((el) => el.getAttribute("href").split("/").pop()));
+    await openPage(page, "/notes/vintage-silicon/");
+    expect(await preloads()).toContain("instrument-serif-v1.woff2");
+    await openPage(page, "/notes/");
+    expect(await preloads()).toContain("instrument-serif-v1.woff2");
+    await openPage(page, "/");
+    expect(await preloads()).toEqual(["instrument-sans-v1.woff2", "fragment-mono-v1.woff2"]);
+  });
+
+  test("on a touch screen a press lights a step, the name's band follows the scroll and the foil photos tilt with it", async ({ page }, testInfo) => {
+    test.skip(testInfo.project.name === "desktop", "touch screens only");
+    await page.emulateMedia({ reducedMotion: "no-preference" });
+    await page.goto("/how-i-work/");
+    await page.waitForSelector("html.is-ready");
+    const step = page.locator(".playbook__stage").first();
+    await step.scrollIntoViewIfNeeded();
+    const box = await step.boundingBox();
+    const lit = page.evaluate(() => new Promise((resolve) => {
+      const el = document.querySelector(".playbook__stage");
+      new MutationObserver(() => { if (el.classList.contains("is-lit")) resolve(true); }).observe(el, { attributes: true, attributeFilter: ["class"] });
+      setTimeout(() => resolve(false), 3000);
+    }));
+    await page.touchscreen.tap(box.x + box.width * 0.5, box.y + 30);
+    expect(await lit).toBe(true);
+    expect(await step.getAttribute("style")).toMatch(/^--mx:\s*0\.5\d*;\s*--my:\s*0\.\d+;$/);
+    await expect(step).not.toHaveClass(/is-lit/);
+
+    await page.goto("/");
+    await page.waitForSelector("html.is-ready");
+    expect(await page.locator(".hero__name").evaluate((el) => getComputedStyle(el).animationName)).toBe("sheen-sweep");
+    await page.goto("/notes/vintage-silicon/");
+    await page.waitForSelector("html.is-ready");
+    expect(await page.locator(".figure--foil .figure__link").first().evaluate((el) => getComputedStyle(el).animationName)).toBe("foil-pass");
+  });
+
+  test("with a mouse the name's band and the foil are not tied to the scroll", async ({ page }, testInfo) => {
+    onlyDesktop(testInfo);
+    await page.emulateMedia({ reducedMotion: "no-preference" });
+    await page.goto("/");
+    await page.waitForSelector("html.is-ready");
+    expect(await page.locator(".hero__name").evaluate((el) => getComputedStyle(el).animationName)).toBe("none");
+    await page.goto("/notes/vintage-silicon/");
+    await page.waitForSelector("html.is-ready");
+    expect(await page.locator(".figure--foil .figure__link").first().evaluate((el) => getComputedStyle(el).animationName)).toBe("none");
   });
 });
