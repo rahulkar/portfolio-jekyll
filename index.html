@@ -1,9 +1,11 @@
 ---
 layout: default
 ---
-<div class="orbit-stage" data-orbital-hero="wide" data-light>
+<div class="orbit-stage" data-orbital-hero="wide">
 <section class="hero wrap grid" aria-labelledby="hero-name">
-  <h1 class="hero__name display" id="hero-name">Rahul Kar</h1>
+  {%- comment -%} The name a glyph at a time (src/js/glyphs.js): screen readers get the whole name once, the letters are hidden from them. {%- endcomment -%}
+  {%- assign letters = "Rahul Kar" | split: "" %}
+  <h1 class="hero__name display" id="hero-name"><span class="sr-only">Rahul Kar</span><span class="glyphs" aria-hidden="true" data-glyphs>{% for c in letters %}{% if c == " " %}{{ " " }}{% else %}<span class="glyph">{{ c }}</span>{% endif %}{% endfor %}</span></h1>
   <div class="hero__intro">
     <p class="hero__role">Enterprise Solution Architect &amp; Technology Lead &middot; 11+ years in IT</p>
     <dl class="hero__facts">

@@ -58,12 +58,12 @@ for (const path of PAGES) {
         await expect(page.locator("dialog:not(#cmdk):not(.lightbox)")).toHaveCount(0);
         await expect(page.locator("dialog[open]")).toHaveCount(0);
         // Style attributes hold only the numbers the scripts write: the datum's
-        // --now and --probe, and the pointer effects' coordinates.
-        const styled = await page.evaluate(() => [...document.querySelectorAll("[style]")].map((el) => [el.matches("[data-datum]"), el.matches("[data-light], [data-tilt], [data-magnet]"), el.getAttribute("style")]));
+        // --now and --probe, and the pointer effects' coordinates and lift.
+        const styled = await page.evaluate(() => [...document.querySelectorAll("[style]")].map((el) => [el.matches("[data-datum]"), el.matches("[data-light], [data-tilt], [data-magnet], [data-glyphs] .glyph"), el.getAttribute("style")]));
         for (const [isDatum, isPointer, style] of styled) {
           expect(isDatum || isPointer).toBe(true);
           if (isDatum) expect(style).toMatch(/^--now:\s*[\d.]+;(\s*--probe:\s*[\d.]+;)?$/);
-          else expect(style).toMatch(/^(\s*--(mx|my|rx|ry|tx|ty):\s*-?[\d.]+;)+$/);
+          else expect(style).toMatch(/^(\s*--(mx|my|rx|ry|tx|ty|lift):\s*-?[\d.]+;)+$/);
         }
       });
 
@@ -176,7 +176,12 @@ test.describe("without JavaScript", () => {
 test.describe("home page", () => {
   test("hero", async ({ page }, testInfo) => {
     await openPage(page, "/");
-    await expect(page.locator("h1")).toHaveText("Rahul Kar");
+    // The name is read once; its letters, one span each, are hidden from
+    // screen readers.
+    await expect(page.locator("h1")).toHaveAccessibleName("Rahul Kar");
+    await expect(page.locator("h1 [data-glyphs]")).toHaveAttribute("aria-hidden", "true");
+    await expect(page.locator("h1 [data-glyphs]")).toHaveText("Rahul Kar");
+    await expect(page.locator("h1 .glyph")).toHaveCount(8);
     if (testInfo.project.name === "desktop") {
       const size = await page.locator("h1").evaluate((el) => parseFloat(getComputedStyle(el).fontSize));
       expect(Math.abs(size - 176)).toBeLessThan(0.5);
@@ -1023,7 +1028,7 @@ test.describe("home hero orbit", () => {
     const canvas = page.locator(".orbital-hero__canvas");
     await expect(canvas).toHaveCount(1);
     await expect(canvas).toHaveAttribute("aria-hidden", "true");
-    await expect(page.locator("#hero-name")).toHaveText("Rahul Kar");
+    await expect(page.locator("#hero-name")).toHaveAccessibleName("Rahul Kar");
   });
 
   test("below 1024px the orbit band sits between the hero and Background", async ({ page }, testInfo) => {
@@ -1112,6 +1117,39 @@ test.describe("colour, type and light", () => {
     await card.hover();
     await page.waitForTimeout(300);
     expect(await card.getAttribute("style")).toBeNull();
+    await page.goto("/");
+    await page.waitForSelector("html.is-ready");
+    const k = page.locator("h1 .glyph").nth(5);
+    await k.hover();
+    await page.waitForTimeout(400);
+    expect(await k.getAttribute("style")).toBeNull();
+    expect(await k.evaluate((el) => getComputedStyle(el).fontWeight)).toBe("400");
+  });
+
+  test("the name's letters swell under the mouse, in ink, and settle back when it leaves", async ({ page }, testInfo) => {
+    onlyDesktop(testInfo);
+    await page.emulateMedia({ reducedMotion: "no-preference" });
+    await page.goto("/");
+    await page.waitForSelector("html.is-ready");
+    const glyphs = page.locator("h1 .glyph");
+    const weights = () => glyphs.evaluateAll((els) => els.map((el) => Math.round(parseFloat(getComputedStyle(el).fontWeight))));
+    expect(await weights()).toEqual([400, 400, 400, 400, 400, 400, 400, 400]);
+    // No colour: the letters are filled with the ink, like any text.
+    const fill = await glyphs.first().evaluate((el) => [getComputedStyle(el).webkitTextFillColor, getComputedStyle(el).color, getComputedStyle(el.closest("h1")).backgroundImage]);
+    expect(fill[0]).toBe(fill[1]);
+    expect(fill[2]).toBe("none");
+    // The pointer on the K: it swells most, the R at the far end not at all.
+    const box = await glyphs.nth(5).boundingBox();
+    await page.mouse.move(box.x - 300, box.y + box.height / 2);
+    await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2, { steps: 6 });
+    await expect.poll(async () => (await weights())[5]).toBeGreaterThan(680);
+    const w = await weights();
+    expect(w[0]).toBe(400);
+    expect(Math.max(...w)).toBe(w[5]);
+    // Away from the name the letters go back to rest and to plain markup.
+    await page.mouse.move(box.x, box.y + 700, { steps: 4 });
+    await expect.poll(weights).toEqual([400, 400, 400, 400, 400, 400, 400, 400]);
+    await expect(page.locator("h1 .glyph[style]")).toHaveCount(0);
   });
 
   test("drawings plot themselves once on screen; under reduced motion they are simply there", async ({ page }, testInfo) => {
@@ -1193,7 +1231,8 @@ test.describe("pausing the orbit", () => {
     });
   const turning = (page) => page.locator(".orbit-mini__turn").first().evaluate((el) => getComputedStyle(el).animationPlayState);
 
-  test("the hero's button stops both orbits, says so, and starts them again", async ({ page }) => {
+  test("the hero's button stops both orbits, says so, and starts them again", async ({ page }, testInfo) => {
+    onlyDesktop(testInfo);
     await page.emulateMedia({ reducedMotion: "no-preference" });
     await page.goto("/");
     await page.waitForSelector("html.is-ready");
@@ -1234,11 +1273,27 @@ test.describe("pausing the orbit", () => {
     await page.goto("/");
     await page.waitForSelector("html.is-ready");
     await expect(page.locator("html")).toHaveClass(/motion-paused/);
-    await expect(page.locator(".orbit-stage .motion-toggle")).toHaveAccessibleName("Play orbit");
+    await expect(page.locator(".colophon .motion-toggle")).toHaveAccessibleName("Play orbit");
     const held = await frame(page);
     await page.waitForTimeout(700);
     expect(await frame(page)).toBe(held);
     await page.evaluate(() => localStorage.removeItem("orbit"));
+  });
+
+  test("below 1024px the hero has no button; the footer's orbit pauses the band", async ({ page }, testInfo) => {
+    test.skip(testInfo.project.name === "desktop", "phone and tablet widths only");
+    await page.emulateMedia({ reducedMotion: "no-preference" });
+    await page.goto("/");
+    await page.waitForSelector("html.is-ready");
+    await expect(page.locator(".orbit-stage .motion-toggle")).toBeHidden();
+    await expect(page.locator(".orbit-stage__controls")).toBeHidden();
+    const over = page.locator(".colophon .motion-toggle");
+    await over.scrollIntoViewIfNeeded();
+    await expect(over).toHaveAccessibleName("Pause orbit");
+    await over.click();
+    await expect(page.locator("html")).toHaveClass(/motion-paused/);
+    await over.click();
+    await expect(page.locator("html")).not.toHaveClass(/motion-paused/);
   });
 
   test("the command menu pauses and plays it too", async ({ page }, testInfo) => {
@@ -1278,7 +1333,7 @@ test.describe("touch and loading", () => {
     expect(await preloads()).toEqual(["instrument-sans-v1.woff2", "fragment-mono-v1.woff2"]);
   });
 
-  test("on a touch screen a press lights a step, the name's band follows the scroll and the foil photos tilt with it", async ({ page }, testInfo) => {
+  test("on a touch screen a press lights a step, a wave crosses the name's letters with the scroll and the foil photos tilt with it", async ({ page }, testInfo) => {
     test.skip(testInfo.project.name === "desktop", "touch screens only");
     await page.emulateMedia({ reducedMotion: "no-preference" });
     await page.goto("/how-i-work/");
@@ -1298,18 +1353,21 @@ test.describe("touch and loading", () => {
 
     await page.goto("/");
     await page.waitForSelector("html.is-ready");
-    expect(await page.locator(".hero__name").evaluate((el) => getComputedStyle(el).animationName)).toBe("sheen-sweep");
+    const glyph = page.locator("h1 .glyph");
+    expect(await glyph.first().evaluate((el) => getComputedStyle(el).animationName)).toBe("glyph-wave");
+    const ranges = await glyph.evaluateAll((els) => els.map((el) => getComputedStyle(el).animationRangeStart));
+    expect(new Set(ranges).size).toBe(8);
     await page.goto("/notes/vintage-silicon/");
     await page.waitForSelector("html.is-ready");
     expect(await page.locator(".figure--foil .figure__link").first().evaluate((el) => getComputedStyle(el).animationName)).toBe("foil-pass");
   });
 
-  test("with a mouse the name's band and the foil are not tied to the scroll", async ({ page }, testInfo) => {
+  test("with a mouse the name's letters and the foil are not tied to the scroll", async ({ page }, testInfo) => {
     onlyDesktop(testInfo);
     await page.emulateMedia({ reducedMotion: "no-preference" });
     await page.goto("/");
     await page.waitForSelector("html.is-ready");
-    expect(await page.locator(".hero__name").evaluate((el) => getComputedStyle(el).animationName)).toBe("none");
+    expect(await page.locator("h1 .glyph").first().evaluate((el) => getComputedStyle(el).animationName)).toBe("none");
     await page.goto("/notes/vintage-silicon/");
     await page.waitForSelector("html.is-ready");
     expect(await page.locator(".figure--foil .figure__link").first().evaluate((el) => getComputedStyle(el).animationName)).toBe("none");
