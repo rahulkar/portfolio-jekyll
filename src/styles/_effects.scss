@@ -260,51 +260,53 @@
   .figure--parts .figure__link.is-lit::after { opacity: 1; }
 }
 
-/* The hero name's sheen --------------------------------------------------- */
+/* The hero name, a glyph at a time --------------------------------------- */
 
-// The name is filled with a band of the orbit's colours, which slides across
-// it with the pointer (the stage is a [data-light] element). On the dark
-// stage, from 1024px, the band is light: pale gold, white, pale blue. Below
-// that the hero is on the page's own colour, so the band is three of the hues,
-// which hold their contrast in either theme. Print, forced colours and higher
-// contrast get plain ink.
-@media screen and (forced-colors: none) {
-  @supports ((-webkit-background-clip: text) or (background-clip: text)) {
-    .orbit-stage .hero__name {
-      --sheen-1: var(--hue-venus);
-      --sheen-2: var(--hue-uranus);
-      --sheen-3: var(--hue-neptune);
-      background: linear-gradient(105deg, var(--ink) 0%, var(--ink) 40%, var(--sheen-1) 46%, var(--sheen-2) 50%, var(--sheen-3) 54%, var(--ink) 60%, var(--ink) 100%) no-repeat;
-      background-size: 250% 100%;
-      background-position: calc(100% - var(--mx, 0.35) * 100%) 0;
-      -webkit-background-clip: text;
-      background-clip: text;
-      -webkit-text-fill-color: transparent;
+// Each letter is its own span (index.html), drawn in plain ink, and takes its
+// weight from the font's weight axis: the rest weight, plus the way up to the
+// peak scaled by --lift, which glyphs.js writes (0 to 1) as the pointer comes
+// near. On a touch screen a wave (--wave) also crosses the letters as the
+// first screen scrolls away, a scroll-driven animation with no script. A
+// letter is as heavy as the larger of the two.
+@property --wave {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0;
+}
 
-      @include wide {
-        --sheen-1: #FFE2A0;
-        --sheen-2: #FFFFFF;
-        --sheen-3: #A6E9FF;
+.hero__name {
+  --glyph-rest: 400;
+  --glyph-peak: 700;
+  font-weight: var(--glyph-rest);
+  // A finger can slide along the name; the page still scrolls up and down.
+  touch-action: pan-y;
+}
+
+.glyph {
+  font-weight: calc(var(--glyph-rest) + (var(--glyph-peak) - var(--glyph-rest)) * max(var(--lift, 0), var(--wave, 0)));
+}
+
+@media screen and (pointer: coarse) and (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: scroll()) {
+    .glyph {
+      animation: glyph-wave linear both;
+      animation-timeline: scroll(root block);
+    }
+
+    // Letter by letter, $step apart, each swelling over $span of scroll.
+    $step: 14;
+    $span: 110;
+    @for $i from 1 through 9 {
+      .glyph:nth-child(#{$i}) {
+        animation-range: #{($i - 1) * $step}px #{($i - 1) * $step + $span}px;
       }
     }
   }
 }
 
-// A touch screen has no pointer to follow, so there the band crosses the name
-// as the first screen scrolls away: a scroll-driven animation, no script.
-@media screen and (pointer: coarse) and (prefers-reduced-motion: no-preference) and (forced-colors: none) {
-  @supports (animation-timeline: scroll()) {
-    .orbit-stage .hero__name {
-      animation: sheen-sweep linear both;
-      animation-timeline: scroll(root block);
-      animation-range: 0 70vh;
-    }
-  }
-}
-
-@keyframes sheen-sweep {
-  from { background-position: 72% 0; }
-  to { background-position: 8% 0; }
+@keyframes glyph-wave {
+  0%, 100% { --wave: 0; }
+  50% { --wave: 1; }
 }
 
 /* Buttons that lean ------------------------------------------------------- */
@@ -460,8 +462,9 @@
 
 /* Modes ------------------------------------------------------------------- */
 
-// Higher contrast: the header is solid and the name plain ink. (The hues and
-// glows already give way to ink through the more-contrast tokens.)
+// Higher contrast: the header is solid and the name rests at its usual
+// display weight. (The hues and glows already give way to ink through the
+// more-contrast tokens.)
 @media (prefers-contrast: more) {
   .site-header,
   html.js:not(.is-past-stage) .has-stage .site-header {
@@ -470,10 +473,7 @@
     backdrop-filter: none;
   }
 
-  .orbit-stage .hero__name {
-    background: none;
-    -webkit-text-fill-color: currentColor;
-  }
+  .hero__name { --glyph-rest: var(--w-display); }
 }
 
 // Forced colours: gradients and canvases are not recoloured, so the glows,
@@ -510,8 +510,8 @@
 /* The orbit's pause control ----------------------------------------------- */
 
 // The two orbits run by themselves, so there is a way to stop them: a button
-// on the hero, the footer's orbit itself (a button lies over it), and a
-// command in the command menu (motion.js). The choice is the class motion-paused on <html>.
+// on the hero from 1024px, the footer's orbit itself (a button lies over it),
+// and a command in the command menu (motion.js). The choice is the class motion-paused on <html>.
 .motion-toggle {
   @include label;
   display: inline-flex;
@@ -580,19 +580,19 @@
   }
 }
 
-// On the hero: below the datum and above the band on narrower screens; from
-// 1024px in the stage's bottom right corner, over the orbit.
+// On the hero from 1024px, in the stage's bottom right corner, over the orbit.
+// Below that the orbit is a band of its own under the hero and the button is
+// left out; the footer's orbit and the command menu still pause it.
 .orbit-stage__controls {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: var(--s-4);
+  display: none;
 
   @include wide {
+    display: flex;
+    justify-content: flex-end;
     position: absolute;
     right: 0;
     bottom: calc(var(--s-9) + var(--s-2));
     left: 0;
-    margin-top: 0;
     pointer-events: none;
 
     > .motion-toggle {

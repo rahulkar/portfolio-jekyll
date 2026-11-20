@@ -267,26 +267,32 @@ without cross-document transitions just load the page.
   scroll. Reduced motion stops all of it.
 - **Pausing it.** Motion that starts by itself needs a way to stop it (WCAG
   2.2.2), so `src/js/motion.js` gives the orbits one: the Pause orbit button
-  on the hero (`_includes/motion-toggle.html`), the footer's orbit itself (the
-  same button laid over it) and "Pause the orbit" in the command menu. The
+  on the hero from 1024px (`_includes/motion-toggle.html`; below that the
+  orbit is a band under the hero and the button is left out), the footer's
+  orbit itself (the same button laid over it) and "Pause the orbit" in the
+  command menu. The
   choice is `localStorage.orbit = "paused"`; `assets/js/theme.js` applies it
   before first paint as `motion-paused` on `<html>`, the stylesheet pauses the
   footer's orbit from that class, and `orbit.js` hears a `motionchange` event
   on the document. Under reduced motion the controls and the command are not
   there, since nothing runs.
 - **Pointer.** `src/js/pointer.js` writes `--mx`/`--my` on `[data-light]`
-  elements (the lights on note cards, rows, steps and the 6502 photo, and the
-  sheen on the hero name) and `--tx`/`--ty` on `[data-magnet]` (the Email me
-  button leans). `src/js/tilt.js` (notes) writes `--rx`/`--ry` on photos given
+  elements (the lights on note cards, rows, steps and the 6502 photo) and
+  `--tx`/`--ty` on `[data-magnet]` (the Email me button leans).
+  `src/js/glyphs.js` writes `--lift` (0 to 1) on the hero name's letters near
+  the pointer, one span per letter in `index.html`; the stylesheet turns it
+  into a weight between 400 and 700 on the font's weight axis.
+  `src/js/tilt.js` (notes) writes `--rx`/`--ry` on photos given
   `class="figure--foil"`. These are the only custom properties a script may
   write besides the datum's: the list is in `tools/check-csp.mjs` and in the
   "loads clean" test, so a new one goes in both.
 - **Touch.** Nothing hovers on a touch screen, so each effect has another
   trigger there: a press lights a `[data-light]` element for a moment
-  (`pointer.js` adds `is-lit`); the band on the hero name crosses it as the
-  first screen scrolls away, and the foil photos lean and shimmer as they
-  scroll through the window (both CSS scroll-driven animations under
-  `pointer: coarse`, static where the browser has none).
+  (`pointer.js` adds `is-lit`); a press on the hero name lifts the letters
+  under the finger (`glyphs.js`), and a weight wave crosses them as the first
+  screen scrolls away; the foil photos lean and shimmer as they scroll through
+  the window (both CSS scroll-driven animations under `pointer: coarse`,
+  static where the browser has none).
 - **Drawings that plot.** `assets/js/theme.js` puts `can-plot` on `<html>`
   before first paint; `src/js/plot.js` adds `is-drawn` to each drawing when a
   quarter of it is on screen, and `_art.scss` runs the lines. If `main.js`

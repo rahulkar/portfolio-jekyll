@@ -10,6 +10,7 @@ import { initPointer } from "./pointer.js";
 import { initPlot } from "./plot.js";
 import { initLcd } from "./lcd.js";
 import { initMotion } from "./motion.js";
+import { initGlyphs } from "./glyphs.js";
 
 function start() {
   var root = document.documentElement;
@@ -25,6 +26,7 @@ function start() {
   initStageHeader(root);
   initOrbitMini(document);
   initPointer(document);
+  initGlyphs(document);
   initPlot(document);
   initLcd(document);
 
